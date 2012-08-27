@@ -1,5 +1,13 @@
-import htmllib, formatter
 import re
+import bleach
+import htmllib
+import formatter
+
+from itertools import chain
+
+DEFAULT_ALLOWED_TAGS = ['i', 'b', 'u']
+MULTIPLE_SPACES = re.compile('\s{2,}')
+BLANK_CHARS = re.compile('[\n\t\r]*')
 
 def unescape_html(s):
     p = htmllib.HTMLParser(formatter.NullFormatter() )
@@ -32,3 +40,60 @@ def to_bcp47(code):
     return "%s%s%s" % (match_dict['lang_code'],
                        (match_dict.get('dialect', "") or "").upper(),
                        match_dict.get('rest', '') or "")
+
+def generate_style_map(dom):
+    '''
+    Parse the head.styling node on the xml and generate a hash -> list
+    of styles that require our supported formatting optins (bold and
+    italic for now).
+    eg.
+    style_map = {
+        'italic': ['speaker', 'importante'],
+        'bold': [],
+    }
+    This will be used when parsing each text node to make sure
+    we can convert to our own styling markers.
+    '''
+    style_map = {
+        'italic': [],
+        'bold': [],
+    }
+    styling_nodes = dom.getElementsByTagName("styling")
+    style_nodes = chain.from_iterable([x.getElementsByTagName('style') for x in styling_nodes])
+    for style_node in style_nodes:
+        style_id = style_node.getAttribute('xml:id')
+        for key in style_node.attributes.keys():
+            value  = style_node.attributes[key].value
+            if key  == 'tts:fontWeight' and  value == 'bold':
+                style_map['bold'].append(style_id)
+            elif key  == 'tts:fontStyle' and value == 'italic':
+                style_map['italic'].append(style_id)
+    return style_map
+
+def strip_tags(text, tags=None):
+    """
+    Returns text with the tags stripped.
+    By default we allow the standard formatting tags
+    to pass (i,b,u).
+    Any other tag's content will be present, but with tags removed.
+    """
+    if tags is None:
+        tags = DEFAULT_ALLOWED_TAGS
+    return bleach.clean(text, tags=tags, strip=True)
+
+def from_xmlish_text(input_str):
+    """
+    Parses text content from xml based formats.
+    <br> tags are transformed into newlines, tab and multiple spaces
+    collapsed. e.g. turns:
+    "\n\r foo  <br/> bar foorer \t " -> "foo bar\nfoorer"
+    """
+    if not input_str:
+        return u""
+    # remove new lines and tabs
+    input_str = BLANK_CHARS.sub(u"", input_str)
+    # do convert <br> to new lines
+    input_str = input_str.replace("<br/>", "\n")
+    # collapse whitespace on each new line
+    return "\n".join( MULTIPLE_SPACES.sub(u" ", x).strip() for x in input_str.split('\n'))
+
