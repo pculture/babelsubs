@@ -1,0 +1,4 @@
+-e git+https://github.com/jsocol/bleach.git@b71bb4d40773b0a07029b83d91d3f659731cbbb0#egg=bleach-dev
+html5lib==0.95
+lxml==2.3
+wsgiref==0.1.2
