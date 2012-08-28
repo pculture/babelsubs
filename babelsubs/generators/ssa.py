@@ -1,7 +1,7 @@
 import codecs
 
 from math import floor
-from babel.generators.base import BaseGenerator, register
+from babelsubs.generators.base import BaseGenerator, register
 
 class SSAGenerator(BaseGenerator):
     file_type = 'ssa'

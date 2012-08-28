@@ -1,4 +1,4 @@
-from babel.generators.base import BaseGenerator, register
+from babelsubs.generators.base import BaseGenerator, register
 
 class TXTGenerator(BaseGenerator):
     file_type = 'txt'

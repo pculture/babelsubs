@@ -2,8 +2,8 @@ import re
 import xml.dom.minidom
 
 from math import floor
-from babel.utils import to_bcp47
-from babel.generators.base import BaseGenerator, register
+from babelsubs.utils import to_bcp47
+from babelsubs.generators.base import BaseGenerator, register
 
 class TTMLGenerator(BaseGenerator):
     file_type = 'xml'

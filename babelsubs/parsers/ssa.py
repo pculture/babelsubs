@@ -1,5 +1,5 @@
 import re
-from babel.parsers.srt import SRTParser
+from babelsubs.parsers.srt import SRTParser
 from base import register
 
 class SSAParser(SRTParser):

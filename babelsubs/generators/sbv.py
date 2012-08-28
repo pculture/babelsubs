@@ -1,6 +1,6 @@
 from math import floor
 
-from babel.generators.base import BaseGenerator, register
+from babelsubs.generators.base import BaseGenerator, register
 
 class SBVGenerator(BaseGenerator):
     file_type = 'sbv'

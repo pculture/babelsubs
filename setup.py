@@ -11,7 +11,7 @@ setup(
     author_email="dev+babel@pculture.org",
     url="https://github.com/pculture/babelsubs",
     license='LICENSE.txt',
-    packages=['babel'],
+    packages=['babelsubs'],
     install_requires=[
         'lxml==2.3',
         'html5lib==0.95',

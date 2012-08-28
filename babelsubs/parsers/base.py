@@ -1,6 +1,6 @@
 import re
 
-from babel import generators
+from babelsubs import generators
 
 class BaseParser(object):
 

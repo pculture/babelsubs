@@ -1,4 +1,4 @@
-from babel import utils
+from babelsubs import utils
 from base import BaseParser, SubtitleParserError, register
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError

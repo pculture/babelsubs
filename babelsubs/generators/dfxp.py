@@ -1,5 +1,5 @@
-from babel.generators.ttml import TTMLGenerator
-from babel.generators.base import register
+from babelsubs.generators.ttml import TTMLGenerator
+from babelsubs.generators.base import register
 
 class DFXPGenerator(TTMLGenerator):
     file_type = 'dfxp'

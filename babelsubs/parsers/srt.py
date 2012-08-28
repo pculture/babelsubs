@@ -1,6 +1,6 @@
 import re
 
-from babel import utils
+from babelsubs import utils
 from base import BaseParser, register
 
 class SRTParser(BaseParser):

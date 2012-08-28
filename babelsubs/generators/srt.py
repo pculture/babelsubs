@@ -1,7 +1,7 @@
 from math import floor
 from HTMLParser import HTMLParser
 
-from babel.generators.base import BaseGenerator, register
+from babelsubs.generators.base import BaseGenerator, register
 
 class SRTGenerator(BaseGenerator):
     file_type = 'srt'
