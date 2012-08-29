@@ -1,11 +1,11 @@
 from babelsubs import utils
-from base import BaseParser, SubtitleParserError, register
+from base import BaseTextParser, SubtitleParserError, register
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError
 
 MAX_SUB_TIME = (60 * 60 * 100) - 1
 
-class DFXPParser(BaseParser):
+class DFXPParser(BaseTextParser):
 
     file_type = 'dfxp'
 

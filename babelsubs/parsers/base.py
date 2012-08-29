@@ -2,7 +2,7 @@ import re
 
 from babelsubs import generators
 
-class BaseParser(object):
+class BaseTextParser(object):
 
     def __init__(self, subtitles, pattern, language=None, flags=[]):
         self.subtitles = subtitles

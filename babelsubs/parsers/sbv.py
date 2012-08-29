@@ -1,9 +1,9 @@
 import re
 from babelsubs import utils
 
-from base import BaseParser, register
+from base import BaseTextParser, register
 
-class SBVParser(BaseParser):
+class SBVParser(BaseTextParser):
 
     file_type = 'sbv'
 
@@ -13,7 +13,7 @@ class SBVParser(BaseParser):
         pattern += r'(?P<e_hour>\d{1}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})\.(?P<e_secfr>\d{3})'
         pattern += r'\n(?P<text>.+?)\n\n'
         subtitles = utils.strip_tags(subtitles)
-        super(BaseParser, self).__init__(subtitles, pattern, [re.DOTALL])
+        super(BaseTextParser, self).__init__(subtitles, pattern, [re.DOTALL])
         #replace \r\n to \n and fix end of last subtitle
         self.subtitles = self.subtitles.replace('\r\n', '\n')+u'\n\n'
         self.language = language

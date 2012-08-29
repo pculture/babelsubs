@@ -1,11 +1,11 @@
 from babelsubs import utils
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError
-from base import BaseParser, SubtitleParserError, register
+from base import BaseTextParser, SubtitleParserError, register
 
 MAX_SUB_TIME = (60 * 60 * 100) - 1
 
-class TTMLParser(BaseParser):
+class TTMLParser(BaseTextParser):
 
     file_type = ['xml', 'ttml']
 

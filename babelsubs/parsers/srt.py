@@ -1,28 +1,41 @@
 import re
 
 from babelsubs import utils
-from base import BaseParser, register
+from babelsubs.storage import SubtitleSet
+from babelsubs.parsers.base import BaseTextParser, register
 
-class SRTParser(BaseParser):
+class SRTParser(BaseTextParser):
 
     file_type = 'srt'
     _clean_pattern = re.compile(r'\{.*?\}', re.DOTALL)
 
-    def __init__(self, subtitles, language=None):
+    def __init__(self, input_string, language_code):
         pattern = r'\d+\s*?\n'
         pattern += r'(?P<s_hour>\d{2}):(?P<s_min>\d{2}):(?P<s_sec>\d{2})(,(?P<s_secfr>\d*))?'
         pattern += r' --> '
         pattern += r'(?P<e_hour>\d{2}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})(,(?P<e_secfr>\d*))?'
         pattern += r'\n(\n|(?P<text>.+?)\n\n)'
-        super(SRTParser, self).__init__(subtitles, pattern, [re.DOTALL])
-        #replace \r\n to \n and fix end of last subtitle
-        self.subtitles = self.subtitles.replace('\r\n', '\n')+'\n\n'
-        self.language = language
+        self.language_code = language_code
+        self._pattern = re.compile(pattern, re.DOTALL)
 
+        #replace \r\n to \n and fix end of last subtitle
+        self.subtitles = input_string.replace('\r\n', '\n')+'\n\n'
+        self.language = language_code
+
+    def to_internal(self):
+        self.sub_set = SubtitleSet(self.language_code)
+        for match in self._matches:
+            item = self._get_data(match)
+            # fix me: support markup
+            self.sub_set.append_subtitle(item['start'], item['end'], item['text']) 
+        return self.sub_set
+        
+        
     def _get_time(self, hour, min, sec, secfr):
         if secfr is None:
             secfr = '0'
-        return int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)
+        res  =  (int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)) * 1000
+        return res
 
     def _get_data(self, match):
         r = match.groupdict()

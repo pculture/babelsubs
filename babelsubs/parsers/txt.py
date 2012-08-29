@@ -1,8 +1,8 @@
 import re
 from babelsubs import utils
-from base import BaseParser, register
+from base import BaseTextParser, register
 
-class TXTParser(BaseParser):
+class TXTParser(BaseTextParser):
 
     file_type = 'txt'
 
