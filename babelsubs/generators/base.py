@@ -1,5 +1,6 @@
 class BaseGenerator(object):
     file_type = ''
+    allows_formatting = False
 
     def __init__(self, subtitles, line_delimiter=u'\n', language=None):
         """

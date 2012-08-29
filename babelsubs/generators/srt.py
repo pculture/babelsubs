@@ -2,37 +2,36 @@ from math import floor
 from HTMLParser import HTMLParser
 
 from babelsubs.generators.base import BaseGenerator, register
+from babelsubs.storage import milliseconds_to_time_expression
+
+def format_srt_time(milliseconds):
+    seconds, milliseconds = divmod(int(milliseconds), 1000)
+    minutes, seconds = divmod(seconds, 60 )
+    hours, minutes = divmod(minutes, 60 )
+    return "%02i:%02i:%02i,%03i" % (hours, minutes, seconds, milliseconds)
 
 class SRTGenerator(BaseGenerator):
     file_type = 'srt'
 
-    def __init__(self, subtitles, line_delimiter=u'\r\n', language=None):
-        super(SRTGenerator, self).__init__(subtitles, line_delimiter)
+    def __init__(self, subtitle_set):
+        self.line_delimiter = '\r\n'
+        self.subtitle_set = subtitle_set
+        super(SRTGenerator, self).__init__(subtitle_set)
 
     def __unicode__(self):
         output = []
-
-        parser = HTMLParser()
         i = 1
-        for item in self.subtitles:
-            if self.isnumber(item['start']) and self.isnumber(item['end']):
-                output.append(unicode(i))
-                start = self.format_time(item['start'])
-                end = self.format_time(item['end'])
-                output.append(u'%s --> %s' % (start, end))
-                output.append(parser.unescape(item['text']).strip())
-                output.append(u'')
-                i += 1
-
+        # FIXME: allow formatting tags
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=False):
+            output.append(unicode(i))
+            output.append(u'%s --> %s' % (
+                format_srt_time(from_ms),
+                format_srt_time(to_ms)
+            ))
+            output.append(content)
+            output.append(u'')
+            i += 1
         return self.line_delimiter.join(output)
 
-    def format_time(self, time):
-        hours = int(floor(time / 3600))
-        if hours < 0:
-            hours = 99
-        minutes = int(floor(time % 3600 / 60))
-        seconds = int(time % 60)
-        fr_seconds = int(time % 1 * 100)
-        return u'%02i:%02i:%02i,%03i' % (hours, minutes, seconds, fr_seconds)
 
 register(SRTGenerator)

@@ -132,7 +132,7 @@ def milliseconds_to_time_expression(milliseconds):
     fot ttml
     """
     hours, minutes, seconds, milliseconds = milliseconds_to_time_clock_components(milliseconds)
-    return '%d:%d:%d:%d' % (hours, minutes, seconds, milliseconds)
+    return '%02d:%02d:%02d:%02d' % (hours, minutes, seconds, milliseconds)
 
 
 def time_expression_to_millisends(time_expression):
@@ -231,16 +231,16 @@ class SubtitleSet(object):
             begin = get_attr(el, 'begin')
             end = get_attr(el, 'end')
 
-            to_ms = (parse_time_expression(begin)
+            from_ms = (parse_time_expression(begin)
                      if begin else None)
-            from_ms = (parse_time_expression(end)
+            to_ms = (parse_time_expression(end)
                        if end else None)
             if not allow_format_tags:
                 content = get_contents(el)
             else:
                 raise NotImplementedError("Formatting not supported just yet.")
 
-            yield (to_ms, from_ms, content)
+            yield (from_ms, to_ms, content)
 
 
     @classmethod
