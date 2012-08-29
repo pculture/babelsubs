@@ -12,10 +12,12 @@ setup(
     url="https://github.com/pculture/babelsubs",
     license='LICENSE.txt',
     packages=['babelsubs'],
+    setup_requires=['nose>=1.0'],
     install_requires=[
         'lxml==2.3',
         'html5lib==0.95',
         'wsgiref==0.1.2',
+        
     ],
     dependency_links=[
         'https://github.com/jsocol/bleachmastertarball/master#egg=bleach-dev'
