@@ -39,6 +39,9 @@ class BaseTextParser(object):
     def _get_matches(self):
         return self._pattern.finditer(self.subtitles)
 
+    def __unicode__(self):
+        return self.to(self.file_type)
+
     @classmethod
     def parse(cls, subtitles, language=None):
         return cls(subtitles, language)
@@ -49,7 +52,7 @@ class BaseTextParser(object):
         if not generator:
             raise TypeError("Could not find a type %s" % type)
 
-        return generator.generate(self._result_iter(), language=self.language)
+        return generator.generate(self.to_internal(), language=self.language)
 
     def to_internal(self):
         if not hasattr(self, 'sub_set'):
