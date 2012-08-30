@@ -1,6 +1,7 @@
 import re
 
 from babelsubs import generators
+from babelsubs.storage import SubtitleSet
 
 class BaseTextParser(object):
 
@@ -49,6 +50,16 @@ class BaseTextParser(object):
             raise TypeError("Could not find a type %s" % type)
 
         return generator.generate(self._result_iter(), language=self.language)
+
+    def to_internal(self):
+        if not hasattr(self, 'sub_set'):
+            self.sub_set = SubtitleSet(self.language_code)
+            for match in self._matches:
+                item = self._get_data(match)
+                # fix me: support markup
+                self.sub_set.append_subtitle(item['start'], item['end'], item['text']) 
+
+        return self.sub_set
 
     _matches = property(_get_matches)
 

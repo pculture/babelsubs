@@ -1,7 +1,6 @@
 import re
 
 from babelsubs import utils
-from babelsubs.storage import SubtitleSet
 from babelsubs.parsers.base import BaseTextParser, register
 
 class SRTParser(BaseTextParser):
@@ -22,15 +21,6 @@ class SRTParser(BaseTextParser):
         self.subtitles = input_string.replace('\r\n', '\n')+'\n\n'
         self.language = language_code
 
-    def to_internal(self):
-        self.sub_set = SubtitleSet(self.language_code)
-        for match in self._matches:
-            item = self._get_data(match)
-            # fix me: support markup
-            self.sub_set.append_subtitle(item['start'], item['end'], item['text']) 
-        return self.sub_set
-        
-        
     def _get_time(self, hour, min, sec, secfr):
         if secfr is None:
             secfr = '0'
