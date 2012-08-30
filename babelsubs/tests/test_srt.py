@@ -37,3 +37,9 @@ class STRParsingTest(TestCase):
         for x1, x2 in zip([x for x in  parsed1.subtitle_items()], [x for x in parsed2.subtitle_items()]):
             self.assertEquals(x1, x2)
         
+    def test_self_generate(self):
+        parsed_subs1 = utils.get_subs("simple.srt")
+        parsed_subs2 = SRTParser(unicode(parsed_subs1), 'en')
+
+        for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in parsed_subs2.to_internal()]):
+            self.assertEquals(x1, x2)
