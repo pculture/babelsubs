@@ -1,6 +1,4 @@
 import codecs
-
-from math import floor
 from babelsubs.generators.base import BaseGenerator, register
 
 class SSAGenerator(BaseGenerator):
@@ -17,14 +15,11 @@ class SSAGenerator(BaseGenerator):
     def _end(self):
         return u''
 
-    def format_time(self, time):
-        hours = int(floor(time / 3600))
-        if hours < 0:
-            hours = 9
-        minutes = int(floor(time % 3600 / 60))
-        seconds = int(time % 60)
-        fr_seconds = int(time % 1 * 100)
-        return u'%i:%02i:%02i.%02i' % (hours, minutes, seconds, fr_seconds)
+    def format_time(self, milliseconds):
+        seconds, milliseconds = divmod(int(milliseconds), 1000)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        return u'%i:%02i:%02i.0' % (hours, minutes, seconds)
 
     def _clean_text(self, text):
         return text.replace('\n', ' ')
@@ -35,12 +30,13 @@ class SSAGenerator(BaseGenerator):
         output.append(u'[Events]%s' % dl)
         output.append(u'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text%s' % dl)
         tpl = u'Dialogue: 0,%s,%s,Default,,0000,0000,0000,,%s%s'
-        for item in self.subtitles:
-            if self.isnumber(item['start']) and self.isnumber(item['end']):
-                start = self.format_time(item['start'])
-                end = self.format_time(item['end'])
-                text = self._clean_text(item['text'].strip())
-                output.append(tpl % (start, end, text, dl))
+
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=self.allows_formatting):
+            start = self.format_time(from_ms)
+            end = self.format_time(to_ms)
+            text = self._clean_text(content)
+            output.append(tpl % (start, end, text, dl))
+
         return ''.join(output)
 
 register(SSAGenerator)
