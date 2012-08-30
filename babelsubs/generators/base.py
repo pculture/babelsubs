@@ -2,11 +2,11 @@ class BaseGenerator(object):
     file_type = ''
     allows_formatting = False
 
-    def __init__(self, subtitles, line_delimiter=u'\n', language=None):
+    def __init__(self, subtitle_set, line_delimiter=u'\n', language=None):
         """
         Generator is list of {'text': 'text', 'start': 'seconds', 'end': 'seconds'}
         """
-        self.subtitles = subtitles
+        self.subtitle_set = subtitle_set
         self.line_delimiter = line_delimiter
         self.language = language
 
@@ -18,8 +18,8 @@ class BaseGenerator(object):
         return isinstance(val, (int, long, float))
 
     @classmethod
-    def generate(cls, subtitles, language=None):
-        return unicode(cls(subtitles=subtitles, language=language))
+    def generate(cls, subtitle_set, language=None):
+        return unicode(cls(subtitle_set=subtitle_set, language=language))
 
 class GeneratorListClass(dict):
 
