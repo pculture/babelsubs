@@ -1,13 +1,9 @@
-from math import floor
-from HTMLParser import HTMLParser
-
 from babelsubs.generators.base import BaseGenerator, register
-from babelsubs.storage import milliseconds_to_time_expression
 
 def format_srt_time(milliseconds):
     seconds, milliseconds = divmod(int(milliseconds), 1000)
-    minutes, seconds = divmod(seconds, 60 )
-    hours, minutes = divmod(minutes, 60 )
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
     return "%02i:%02i:%02i,%03i" % (hours, minutes, seconds, milliseconds)
 
 class SRTGenerator(BaseGenerator):
