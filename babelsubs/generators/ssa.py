@@ -19,7 +19,7 @@ class SSAGenerator(BaseGenerator):
         seconds, milliseconds = divmod(int(milliseconds), 1000)
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
-        return u'%i:%02i:%02i.0' % (hours, minutes, seconds)
+        return u'%i:%02i:%02i.%02i' % (hours, minutes, seconds, milliseconds)
 
     def _clean_text(self, text):
         return text.replace('\n', ' ')
