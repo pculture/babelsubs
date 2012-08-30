@@ -18,7 +18,6 @@
 
 import base64
 from lxml import etree
-import lxml
 import os
 import re
 import zlib
@@ -107,11 +106,6 @@ def parse_time_expression(time_expression):
             't': 0,
         }[unit]
         return num * multiplier
-        
-        
-        
-    
-
 
 def milliseconds_to_time_clock_components(milliseconds):
     """
@@ -201,6 +195,9 @@ class SubtitleSet(object):
 
     def __len__(self):
         return len(self.get_subtitles())
+
+    def __iter__(self):
+        return self.subtitle_items()
 
     def get_subtitles(self):
         return self._ttml.xpath('/n:tt/n:body/n:div/n:p',
