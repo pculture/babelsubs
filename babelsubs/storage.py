@@ -27,6 +27,7 @@ SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
 
 TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))')
+TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
 def compress(data):
     """Compress a bytestring and return it in a form Django can store.
@@ -70,7 +71,7 @@ def get_contents(el):
              [el.tail])
     return ''.join(filter(None, parts)).strip()
 
-def parse_time_expression(time_expression):
+def time_expression_to_milliseconds(time_expression):
     """
     Parses possible values from time expressions[1] to a normalized value
     in milliseconds.
@@ -80,19 +81,14 @@ def parse_time_expression(time_expression):
     """
     if not time_expression:
         return 0
-    # clock-time expression require at lease three parts separated by :
-    parts = time_expression.split(":")
-    if len(parts) >= 3:
-        try:
-            hour = int(parts[0])
-            minutes = int(parts[1])
-            seconds  = int(parts[2])
-            milliseconds = 0
-            if len(parts) > 3:
-                milliseconds = int(float(parts[3]))
-            return (((hour * 3600) + (minutes * 60) + seconds ) * 1000 ) + milliseconds
-        except ValueError:
-            raise ValueError("Time expression %s can't be parsed" % time_expression)
+    match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
+    if match:
+        groups = match.groupdict()
+        hour = int(groups['hours'])
+        minutes = int(groups['minutes'])
+        seconds  = int(groups['seconds'])
+        milliseconds = int(groups['fraction'] or 0)
+        return (((hour * 3600) + (minutes * 60) + seconds ) * 1000 ) + milliseconds
     match = TIME_EXPRESSION_METRIC.match(time_expression)
     if match:
         groups = match.groupdict()
@@ -106,6 +102,7 @@ def parse_time_expression(time_expression):
             't': 0,
         }[unit]
         return num * multiplier
+    raise ValueError("Time expression %s can't be parsed" % time_expression)
 
 def milliseconds_to_time_clock_components(milliseconds):
     """
@@ -120,18 +117,23 @@ def milliseconds_to_time_clock_components(milliseconds):
     hours, minutes = divmod(minutes, 60 )
     return hours, minutes, seconds, milliseconds
 
-def milliseconds_to_time_expression(milliseconds):
+def milliseconds_to_time_clock_exp(milliseconds):
     """
     Converts time components to a string suitable to be used on time expression
     fot ttml
     """
     hours, minutes, seconds, milliseconds = milliseconds_to_time_clock_components(milliseconds)
-    return '%02d:%02d:%02d:%02d' % (hours, minutes, seconds, milliseconds)
+    return '%02d:%02d:%02d.%03d' % (hours, minutes, seconds, milliseconds)
 
 
-def time_expression_to_millisends(time_expression):
-    h,m,s,mil = time_expression.split(":")
-    return mil + ((s  + (m * 60) + (h * 3600)) * 1000)
+def to_clock_time(time_expression):
+    """
+    If time expression is not in clock time, transform it
+    """
+    match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
+    if match:
+        return time_expression
+    return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression))
 
 class SubtitleSet(object):
     BASE_TTML = r'''
@@ -175,7 +177,8 @@ class SubtitleSet(object):
         </p>
     '''
 
-    def __init__(self, language_code, initial_data=None, title=None, description=None):
+    def __init__(self, language_code, initial_data=None, title=None,
+                 description=None, normalize_time=True):
         """Create a new set of Subtitles, either empty or from a hunk of TTML.
 
         language_code: The bcp47 code for this language.
@@ -184,7 +187,9 @@ class SubtitleSet(object):
 
         """
         if initial_data:
-            self._ttml = etree.fromstring(initial_data % language_code) 
+            self._ttml = etree.fromstring(initial_data )
+            if normalize_time:
+                [self.normalize_time(x) for x in self.get_subtitles()]
         else:
             self._ttml = etree.fromstring(SubtitleSet.BASE_TTML % {
                 'title' : title or '',
@@ -200,8 +205,7 @@ class SubtitleSet(object):
         return self.subtitle_items()
 
     def get_subtitles(self):
-        return self._ttml.xpath('/n:tt/n:body/n:div/n:p',
-                                namespaces={'n': 'http://www.w3.org/ns/ttml'})
+        return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': 'http://www.w3.org/2006/10/ttaf1'})
 
     def append_subtitle(self, from_ms, to_ms, content):
         """Append a subtitle to the end of the list.
@@ -210,13 +214,37 @@ class SubtitleSet(object):
 
         """
         
-        begin = 'begin="%s"' % milliseconds_to_time_expression(from_ms)
-        end = 'end="%s"' % milliseconds_to_time_expression(to_ms)
+        begin = 'begin="%s"' % milliseconds_to_time_clock_exp(from_ms)
+        end = 'end="%s"' % milliseconds_to_time_clock_exp(to_ms)
 
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         div = self._ttml.xpath('/n:tt/n:body/n:div',
                                namespaces={'n': 'http://www.w3.org/ns/ttml'})[0]
         div.append(p)
+
+    def normalize_time(self, el):
+        """
+        Transforms begin,dur pairs into begin,end pairs
+        also uses clock time expressions (00:00:00).
+
+        Changes to node in place
+        """
+        begin = get_attr(el, 'begin')
+        if begin:
+            begin = to_clock_time(begin)
+        end = get_attr(el, 'end')
+        if end:
+            end = to_clock_time(end)
+        dur = get_attr(el, 'dur')
+        if dur :
+            end= milliseconds_to_time_clock_exp(
+                time_expression_to_milliseconds(begin) + \
+                time_expression_to_milliseconds(dur))
+            el.attrib.pop('dur')
+        if not begin or not end:
+            raise ValueError("Timed nodes must have either begin or end values")
+        el.attrib['begin'] = begin
+        el.attrib['end'] = end
 
     def subtitle_items(self, allow_format_tags=False):
         """A generator over the subs, yielding (from_ms, to_ms, content) tuples.
@@ -228,9 +256,9 @@ class SubtitleSet(object):
             begin = get_attr(el, 'begin')
             end = get_attr(el, 'end')
 
-            from_ms = (parse_time_expression(begin)
+            from_ms = (time_expression_to_milliseconds(begin)
                      if begin else None)
-            to_ms = (parse_time_expression(end)
+            to_ms = (time_expression_to_milliseconds(end)
                        if end else None)
             if not allow_format_tags:
                 content = get_contents(el)
