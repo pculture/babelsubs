@@ -29,6 +29,8 @@ SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))')
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
+TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
+
 def compress(data):
     """Compress a bytestring and return it in a form Django can store.
 
@@ -137,7 +139,7 @@ def to_clock_time(time_expression):
 
 class SubtitleSet(object):
     BASE_TTML = r'''
-        <tt xml:lang="%(language_code)s" xmlns="http://www.w3.org/ns/ttml">
+        <tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s">
             <head>
                 <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
                     <ttm:title>%(title)s</ttm:title>
@@ -192,6 +194,7 @@ class SubtitleSet(object):
                 [self.normalize_time(x) for x in self.get_subtitles()]
         else:
             self._ttml = etree.fromstring(SubtitleSet.BASE_TTML % {
+                'namespace_uri': TTML_NAMESPACE_URI,
                 'title' : title or '',
                 'description': description or '',
                 'language_code': language_code or '',
@@ -205,7 +208,7 @@ class SubtitleSet(object):
         return self.subtitle_items()
 
     def get_subtitles(self):
-        return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': 'http://www.w3.org/2006/10/ttaf1'})
+        return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': TTML_NAMESPACE_URI})
 
     def append_subtitle(self, from_ms, to_ms, content):
         """Append a subtitle to the end of the list.
@@ -219,7 +222,7 @@ class SubtitleSet(object):
 
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         div = self._ttml.xpath('/n:tt/n:body/n:div',
-                               namespaces={'n': 'http://www.w3.org/ns/ttml'})[0]
+                               namespaces={'n': TTML_NAMESPACE_URI})[0]
         div.append(p)
 
     def normalize_time(self, el):
