@@ -222,7 +222,7 @@ class SubtitleSet(object):
         Transforms begin,dur pairs into begin,end pairs
         also uses clock time expressions (00:00:00).
 
-        Changes to node in place
+        Changes node in place
         """
         begin = get_attr(el, 'begin')
         if begin:
