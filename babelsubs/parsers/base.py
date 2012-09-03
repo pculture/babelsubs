@@ -1,7 +1,6 @@
 import re
-
-from babelsubs import generators
 from babelsubs.storage import SubtitleSet
+
 
 class BaseTextParser(object):
 
@@ -47,12 +46,8 @@ class BaseTextParser(object):
         return cls(subtitles, language)
 
     def to(self, type):
-        generator = generators.discover(type)
-
-        if not generator:
-            raise TypeError("Could not find a type %s" % type)
-
-        return generator.generate(self.to_internal(), language=self.language)
+        from babelsubs import to
+        return to(self.to_internal(), type, language=self.language)
 
     def to_internal(self):
         if not hasattr(self, 'sub_set'):
