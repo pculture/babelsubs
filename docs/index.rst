@@ -6,6 +6,11 @@
 Welcome to babelsubs's documentation!
 =====================================
 
+Babelsubs is a Python library that helps you to convert from one subtitle
+format to another.
+
+Example usage:
+
 .. code-block:: python
 
     dxfp_data = """<?xml version="1.0" encoding="UTF-8"?>
@@ -25,12 +30,10 @@ Welcome to babelsubs's documentation!
         </body>
     </tt>"""
 
-
-    from babelsubs.parsers import DFXPParser
     from babelsubs.generators import SRTGenerator
+    from babelsubs import load_from
 
-    parser = DFXPParser(dxfp_data)
-    parsed = parser.to_internal()
+    parsed = load_from(dxfp_data, type='dfxp').to_internal()
     srt_output = unicode(SRTGenerator(parsed))
     print srt_output
 
@@ -48,13 +51,3 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
