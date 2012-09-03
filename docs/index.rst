@@ -30,12 +30,10 @@ Example usage:
         </body>
     </tt>"""
 
-    from babelsubs.generators import SRTGenerator
-    from babelsubs import load_from
+    from babelsubs import load_from, parse_to
 
     parsed = load_from(dxfp_data, type='dfxp').to_internal()
-    srt_output = unicode(SRTGenerator(parsed))
-    print srt_output
+    print parse_to(parsed, 'srt')
 
 This will output:
 

@@ -30,6 +30,7 @@
 
 import os
 import parsers
+import generators
 
 def load_from(sub_from, type=None, language=None):
     if os.path.isfile(sub_from):
@@ -50,5 +51,11 @@ def load_from(sub_from, type=None, language=None):
         sub_from = sub_from.decode("utf-8")
 
     return parsers.discover(type).parse(sub_from, language=language)
+
+
+def parse_to(subs, output_format):
+    Generator = generators.discover(output_format)
+    return unicode(Generator(subs))
+
 
 __all__ = ['load_from']
