@@ -46,6 +46,9 @@ def load_from(sub_from, type=None, language=None):
     elif isinstance(sub_from, basestring) and type is None:
         raise TypeError("Couldn't find out the type by myself. Care to specify?")
 
+    if not isinstance(sub_from, unicode):
+        sub_from = sub_from.decode("utf-8")
+
     return parsers.discover(type).parse(sub_from, language=language)
 
 __all__ = ['load_from']
