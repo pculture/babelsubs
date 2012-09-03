@@ -16,12 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
-import base64
 from lxml import etree
 import os
 import re
-import zlib
-
 
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
@@ -30,22 +27,6 @@ TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))'
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
-
-def compress(data):
-    """Compress a bytestring and return it in a form Django can store.
-
-    If you want to store a Unicode string, you need to encode it to a bytestring
-    yourself!
-
-    Django prefers to receive Unicode strings to store in a text field, which
-    will mangle normal zip data.  We base64 it to avoid the problem.
-
-    """
-    return base64.encodestring(zlib.compress(data))
-
-def decompress(data):
-    """Decompress data created with compress."""
-    return zlib.decompress(base64.decodestring(data))
 
 def get_attr(el, attr):
     """Get the string of an attribute, or None if it's not present.
@@ -282,11 +263,6 @@ class SubtitleSet(object):
 
 
     @classmethod
-    def from_blob(cls, blob_data):
-        """Return a SubtitleSet from a blob of base64'ed zip data."""
-        return SubtitleSet(decompress(blob_data))
-
-    @classmethod
     def from_list(cls, subtitles):
         """Return a SubtitleSet from a list of subtitle tuples.
 
@@ -306,9 +282,6 @@ class SubtitleSet(object):
 
         return subs
 
-
-    def to_blob(self):
-        return compress(self.to_xml())
 
     def to_xml(self):
         """Return a string containing the XML for this set of subtitles."""
