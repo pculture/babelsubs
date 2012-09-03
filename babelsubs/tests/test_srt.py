@@ -1,9 +1,7 @@
 try:
-    import unittest2 as unittest
+    from unittest2 import TestCase
 except ImportError:
-    import unittest
-
-from unittest import TestCase
+    from unittest import TestCase
 
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.srt import SRTParser

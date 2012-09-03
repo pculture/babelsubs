@@ -1,9 +1,7 @@
-import os
 try:
-    import unittest2 as unittest
+    from unittest2 import TestCase
 except ImportError:
-    import unittest
-from unittest import TestCase
+    from unittest import TestCase
 
 from babelsubs import storage
 from babelsubs.tests import utils
