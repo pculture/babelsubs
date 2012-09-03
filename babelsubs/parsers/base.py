@@ -56,7 +56,7 @@ class BaseTextParser(object):
 
     def to_internal(self):
         if not hasattr(self, 'sub_set'):
-            self.sub_set = SubtitleSet(self.language_code)
+            self.sub_set = SubtitleSet(self.language)
             for match in self._matches:
                 item = self._get_data(match)
                 # fix me: support markup

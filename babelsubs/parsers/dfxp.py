@@ -1,4 +1,5 @@
 from babelsubs import utils
+from babelsubs.storage import SubtitleSet
 from base import BaseTextParser, SubtitleParserError, register
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError
@@ -97,5 +98,16 @@ class DFXPParser(BaseTextParser):
     def _result_iter(self):
         for item in self.nodes:
             yield self._get_data(item)
+
+    def to_internal(self):
+        if not hasattr(self, 'sub_set'):
+            self.sub_set = SubtitleSet(self.language)
+            for node in self.nodes:
+                item = self._get_data(node)
+                self.sub_set.append_subtitle(item['start'], item['end'],
+                        item['text'])
+
+        return self.sub_set
+
 
 register(DFXPParser)
