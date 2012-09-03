@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en" xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+    <head>
+        <metadata>
+            <ttm:title>Just a test file</ttm:title>
+        </metadata>
+        <styling>
+            <style tts:fontSize="12" tts:fontFamily="Verdana" tts:backgroundColor="black" xml:id="s1" tts:fontWeight="normal" tts:fontStyle="normal" tts:textAlign="center" tts:color="yellow"></style>
+        </styling>
+    </head>
+    <body>
+        <div style="s1" xml:id="d1">
+            <p xml:id="p0" begin="00:00:21.734" dur="00:00:02.000">With duration</p>
+            <p xml:id="p1" begin="00:00:36.167" dur="1000ms">With ms in duration</p>
+            <p xml:id="p2" begin="37667ms" dur="00:00:01.934">with ms in begin</p>
+            <p xml:id="p3" begin="00:00:39.667" end="00:00:40.300"> With end </p>
+            <p xml:id="p4" begin="00:00:42.033" end="43033ms">With ms and end</p>
+        </div>
+    </body>
+</tt>

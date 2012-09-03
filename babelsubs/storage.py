@@ -179,6 +179,11 @@ class SubtitleSet(object):
         </p>
     '''
 
+    SUBTITLE_DIV_XML = r'''
+        <div xmlns="http://www.w3.org/ns/ttml" >
+        </div>
+    '''
+    
     def __init__(self, language_code, initial_data=None, title=None,
                  description=None, normalize_time=True):
         """Create a new set of Subtitles, either empty or from a hunk of TTML.
@@ -210,7 +215,7 @@ class SubtitleSet(object):
     def get_subtitles(self):
         return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': TTML_NAMESPACE_URI})
 
-    def append_subtitle(self, from_ms, to_ms, content):
+    def append_subtitle(self, from_ms, to_ms, content, new_paragraph=False):
         """Append a subtitle to the end of the list.
 
         NO UNICODE ALLOWED!  USE XML ENTITIES TO REPRESENT UNICODE CHARACTERS!
@@ -222,7 +227,12 @@ class SubtitleSet(object):
 
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         div = self._ttml.xpath('/n:tt/n:body/n:div',
-                               namespaces={'n': TTML_NAMESPACE_URI})[0]
+                               namespaces={'n': TTML_NAMESPACE_URI})[-1]
+        if new_paragraph:
+            body = self._ttml.xpath('/n:tt/n:body',
+                                   namespaces={'n': TTML_NAMESPACE_URI})[-1]
+            div = etree.fromstring(SubtitleSet.SUBTITLE_DIV_XML)
+            body.append(div)
         div.append(p)
 
     def normalize_time(self, el):
