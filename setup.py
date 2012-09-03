@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name="babelsubs",
-    version="0.1",
+    version="0.1.0",
     description="A simple library to convert from any subtitle format to any format",
     author="Participatory Culture Foundation",
     author_email="dev+babel@pculture.org",

@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
-import base64
 from lxml import etree
 import os
 import re
@@ -265,11 +264,6 @@ class SubtitleSet(object):
 
 
     @classmethod
-    def from_blob(cls, blob_data):
-        """Return a SubtitleSet from a blob of base64'ed zip data."""
-        return SubtitleSet(decompress(blob_data))
-
-    @classmethod
     def from_list(cls, subtitles):
         """Return a SubtitleSet from a list of subtitle tuples.
 
@@ -288,11 +282,6 @@ class SubtitleSet(object):
             subs.append_subtitle(*s)
 
         return subs
-
-    def to_xml(self):
-        """Return a string containing the XML for this set of subtitles."""
-        return etree.tostring(self._ttml, pretty_print=True)
-
 
     def __eq__(self, other):
         if type(self) == type(other):

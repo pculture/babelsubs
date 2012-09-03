@@ -9,3 +9,4 @@ venv
 build
 *.srt
 .DS_Store
+docs/_build
