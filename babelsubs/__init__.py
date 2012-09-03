@@ -30,6 +30,7 @@
 
 import os
 import parsers
+import generators
 
 def load_from(sub_from, type=None, language=None):
     if os.path.isfile(sub_from):
@@ -51,4 +52,14 @@ def load_from(sub_from, type=None, language=None):
 
     return parsers.discover(type).parse(sub_from, language=language)
 
-__all__ = ['load_from']
+
+def to(subs, type, language=None):
+    Generator = generators.discover(type)
+
+    if not Generator:
+        raise TypeError("Could not find a type %s" % type)
+
+    return Generator.generate(subs, language=language)
+
+
+__all__ = ['load_from', 'to']
