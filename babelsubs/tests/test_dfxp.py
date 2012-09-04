@@ -10,7 +10,7 @@ from babelsubs.tests import utils
 from babelsubs import load_from
 
 
-class SRTParsingTest(TestCase):
+class DFXPParsingTest(TestCase):
 
     def test_basic(self):
         subs  = utils.get_subs("simple.dfxp")
