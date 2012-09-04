@@ -10,3 +10,6 @@ build
 *.srt
 .DS_Store
 docs/_build
+/.coverage
+/coverage.xml
+/nosetests.xml
