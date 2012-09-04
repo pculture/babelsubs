@@ -12,7 +12,7 @@ setup(
     url="https://github.com/pculture/babelsubs",
     license='LICENSE.txt',
     packages=['babelsubs'],
-    setup_requires=['nose>=1.0', 'nosexcover'],
+    setup_requires=[],
     install_requires=[
         'lxml==2.3',
         'html5lib==0.95',
