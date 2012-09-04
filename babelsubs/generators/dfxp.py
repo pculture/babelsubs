@@ -2,7 +2,11 @@ from babelsubs.generators.base import register, BaseGenerator
 
 
 class DFXPGenerator(BaseGenerator):
-
+    """
+    Since the internal storage is already in dfxp, the generator is just
+    a small shim to keep the public interface between all generators
+    regular.
+    """
     file_type = 'dfxp'
 
     def __init__(self, subtitle_set, line_delimiter=u'\n', language=None):

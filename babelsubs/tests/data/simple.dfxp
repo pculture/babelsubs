@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en" >
+<head>
+	<styling>
+		<style id="defaultCaption" tts:fontSize="14px" tts:fontFamily="Arial" tts:fontWeight="normal" tts:fontStyle="normal" tts:textDecoration="none" tts:color="white" tts:backgroundColor="black" tts:textAlign="center" />
+	</styling>
+</head>
+<body id="thebody" style="defaultCaption">
+	<div xml:lang="en">
+		<p begin="00:00:01.200" end="00:00:04.467">DAVID POGUE:<br />Copper, symbol Cu.</p>
+		<p begin="00:00:04.467" end="00:00:10.300">Atomic number 29--<br />29 protons, 29 electrons.</p>
+		<p begin="00:00:10.300" end="00:00:15.300">The ancients first learned how<br />to heat rocks to extract copper</p>
+		<p begin="00:00:15.300" end="00:00:19.167">at least 7,000 years ago.</p>
+		<p begin="00:00:23.567" end="00:00:26.533">And today, it&apos;s one of the most<br />widely bought and sold metals</p>
+		<p begin="00:00:26.533" end="00:00:28.133">in the world.</p>
+		<p begin="00:00:31.067" end="00:00:33.367">The New York Mercantile Exchange</p>
+		<p begin="00:00:33.367" end="00:00:35.633">is a vital hub<br />in the global metals market...</p>
+		<p begin="00:00:39.300" end="00:00:41.967">...which is pretty<br />good news for me.</p>
+		<p begin="00:00:45.200" end="00:00:46.900">At least, I thought so.</p>
+		<p begin="00:00:46.900" end="00:00:49.667">Sorry, sir,<br />you can&apos;t come in with this.</p>
+		<p begin="00:00:49.667" end="00:00:51.833">I thought this is<br />a copper exchange.</p>
+		<p begin="00:00:51.833" end="00:00:53.167">I&apos;m here to exchange<br />some copper.</p>
+		<p begin="00:00:53.167" end="00:00:54.667">I&apos;m sorry, that&apos;s<br />not allowed on the floor.</p>
+		<p begin="00:00:54.667" end="00:00:55.900">You can&apos;t come in with this.</p>
+		<p begin="00:00:55.900" end="00:00:57.033">Seriously?</p>
+		<p begin="00:00:59.500" end="00:01:03.300">The only business that<br />they&apos;re willing to do here</p>
+		<p begin="00:01:03.300" end="00:01:06.967">is to buy or sell<br />copper futures.</p>
+		<p begin="00:01:06.967" end="00:01:09.200">Like, who would fall for that?</p>
+		<p begin="00:01:09.200" end="00:01:10.900">ANTHONY GRISANTI: Oh, this is<br />an old, old business.</p>
+		<p begin="00:01:10.900" end="00:01:14.500">This goes back to the 1800s,<br />the late 1800s,</p>
+		<p begin="00:01:14.500" end="00:01:16.433">where farmers were looking,<br />actually, for money</p>
+		<p begin="00:01:16.433" end="00:01:18.367">to plant their<br />next year&apos;s crops.</p>
+		<p begin="00:01:18.367" end="00:01:22.000">So what the farmers would do is<br />they would say, for example,</p>
+		<p begin="00:01:22.000" end="00:01:23.467">&quot;David, you loan me<br />some money, okay?</p>
+		<p begin="00:01:23.467" end="00:01:24.567">&quot;And then in the future,</p>
+		<p begin="00:01:24.567" end="00:01:27.100">&quot;I will sell you that crop<br />that I planted</p>
+		<p begin="00:01:27.100" end="00:01:29.633">for this amount of dollars.&quot;</p>
+		<p begin="00:01:29.633" end="00:01:31.633">So what I&apos;m doing is<br />I&apos;m selling you the right</p>
+		<p begin="00:01:31.633" end="00:01:34.667">to buy or sell my future crops.</p>
+		<p begin="00:01:34.667" end="00:01:37.667">POGUE: So this crazy<br />high-tech thing</p>
+		<p begin="00:01:37.667" end="00:01:39.100">began as a glorified<br />farmer&apos;s market?</p>
+		<p begin="00:01:41.133" end="00:01:43.733">In fact,<br />this exchange in New York</p>
+		<p begin="00:01:43.733" end="00:01:47.500">started as a butter and cheese<br />exchange on Harrison Street.</p>
+		<p begin="00:01:47.500" end="00:01:48.867">POGUE: Is it safe to say</p>
+		<p begin="00:01:48.867" end="00:01:51.000">there&apos;s no cheese pit here<br />somewhere?</p>
+		<p begin="00:01:51.000" end="00:01:52.100">Uh, gruyere, gruyere!</p>
+		<p begin="00:01:52.100" end="00:01:53.200">Cheddar, cheddar!</p>
+		<p begin="00:01:53.200" end="00:01:54.867">David, you have to go<br />to Chicago for that.</p>
+		<p begin="00:01:54.867" end="00:01:56.300">They still do that?</p>
+		<p begin="00:01:56.300" end="00:01:58.000">Yeah, they still trade<br />agricultural products.</p>
+		<p begin="00:02:01.333" end="00:02:04.067">I would think that there would<br />be trading markets like this</p>
+		<p begin="00:02:04.067" end="00:02:06.067">for gold and silver<br />and platinum,</p>
+		<p begin="00:02:06.067" end="00:02:08.733">and things that are valuable,<br />but copper?</p>
+		<p begin="00:02:08.733" end="00:02:10.467">Come on, it&apos;s like pennies,<br />it&apos;s like...</p>
+		<p begin="00:02:10.467" end="00:02:12.267">Copper is king, okay?</p>
+		<p begin="00:02:12.267" end="00:02:13.767">Copper is used for everything.</p>
+		<p begin="00:02:13.767" end="00:02:15.800">It&apos;s a really vital metal.</p>
+		<p begin="00:02:15.800" end="00:02:19.200">We use it for infrastructure;<br />we use it for electronic goods.</p>
+		<p begin="00:02:19.200" end="00:02:21.533">I can hardly think of anything<br />that doesn&apos;t have</p>
+		<p begin="00:02:21.533" end="00:02:24.667">either a tiny bit of copper<br />or lots of copper.</p>
+		<p begin="00:02:24.667" end="00:02:25.967">I love copper,<br />I do, I do.</p>
+		<p begin="00:02:25.967" end="00:02:27.233">I&apos;m getting that.</p>
+		<p begin="00:02:27.233" end="00:02:31.633">Harriet tells me that<br />the copper market is huge.</p>
+		<p begin="00:02:31.633" end="00:02:34.533">Traders in New York,<br />London and Shanghai</p>
+		<p begin="00:02:34.533" end="00:02:38.500">buy and sell more than<br />20 million tons a year.</p>
+		<p begin="00:02:38.500" end="00:02:43.467">Copper is in wire,<br />electronics and computer chips,</p>
+		<p begin="00:02:43.467" end="00:02:47.167">plumbing and other<br />building materials.</p>
+		<p begin="00:02:47.167" end="00:02:50.133">It&apos;s so important that the rise<br />and fall of copper prices</p>
+		<p begin="00:02:50.133" end="00:02:54.200">provide a snapshot of the health<br />of the entire world economy.</p>
+		<p begin="00:02:54.200" end="00:02:57.467">When times are bad,<br />copper prices tumble,</p>
+		<p begin="00:02:57.467" end="00:03:00.700">and when times are good,<br />they soar.</p>
+		<p begin="00:03:00.700" end="00:03:03.067">Some say it should be called<br />&quot;Dr. Copper,&quot;</p>
+		<p begin="00:03:03.067" end="00:03:06.967">because it&apos;s the only metal<br />with a Ph.D. in economics.</p>
+		<p begin="00:03:06.967" end="00:03:09.233">Copper has been prized<br />for millennia</p>
+		<p begin="00:03:09.233" end="00:03:11.433">for its unique properties:</p>
+		<p begin="00:03:11.433" end="00:03:15.100">it conducts electricity better<br />than any metal except silver;</p>
+		<p begin="00:03:15.100" end="00:03:19.067">it&apos;s malleable and has<br />a moderate melting temperature;</p>
+		<p begin="00:03:19.067" end="00:03:22.400">it even scares away bacteria.</p>
+		<p begin="00:03:26.000" end="00:03:29.833">These guys can trade<br />their copper futures;</p>
+		<p begin="00:03:29.833" end="00:03:33.633">I&apos;ve got to unload<br />my copper today.</p>
+		<p begin="00:03:33.633" end="00:03:35.367">Commodities!</p>
+		<p begin="00:03:35.367" end="00:03:37.000">Get your commodities!</p>
+		<p begin="00:03:37.000" end="00:03:39.333">Got copper at 80 cents a pound.</p>
+		<p begin="00:03:39.333" end="00:03:40.867">Anybody?</p>
+		<p begin="00:03:40.867" end="00:03:42.833">Anybody?</p>
+</div>
+</body>
+</tt>

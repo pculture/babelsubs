@@ -42,15 +42,16 @@ def load_from(sub_from, type=None, language=None):
 
         type = sub_from.name.split(".")[-1]
 
+        parser = parsers.discover(type) 
         with sub_from:
             sub_from = sub_from.read()
     elif isinstance(sub_from, basestring) and type is None:
         raise TypeError("Couldn't find out the type by myself. Care to specify?")
 
-    if not isinstance(sub_from, unicode):
+    if not isinstance(sub_from, unicode) and not getattr(parser, 'no_unicode', False):
         sub_from = sub_from.decode("utf-8")
 
-    return parsers.discover(type).parse(sub_from, language=language)
+    return parser.parse(sub_from, language=language)
 
 
 def to(subs, type, language=None):

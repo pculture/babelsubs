@@ -299,6 +299,8 @@ class SubtitleSet(object):
         else:
             return False
 
+    def __nonzero__(self):
+        return bool(self.__len__())
 
     def validate(self):
         raise NotImplementedError("Validation isnt working so far")
