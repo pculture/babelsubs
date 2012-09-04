@@ -294,3 +294,5 @@ class SubtitleSet(object):
         raise NotImplementedError("Validation isnt working so far")
         schema.assertValid(self._ttml)
         
+    def to_xml(self):
+        return etree.tostring(self._ttml, pretty_print=True)
