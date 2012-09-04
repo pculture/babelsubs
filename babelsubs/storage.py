@@ -267,7 +267,7 @@ class SubtitleSet(object):
 
 
     @classmethod
-    def from_list(cls, subtitles):
+    def from_list(cls, language_code, subtitles):
         """Return a SubtitleSet from a list of subtitle tuples.
 
         Each tuple should be (from_ms, to_ms, content).  See the docstring of
@@ -279,7 +279,7 @@ class SubtitleSet(object):
              (1100, None, "world!")]
 
         """
-        subs = SubtitleSet()
+        subs = SubtitleSet(language_code=language_code)
 
         for s in subtitles:
             subs.append_subtitle(*s)
