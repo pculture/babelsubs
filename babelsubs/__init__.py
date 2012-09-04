@@ -40,13 +40,24 @@ def load_from(sub_from, type=None, language=None):
         if type is None and not getattr(sub_from, 'name', None):
             raise TypeError("Couldn't find out the type by myself. Care to specify?")
 
-        type = sub_from.name.split(".")[-1]
-
-        parser = parsers.discover(type) 
+        extension = sub_from.name.split(".")[-1]
+        # if the file extension is not given or is not a registred
+        # fallback to the given type
+        available_types = parsers.base.ParserList.keys()
+        target_type = None
+        if type and type in available_types:
+            target_type = type
+        elif extension and extension in available_types:
+            target_type = extension
+        else: 
+            raise TypeError("Type %s is not an available type"  % (type or extension))
+        parser = parsers.discover(target_type) 
         with sub_from:
             sub_from = sub_from.read()
     elif isinstance(sub_from, basestring) and type is None:
         raise TypeError("Couldn't find out the type by myself. Care to specify?")
+    else:
+        parser = parsers.discover(type)
 
     if not isinstance(sub_from, unicode) and not getattr(parser, 'no_unicode', False):
         sub_from = sub_from.decode("utf-8")
