@@ -9,11 +9,11 @@ class TTMLParser(BaseTextParser):
 
     file_type = ['xml', 'ttml']
 
-    def __init__(self, subtitles, language=None):
+    def __init__(self, input_string, language=None):
         try:
             # do not pass utf-8 econded strings. If the xml declaration is
             # something else, the parser will complain otherwise
-            dom = parseString(subtitles)
+            dom = parseString(input_string)
             self.nodes = dom.getElementsByTagName('body')[0].getElementsByTagName('p')
             self.language = language
         except (ExpatError, IndexError):

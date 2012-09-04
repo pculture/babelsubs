@@ -8,17 +8,17 @@ class TXTParser(BaseTextParser):
 
     _linebreak_re = re.compile(r"\n\n|\r\n\r\n|\r\r")
 
-    def __init__(self, subtitles, language=None, linebreak_re=_linebreak_re):
-        self.subtitles = linebreak_re.split(subtitles, language)
+    def __init__(self, input_string, language=None, linebreak_re=_linebreak_re):
+        self.input_string = linebreak_re.split(input_string, language)
 
     def __len__(self):
-        return len(self.subtitles)
+        return len(self.input_string)
 
     def __nonzero__(self):
-        return bool(self.subtitles)
+        return bool(self.input_string)
 
     def _result_iter(self):
-        for item in self.subtitles:
+        for item in self.input_string:
             output = {}
             output['start'] = -1
             output['end'] = -1

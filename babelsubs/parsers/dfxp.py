@@ -15,8 +15,8 @@ class DFXPParser(BaseTextParser):
     file_type = 'dfxp'
     no_unicode = True
 
-    def __init__(self, subtitles, language=None):
-        self.subttitle_set = SubtitleSet(language, subtitles, normalize_time=True)
+    def __init__(self, input_string, language=None):
+        self.subttitle_set = SubtitleSet(language, input_string, normalize_time=True)
 
     def __len__(self):
         return self.subttitle_set.__len__()

@@ -4,8 +4,8 @@ from babelsubs.storage import SubtitleSet
 
 class BaseTextParser(object):
 
-    def __init__(self, subtitles, pattern, language=None, flags=[]):
-        self.subtitles = subtitles
+    def __init__(self, input_string, pattern, language=None, flags=[]):
+        self.input_string = input_string
         self.pattern = pattern
         self.language = language
         self._pattern = re.compile(pattern, *flags)
@@ -14,10 +14,10 @@ class BaseTextParser(object):
         return self._result_iter()
 
     def __len__(self):
-        return len(self._pattern.findall(self.subtitles))
+        return len(self._pattern.findall(self.input_string))
 
     def __nonzero__(self):
-        return bool(self._pattern.search(self.subtitles))
+        return bool(self._pattern.search(self.input_string))
 
     def _result_iter(self):
         """
@@ -36,14 +36,14 @@ class BaseTextParser(object):
         return match.groupdict()
 
     def _get_matches(self):
-        return self._pattern.finditer(self.subtitles)
+        return self._pattern.finditer(self.input_string)
 
     def __unicode__(self):
         return self.to(self.file_type)
 
     @classmethod
-    def parse(cls, subtitles, language=None):
-        return cls(subtitles, language)
+    def parse(cls, input_string, language=None):
+        return cls(input_string, language)
 
     def to(self, type):
         from babelsubs import to

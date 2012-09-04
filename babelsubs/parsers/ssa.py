@@ -17,7 +17,7 @@ class SSAParser(SRTParser):
         pattern += r'(?:\{.*?\})?(?P<text>.+?)\n' #[{<Override control codes>}]<Text>
         super(SRTParser, self).__init__(file, pattern, [re.DOTALL])
         #replace \r\n to \n and fix end of last subtitle
-        self.subtitles = self.subtitles.replace('\r\n', '\n')+u'\n'
+        self.input_string = self.input_string.replace('\r\n', '\n')+u'\n'
         self.language = language
 
 register(SSAParser)

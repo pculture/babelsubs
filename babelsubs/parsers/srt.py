@@ -18,7 +18,7 @@ class SRTParser(BaseTextParser):
         self._pattern = re.compile(pattern, re.DOTALL)
 
         #replace \r\n to \n and fix end of last subtitle
-        self.subtitles = input_string.replace('\r\n', '\n')+'\n\n'
+        self.input_string = input_string.replace('\r\n', '\n')+'\n\n'
         self.language = language_code
 
     def _get_time(self, hour, min, sec, secfr):
