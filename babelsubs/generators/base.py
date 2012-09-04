@@ -19,7 +19,7 @@ class BaseGenerator(object):
 
     @classmethod
     def generate(cls, subtitle_set, language=None):
-        return unicode(cls(subtitle_set=subtitle_set, language=language))
+        return unicode(cls(subtitle_set, language=language))
 
 class GeneratorListClass(dict):
 
