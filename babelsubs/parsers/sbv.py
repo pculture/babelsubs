@@ -12,9 +12,11 @@ class SBVParser(BaseTextParser):
         pattern += r','
         pattern += r'(?P<e_hour>\d{1}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})\.(?P<e_secfr>\d{3})'
         pattern += r'\n(?P<text>.+?)\n\n'
-        input_string = utils.strip_tags(input_string)
+        # TODO: Support the DELAY header. Now, how can we map frames
+        # to time coordinates without having a frame rate number?
+        # My guess people expect it to be guessable through the video
+        # file, but that renders our quest useless. Ideas?
         super(SBVParser, self).__init__(input_string, pattern, flags=[re.DOTALL])
-        #replace \r\n to \n and fix end of last subtitle
         self.input_string = self.input_string.replace('\r\n', '\n')+u'\n\n'
         self.language = language
 

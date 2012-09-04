@@ -29,3 +29,12 @@ class SBVParsingTest(TestCase):
         parsed = subs.to_internal()
         nodes = [x for x in parsed.get_subtitles()]
         self.assertEquals(storage.get_contents(nodes[13]), 'We support videos on <br xmlns="http://www.w3.org/ns/ttml"/>YouTube, Blip.TV, Ustream, and many more.')
+
+    def test_with_information_headers(self):
+        # we ignore those headers for now, but at least we shouldn't fail on them
+        subs  = utils.get_subs("with-information-header.sbv")
+        parsed = subs.to_internal()
+        sub_data = [x for x in parsed.subtitle_items()]
+        self.assertEquals(sub_data[0][0], 48)
+        self.assertEquals(sub_data[0][1], 2932)
+        self.assertEquals(sub_data[0][2], 'We started Universal Subtitles because we believe')
