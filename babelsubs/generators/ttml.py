@@ -48,7 +48,7 @@ class TTMLGenerator(BaseGenerator):
         </tt>""" % to_bcp47(self.language)
         from xml.dom import expatbuilder
         dom = xml.dom.minidom.parseString(xmlt)
-	styling = dom.getElementsByTagName('head')[0].getElementsByTagName('styling')[0]
+        styling = dom.getElementsByTagName('head')[0].getElementsByTagName('styling')[0]
         styling.setAttribute("xmlns:tts", "http://www.w3.org/2006/10/ttaf1#styling")
 
         for style_name, style_def in TTMLGenerator.STYLES.items():
@@ -58,12 +58,19 @@ class TTMLGenerator(BaseGenerator):
                 style.setAttribute(def_name, def_style)
             styling.appendChild(style)
 
-	div = dom.getElementsByTagName('tt')[0].getElementsByTagName('body')[0].getElementsByTagName('div')[0]
+        div = dom.getElementsByTagName('tt')[0].getElementsByTagName('body')[0].getElementsByTagName('div')[0]
         italic_declaration = 'tts:fontStyle="italic"' if TTMLGenerator.use_named_styles else 'style="emphasis"'
         bold_declaration = 'tts:fontWeight="bold"' if TTMLGenerator.use_named_styles else 'style="strong"'
         underline_declaration = 'tts:textDecoration="underline"' if TTMLGenerator.use_named_styles else 'style="underlined"'
             
-        for i,item in enumerate(self.subtitles):
+        for i, item in enumerate(self.subtitle_set.subtitle_items()):
+            tp = item
+            item = {
+                'start': tp[0],
+                'end': tp[1],
+                'text': tp[2]
+            }
+
             if item['text'] and self.isnumber(item['start']) and self.isnumber(item['end']):
                 # as we're replacing new lines with <br>s we need to create
                 # the element from a fragment,and also from the formateed <b> and <i> to

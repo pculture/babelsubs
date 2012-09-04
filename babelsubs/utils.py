@@ -32,6 +32,9 @@ def to_bcp47(code):
     assert (unilangs.to_bcp47("en-us"), unilangs.to_bcp47('en'), unilangs.to_bcp47('ug_Arab-cn')) == ('en-US', 'en', 'ug_Arab-CN'
 )
     """
+    if not code:
+         raise ValueError("No language was passed")
+
     match = LANG_DIALECT_RE.match(code)
     if not match:
          raise ValueError("%s code does not seem to be a valid language code.")
