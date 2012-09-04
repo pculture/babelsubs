@@ -55,7 +55,7 @@ def get_contents(el):
              [el.tail])
     return ''.join(filter(None, parts)).strip()
 
-def time_expression_to_milliseconds(time_expression):
+def time_expression_to_milliseconds(time_expression, tick_rate=None):
     """
     Parses possible values from time expressions[1] to a normalized value
     in milliseconds.
@@ -77,14 +77,17 @@ def time_expression_to_milliseconds(time_expression):
     if match:
         groups = match.groupdict()
         num, unit = int(groups['num']), groups['unit']
+        if unit == 't':
+            if not tick_rate:
+                raise ValueError("Ticks need a tick rate, mate.")
+            return 1000 * (num / float(tick_rate))
         multiplier = {
             "h": 3600 * 1000,
             "m": 60 * 1000,
             "s": 1000,
             "ms": 1,
             'f': 0,
-            't': 0,
-        }[unit]
+        }.get(unit, None)
         return num * multiplier
     raise ValueError("Time expression %s can't be parsed" % time_expression)
 
@@ -110,14 +113,14 @@ def milliseconds_to_time_clock_exp(milliseconds):
     return '%02d:%02d:%02d.%03d' % (hours, minutes, seconds, milliseconds)
 
 
-def to_clock_time(time_expression):
+def to_clock_time(time_expression, tick_rate=None):
     """
     If time expression is not in clock time, transform it
     """
     match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
     if match:
         return time_expression
-    return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression))
+    return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression, tick_rate))
 
 class SubtitleSet(object):
     BASE_TTML = r'''
@@ -177,6 +180,7 @@ class SubtitleSet(object):
         """
         if initial_data:
             self._ttml = etree.fromstring(initial_data )
+            self.tick_rate = self._get_tick_rate()
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
         else:
@@ -186,7 +190,6 @@ class SubtitleSet(object):
                 'description': description or '',
                 'language_code': language_code or '',
             })
-
 
     def __len__(self):
         return len(self.get_subtitles())
@@ -226,15 +229,15 @@ class SubtitleSet(object):
         """
         begin = get_attr(el, 'begin')
         if begin:
-            begin = to_clock_time(begin)
+            begin = to_clock_time(begin, self.tick_rate)
         end = get_attr(el, 'end')
         if end:
-            end = to_clock_time(end)
+            end = to_clock_time(end, self.tick_rate)
         dur = get_attr(el, 'dur')
         if dur :
             end= milliseconds_to_time_clock_exp(
-                time_expression_to_milliseconds(begin) + \
-                time_expression_to_milliseconds(dur))
+                time_expression_to_milliseconds(begin, self.tick_rate) + \
+                time_expression_to_milliseconds(dur, self.tick_rate))
             el.attrib.pop('dur')
         if not begin or not end:
             raise ValueError("Timed nodes must have either begin or end values")
@@ -283,6 +286,13 @@ class SubtitleSet(object):
 
         return subs
 
+    def _get_tick_rate(self):
+        tt = self._ttml.xpath('/n:tt', namespaces={'n': TTML_NAMESPACE_URI})[0] 
+        for name,value in tt.attrib.items():
+            if name == "tickRate":
+                return int(value)
+        return 1
+ 
     def __eq__(self, other):
         if type(self) == type(other):
             return self.to_xml() == other.to_xml()
