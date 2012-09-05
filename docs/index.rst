@@ -1,15 +1,32 @@
-.. babelsubs documentation master file, created by
-   sphinx-quickstart on Mon Sep  3 11:55:09 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to babelsubs's documentation!
 =====================================
 
 Babelsubs is a Python library that helps you to convert from one subtitle
 format to another.
 
-Example usage:
+Installation
+------------
+
+Via pip:
+
+::
+
+    $ pip install -e git+https://github.com/pculture/babelsubs.git#egg=babelsubs
+
+.. note:: Once the library reaches a stable state, it will be published to
+    PyPI.
+
+Via distutils:
+
+::
+
+    $ git clone git://github.com/pculture/babelsubs.git
+    $ cd babelsubs
+    $ python setup.py install
+
+
+Usage
+-----
 
 .. code-block:: python
 
@@ -43,9 +60,12 @@ This will output:
     00:00:00,039 --> 00:00:00,040
     With end
 
+Supported formats
+-----------------
 
-
-Contents:
-
-.. toctree::
-   :maxdepth: 2
+* dfxp
+* sbv
+* srt
+* ssa
+* ttml
+* txt
