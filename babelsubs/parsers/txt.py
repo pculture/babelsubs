@@ -9,7 +9,7 @@ class TXTParser(BaseTextParser):
     _linebreak_re = re.compile(r"\n\n|\r\n\r\n|\r\r")
 
     def __init__(self, input_string, language=None, linebreak_re=_linebreak_re):
-        self.input_string = linebreak_re.split(input_string, language)
+        self.input_string = linebreak_re.split(input_string)
 
     def __len__(self):
         return len(self.input_string)
