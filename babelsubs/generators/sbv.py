@@ -1,6 +1,4 @@
-from datetime import timedelta
 from babelsubs.generators.base import BaseGenerator, register
-
 
 class SBVGenerator(BaseGenerator):
     file_type = 'sbv'
@@ -23,12 +21,11 @@ class SBVGenerator(BaseGenerator):
         return self.line_delimiter.join(output)
 
     def format_time(self, time):
-        time = timedelta(milliseconds=time)
-
-        minutes, seconds = divmod(time.seconds, 60)
+        seconds, milliseconds = divmod(int(time), 1000)
+        minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
 
-        return u'%01i:%02i:%02i.%03i' % (hours, minutes, seconds, time.microseconds / 1000)
+        return u'%01i:%02i:%02i.%03i' % (hours, minutes, seconds, milliseconds)
 
 
 register(SBVGenerator)
