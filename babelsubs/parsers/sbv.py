@@ -1,5 +1,4 @@
 import re
-from babelsubs import utils
 
 from base import BaseTextParser, register
 
@@ -23,7 +22,7 @@ class SBVParser(BaseTextParser):
     def _get_time(self, hour, min, sec, secfr):
         if secfr is None:
             secfr = '0'
-        res  =  (int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)) * 1000
+        res = (int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)) * 1000
         return res
 
     def _get_data(self, match):
