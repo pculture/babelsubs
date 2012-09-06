@@ -20,6 +20,8 @@ class DFXPParser(BaseTextParser):
         except (XMLSyntaxError, ExpatError), e:
             raise SubtitleParserError("There was an error while we were parsing your xml", e)
 
+        self.language = language
+
     def __len__(self):
         return self.subtitle_set.__len__()
 
