@@ -8,6 +8,7 @@ from lxml.etree import XMLSyntaxError
 
 from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator
+from babelsubs.parsers.base import SubtitleParserError
 
 from babelsubs.tests import utils
 from babelsubs import load_from
@@ -45,7 +46,7 @@ class DFXPParsingTest(TestCase):
 
     def test_self_generate(self):
         parsed_subs1 = utils.get_subs("simple.dfxp")
-        parsed_subs2 = DFXPParser(DFXPGenerator(parsed_subs1.subttitle_set, 'en').__unicode__())
+        parsed_subs2 = DFXPParser(DFXPGenerator(parsed_subs1.subtitle_set, 'en').__unicode__())
 
         for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in parsed_subs2.to_internal()]):
             self.assertEquals(x1, x2)
@@ -57,8 +58,6 @@ class DFXPParsingTest(TestCase):
         load_from(s, type='dfxp').to_internal()
 
     def test_wrong_format(self):
-        try:
+
+        with self.assertRaises(SubtitleParserError):
             DFXPParser.parse(SRT_TEXT)
-        except XMLSyntaxError:
-            raise AssertionError("DFXPParser raises a strange error when wrong"
-            " format data is passed in.")
