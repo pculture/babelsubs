@@ -23,6 +23,7 @@ class SBVGenerator(BaseGenerator):
         return self.line_delimiter.join(output)
 
     def format_time(self, time):
+        time = float(time) / 1000.0
         hours = int(floor(time / 3600))
         if hours < 0:
             hours = 9
