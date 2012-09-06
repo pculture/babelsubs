@@ -60,7 +60,7 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
     Parses possible values from time expressions[1] to a normalized value
     in milliseconds.
 
-    We don't support all possible forms now, only clock time and metric
+    We don't support all possible forms now, only clock time, metric and tick.
     [1] http://www.w3.org/TR/ttaf1-dfxp/#timing-value-timeExpression
     """
     if not time_expression:
