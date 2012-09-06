@@ -1,0 +1,23 @@
+﻿[Script Info]
+Title: 
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We started Universal Subtitles because we believe
+Dialogue: 0,0:00:02.93,0:00:06.63,Default,,0000,0000,0000,,every video on the web should be subtitle-able.
+Dialogue: 0,0:00:06.63,0:00:11.50,Default,,0000,0000,0000,,Millions of Deaf and hard-of-hearing viewers require subtitles to access video.
+Dialogue: 0,0:00:11.50,0:00:15.25,Default,,0000,0000,0000,,Videomakers and websites should really care about this stuff too.
+Dialogue: 0,0:00:15.25,0:00:20.76,Default,,0000,0000,0000,,Subtitles give them access to a wider audience and they also get better search rankings.
+Dialogue: 0,0:00:20.76,0:00:27.26,Default,,0000,0000,0000,,Universal Subtitles makes it incredibly easy to add subtitles to almost any video.
+Dialogue: 0,0:00:27.26,0:00:32.33,Default,,0000,0000,0000,,Take an existing video on the web, submit the URL to our website
+Dialogue: 0,0:00:32.33,0:00:39.03,Default,,0000,0000,0000,,and then type along with the dialog to create the subtitles
+Dialogue: 0,0:00:39.03,0:00:44.49,Default,,0000,0000,0000,,After that, tap on your keyboard to sync them with the video.
+Dialogue: 0,0:00:44.49,0:00:47.41,Default,,0000,0000,0000,,Then you're done— we give you an embed code for the video
+Dialogue: 0,0:00:47.41,0:00:49.76,Default,,0000,0000,0000,,that you can put on any website
+Dialogue: 0,0:00:49.76,0:00:53.45,Default,,0000,0000,0000,,at that point, viewers are able to use the subtitles and can also
+Dialogue: 0,0:00:53.45,0:00:55.83,Default,,0000,0000,0000,,contribute to translations.
+Dialogue: 0,0:00:55.83,0:01:01.41,Default,,0000,0000,0000,,We support videos on YouTube, Blip.TV, Ustream, and many more.
+Dialogue: 0,0:01:01.41,0:01:05.22,Default,,0000,0000,0000,,Plus we're adding more services all the time
+Dialogue: 0,0:01:05.22,0:01:08.68,Default,,0000,0000,0000,,Universal Subtitles works with many popular video formats,
+Dialogue: 0,0:01:08.68,0:01:13.79,Default,,0000,0000,0000,,such as MP4, theora, webM and over HTML 5.
+Dialogue: 0,0:01:13.79,0:01:19.41,Default,,0000,0000,0000,,Our goal is for every video on the web to be subtitle-able so that anyone who cares about
+Dialogue: 0,0:01:19.41,0:01:22.66,Default,,0000,0000,0000,,the video can help make it more accessible.
