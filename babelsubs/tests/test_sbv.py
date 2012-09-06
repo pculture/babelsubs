@@ -8,8 +8,6 @@ from babelsubs.generators.sbv import SBVGenerator
 from babelsubs.parsers.sbv import SBVParser
 
 from babelsubs.tests import utils
-from babelsubs import load_from
-
 
 class SBVParsingTest(TestCase):
 
