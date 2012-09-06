@@ -47,10 +47,9 @@ Usage
         </body>
     </tt>"""
 
-    from babelsubs import load_from, parse_to
+    from babelsubs import load_from
 
-    parsed = load_from(dxfp_data, type='dfxp').to_internal()
-    print parse_to(parsed, 'srt')
+    print load_from(dxfp_data, type='dfxp').to("srt")
 
 This will output:
 
