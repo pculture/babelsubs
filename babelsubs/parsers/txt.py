@@ -1,6 +1,7 @@
 import re
 from babelsubs import utils
 from base import BaseTextParser, register
+from babelsubs.storage import SubtitleSet
 
 class TXTParser(BaseTextParser):
 
@@ -25,5 +26,12 @@ class TXTParser(BaseTextParser):
             output['end'] = -1
             output['text'] = utils.strip_tags(item)
             yield output
+
+    def to_internal(self):
+        if not hasattr(self, 'sub_set'):
+            self.sub_set = SubtitleSet(self.language)
+            for item in self._result_iter():
+                self.sub_set.append_subtitle(item['start'], item['end'], item['text'])
+        return self.sub_set
 
 register(TXTParser)
