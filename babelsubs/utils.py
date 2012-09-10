@@ -100,3 +100,17 @@ def from_xmlish_text(input_str):
     # collapse whitespace on each new line
     return "\n".join( MULTIPLE_SPACES.sub(u" ", x).strip() for x in input_str.split('\n'))
 
+def milliseconds_to_time_clock_components(milliseconds):
+    """
+    Converts milliseconds (as an int) to the
+    hours, minutes, seconds and milliseconds.
+    None will be converted to all zeros
+    """
+    components = dict(hours=0, minutes=0, seconds=0, milliseconds=0)
+
+    if milliseconds is not None:
+        components['seconds'], components['milliseconds'] = divmod(int(milliseconds), 1000)
+        components['minutes'], components['seconds'] = divmod(components['seconds'], 60 )
+        components['hours'], components['minutes'] = divmod(components['minutes'], 60 )
+
+    return components

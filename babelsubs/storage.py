@@ -19,7 +19,7 @@
 from lxml import etree
 import os
 import re
-
+from babelsubs import utils
 
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
@@ -91,27 +91,14 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
         return num * multiplier
     raise ValueError("Time expression %s can't be parsed" % time_expression)
 
-def milliseconds_to_time_clock_components(milliseconds):
-    """
-    Converts milliseconds (as an int) to the
-    hours, minutes, seconds and milliseconds.
-    None will be converted to all zeros
-    """
-    if milliseconds is None:
-        return (0,0,0,0) 
-    seconds, milliseconds = divmod(int(milliseconds), 1000)
-    minutes, seconds = divmod(seconds, 60 )
-    hours, minutes = divmod(minutes, 60 )
-    return hours, minutes, seconds, milliseconds
 
 def milliseconds_to_time_clock_exp(milliseconds):
     """
     Converts time components to a string suitable to be used on time expression
     fot ttml
     """
-    hours, minutes, seconds, milliseconds = milliseconds_to_time_clock_components(milliseconds)
-    return '%02d:%02d:%02d.%03d' % (hours, minutes, seconds, milliseconds)
-
+    expression = '%(hours)02d:%(minutes)02d:%(seconds)02d.%(milliseconds)03d'
+    return  expression % utils.milliseconds_to_time_clock_components(milliseconds)
 
 def to_clock_time(time_expression, tick_rate=None):
     """

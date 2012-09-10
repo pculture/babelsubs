@@ -1,4 +1,5 @@
 import codecs
+from babelsubs import utils
 from babelsubs.generators.base import BaseGenerator, register
 
 class SSAGenerator(BaseGenerator):
@@ -16,10 +17,8 @@ class SSAGenerator(BaseGenerator):
         return u''
 
     def format_time(self, milliseconds):
-        seconds, milliseconds = divmod(int(milliseconds), 1000)
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        return u'%i:%02i:%02i.%02i' % (hours, minutes, seconds, milliseconds)
+        components = utils.milliseconds_to_time_clock_components(milliseconds)
+        return u'%(hours)i:%(minutes)02i:%(seconds)02i.%(milliseconds)02i' % components
 
     def _clean_text(self, text):
         return text.replace('\n', ' ')

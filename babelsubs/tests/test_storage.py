@@ -5,22 +5,23 @@ except ImportError:
 
 from babelsubs import storage
 from babelsubs.tests import utils
+from babelsubs import utils as main_utils
 
 class TimeHandlingTest(TestCase):
 
     def test_split(self):
         # should looke like 1h:10:20:200
         milliseconds  = (((1 * 3600 ) + (10 * 60 ) + (20 )) * 1000 )  + 200
-        components = storage.milliseconds_to_time_clock_components(milliseconds)
-        self.assertEquals((1,10, 20, 200), components)
+        components = main_utils.milliseconds_to_time_clock_components(milliseconds)
+        self.assertEquals(dict(hours=1,minutes=10, seconds=20, milliseconds=200), components)
         
     def test_rounding(self):
         milliseconds  = (((1 * 3600 ) + (10 * 60 ) + (20 )) * 1000 )  + 200.40
-        components = storage.milliseconds_to_time_clock_components(milliseconds)
-        self.assertEquals((1,10, 20, 200), components)
+        components = main_utils.milliseconds_to_time_clock_components(milliseconds)
+        self.assertEquals(dict(hours=1, minutes=10, seconds=20, milliseconds=200), components)
 
     def test_none(self):
-        self.assertEquals((0,0, 0, 0), storage.milliseconds_to_time_clock_components(0))
+        self.assertEquals(dict(hours=0,minutes=0, seconds=0, milliseconds=0), main_utils.milliseconds_to_time_clock_components(0))
 
 
     def test_expression(self):
