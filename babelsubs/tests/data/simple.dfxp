@@ -10,7 +10,7 @@
 		<p begin="00:00:01.200" end="00:00:04.467">DAVID POGUE:<br />Copper, symbol Cu.</p>
 		<p begin="00:00:04.467" end="00:00:10.300">Atomic number 29--<br />29 protons, 29 electrons.</p>
 		<p begin="00:00:10.300" end="00:00:15.300">The ancients first learned how<br />to heat rocks to extract copper</p>
-		<p begin="00:00:15.300" end="00:00:19.167">at least 7,000 years ago.</p>
+        <p begin="00:00:15.300" end="00:00:19.167">at least <span tts:fontWeight='bold'>7,000</span> years ago.</p>
 		<p begin="00:00:23.567" end="00:00:26.533">And today, it&apos;s one of the most<br />widely bought and sold metals</p>
 		<p begin="00:00:26.533" end="00:00:28.133">in the world.</p>
 		<p begin="00:00:31.067" end="00:00:33.367">The New York Mercantile Exchange</p>

@@ -1,6 +1,6 @@
 1
 00:00:00,004 --> 00:00:02,093
-We started Universal Subtitles because we believe
+We started <b>Universal Subtitles</b> because we believe
 
 2
 00:00:02,093 --> 00:00:06,063
@@ -12,11 +12,11 @@ Millions of Deaf and hard-of-hearing viewers require subtitles to access video.
 
 4
 00:00:11,050 --> 00:00:15,025
-Videomakers and websites should really care about this stuff too.
+Videomakers and websites should <i>really</i> care about this stuff too.
 
 5
 00:00:15,025 --> 00:00:20,076
-Subtitles give them access to a wider audience and they also get better search rankings.
+Subtitles give them access to a <u>wider audience</u> and they also get better search rankings.
 
 6
 00:00:20,076 --> 00:00:27,026
@@ -24,7 +24,7 @@ Universal Subtitles makes it incredibly easy to add subtitles to almost any vide
 
 7
 00:00:27,026 --> 00:00:32,033
-Take an existing video on the web, submit the URL to our website
+Take an existing video on the web, submit the <b>URL<br/></b> to our website
 
 8
 00:00:32,033 --> 00:00:39,003

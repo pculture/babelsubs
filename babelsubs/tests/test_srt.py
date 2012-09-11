@@ -18,10 +18,10 @@ class SRTParsingTest(TestCase):
     def test_internal_format(self):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
-        sub_data = [x for x in parsed.subtitle_items()]
+        sub_data = [x for x in parsed.subtitle_items(True, SRTGenerator.MAPPINGS)]
         self.assertEquals(sub_data[0][0], 4)
         self.assertEquals(sub_data[0][1], 2093)
-        self.assertEquals(sub_data[0][2], "We started Universal Subtitles because we believe")
+        self.assertEquals(sub_data[0][2], "We started <b>Universal Subtitles</b> because we believe")
 
     def test_round_trip(self):
         subs1  = utils.get_subs("simple.srt")
@@ -30,7 +30,7 @@ class SRTParsingTest(TestCase):
         subs2  = SRTParser(srt_ouput, 'en')
         parsed2 = subs2.to_internal()
         self.assertEquals(len(subs1), len(subs2))
-        for x1, x2 in zip([x for x in  parsed1.subtitle_items()], [x for x in parsed2.subtitle_items()]):
+        for x1, x2 in zip([x for x in parsed1.subtitle_items(True, SRTGenerator.MAPPINGS)], [x for x in parsed2.subtitle_items(True, SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
         
     def test_self_generate(self):

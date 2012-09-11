@@ -145,16 +145,9 @@ class SubtitleSet(object):
         </tt>
     '''
 
-    SUBTITLE_XML = r'''
-        <p xmlns="http://www.w3.org/ns/ttml" %s %s>
-            %s
-        </p>
-    '''
+    SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
 
-    SUBTITLE_DIV_XML = r'''
-        <div xmlns="http://www.w3.org/ns/ttml" >
-        </div>
-    '''
+    SUBTITLE_DIV_XML = r'''<div xmlns="http://www.w3.org/ns/ttml"></div>'''
     
     def __init__(self, language_code, initial_data=None, title=None,
                  description=None, normalize_time=True):
@@ -231,12 +224,16 @@ class SubtitleSet(object):
         el.attrib['begin'] = begin
         el.attrib['end'] = end
 
-    def subtitle_items(self, allow_format_tags=False):
+    def subtitle_items(self, allow_format_tags=False, mappings=None):
         """A generator over the subs, yielding (from_ms, to_ms, content) tuples.
 
         The from and to millisecond values may be any time expression
         that we can parse.
         """
+
+        if not mappings:
+            mappings = dict()
+
         for el in self.get_subtitles():
             begin = get_attr(el, 'begin')
             end = get_attr(el, 'end')
@@ -248,9 +245,45 @@ class SubtitleSet(object):
             if not allow_format_tags:
                 content = get_contents(el)
             else:
-                raise NotImplementedError("Formatting not supported just yet.")
+                content = self.get_content_with_markup(el, mappings).strip()
 
             yield (from_ms, to_ms, content)
+
+    def __clear_namespace(self, name):
+        return name.split("}")[-1] if '}' in name else name
+
+    def get_content_with_markup(self, el, mappings):
+        text = [el.text]
+        for child in el.getchildren():
+            # no i don't want  to deal with namespaces right now sorry
+            attrs = dict([(self.__clear_namespace(n), v) for n, v in child.items()])
+
+            tag = self.__clear_namespace(child.tag)
+
+            if tag == 'span':
+                value = "%s"
+
+                if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
+                    value = value % mappings["bold"]
+
+                if attrs.get('fontStyle', '') == 'italic' and 'italics' in mappings:
+                    value = value % mappings["italics"]
+
+                if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
+                    value = value % mappings["underline"]
+
+                text.append(value % child.text)
+
+            if tag == "br":
+                text.append(mappings["linebreaks"])
+
+            if child.tail:
+                text.append(child.tail)
+
+        if el.tail:
+            text.append(el.tail)
+
+        return ''.join(text)
 
 
     @classmethod

@@ -1,5 +1,6 @@
 import re
 
+from lxml import etree
 from babelsubs import utils
 from babelsubs.parsers.base import BaseTextParser, register
 
@@ -35,5 +36,31 @@ class SRTParser(BaseTextParser):
         output['text'] = '' if r['text'] is None else \
             utils.strip_tags(self._clean_pattern.sub('', r['text']))
         return output
+
+    def get_markup(self, text):
+        # create a simple element so we can parse using etree
+        # since srt uses html like tags as markup
+        base = "<p>%s</p>" % text
+        el = etree.fromstring(base)
+
+        content = [el.text]
+        base_span = '<span %s>%s</span>'
+
+        for child in el.getchildren():
+            tag = child.tag
+
+            if tag == 'b':
+                content.append(base_span % ('fontWeight="bold"', child.text))
+            elif tag == 'i':
+                content.append(base_span % ('fontStyle="italic"', child.text))
+            elif tag == 'u':
+                content.append(base_span % ('textDecoration="underline"', child.text))
+
+            content.append(child.tail)
+
+        if el.tail:
+            content.append(el.tail.strip())
+            
+        return "".join(filter(None, content)).replace("\n", "<br />")
 
 register(SRTParser)

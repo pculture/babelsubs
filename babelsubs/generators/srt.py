@@ -4,6 +4,9 @@ from babelsubs.generators.base import BaseGenerator, register
 class SRTGenerator(BaseGenerator):
     file_type = 'srt'
 
+    MAPPINGS = dict(linebreaks="\n", bold="<b>%s</b>",
+                    italics="<i>%s</i>", underline="<u>%s</u>")
+
     def __init__(self, subtitle_set, language=None):
         super(SRTGenerator, self).__init__(subtitle_set, language)
         self.line_delimiter = '\r\n'
@@ -12,7 +15,7 @@ class SRTGenerator(BaseGenerator):
         output = []
         i = 1
         # FIXME: allow formatting tags
-        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=self.allows_formatting):
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=True, mappings=self.MAPPINGS):
             output.append(unicode(i))
             output.append(u'%s --> %s' % (
                 self._format_srt_time(from_ms),

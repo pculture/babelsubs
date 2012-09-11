@@ -42,7 +42,7 @@ class DFXPParsingTest(TestCase):
         sub_data = [x for x in parsed.subtitle_items()]
         self.assertEquals(sub_data[0][0], 1200)
         self.assertEquals(sub_data[0][1], 4467)
-        self.assertEquals(sub_data[3][2], 'at least 7,000 years ago.')
+        self.assertEquals(sub_data[3][2], 'at least <span xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" tts:fontWeight="bold">7,000</span> years ago.')
 
     def test_self_generate(self):
         parsed_subs1 = utils.get_subs("simple.dfxp")

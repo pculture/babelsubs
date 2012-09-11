@@ -55,9 +55,13 @@ class BaseTextParser(object):
             for match in self._matches:
                 item = self._get_data(match)
                 # fix me: support markup
-                self.sub_set.append_subtitle(item['start'], item['end'], item['text']) 
+                text = self.get_markup(item['text'])
+                self.sub_set.append_subtitle(item['start'], item['end'], text) 
 
         return self.sub_set
+
+    def get_markup(self, text):
+        return text
 
     _matches = property(_get_matches)
 
