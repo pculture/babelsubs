@@ -3,6 +3,8 @@ from babelsubs.generators.base import BaseGenerator, register
 class SBVGenerator(BaseGenerator):
     file_type = 'sbv'
 
+    MAPPINGS = dict(linebreaks="[br]")
+
     def __init__(self, subtitles_set, line_delimiter=u'\r\n', language=None):
         super(SBVGenerator, self).__init__(subtitles_set, line_delimiter,
                 language)
@@ -10,7 +12,7 @@ class SBVGenerator(BaseGenerator):
     def __unicode__(self):
         output = []
 
-        for from_ms, to_ms, content in self.subtitle_set.subtitle_items():
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(self.MAPPINGS):
             if self.isnumber(from_ms) and self.isnumber(to_ms):
                 start = self.format_time(from_ms)
                 end = self.format_time(to_ms)

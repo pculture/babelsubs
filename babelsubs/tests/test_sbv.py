@@ -26,8 +26,8 @@ class SBVParsingTest(TestCase):
     def test_line_breaks(self):
         subs  = utils.get_subs("simple.sbv")
         parsed = subs.to_internal()
-        nodes = [x for x in parsed.get_subtitles()]
-        self.assertEquals(storage.get_contents(nodes[13]), 'We support videos on <br xmlns="http://www.w3.org/ns/ttml"/>YouTube, Blip.TV, Ustream, and many more.')
+        lines = [text for _, _, text in parsed.subtitle_items(SBVGenerator.MAPPINGS)]
+        self.assertEquals(lines[13], 'We support videos on [br]YouTube, Blip.TV, Ustream, and many more.')
 
     def test_with_information_headers(self):
         # we ignore those headers for now, but at least we shouldn't fail on them
