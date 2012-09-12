@@ -41,3 +41,37 @@ class SRTParsingTest(TestCase):
 
         for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in parsed_subs2.to_internal()]):
             self.assertEquals(x1, x2)
+
+    def test_formatting(self):
+        subs = u"""1
+00:00:00,004 --> 00:00:02,093
+We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
+"""
+        parsed = SRTParser(subs, 'en')
+        internal = parsed.to_internal()
+
+        self.assertEquals(len(parsed), 1)
+        element = internal.get_subtitles()[0]
+
+        self.assertTrue(len(element.getchildren()), 3)
+        br, bold, italics, underline = element.getchildren()
+
+        self.assertEquals(br.text, None)
+        self.assertEquals(' started ', br.tail)
+
+        self.assertEquals(bold.text, 'Universal Subtitles')
+        self.assertEquals(bold.tail, ' ')
+
+        self.assertEquals(italics.text, 'because')
+        self.assertEquals(italics.tail, ' we ')
+
+        self.assertEquals(underline.text, 'believe')
+        self.assertEquals(underline.tail, None)
+
+        output = unicode(SRTGenerator(internal))
+        parsed2 = SRTParser(output, 'en')
+        internal2 = parsed2.to_internal()
+
+        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
+                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
+            self.assertEquals(x1, x2)
