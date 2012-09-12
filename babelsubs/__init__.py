@@ -32,6 +32,9 @@ import os
 import parsers
 import generators
 
+def get_available_types():
+    return parsers.base.ParserList.keys()
+
 def load_from(sub_from, type=None, language=None):
     if os.path.isfile(sub_from):
         sub_from = open(sub_from)
@@ -43,7 +46,7 @@ def load_from(sub_from, type=None, language=None):
         extension = sub_from.name.split(".")[-1]
         # if the file extension is not given or is not a registred
         # fallback to the given type
-        available_types = parsers.base.ParserList.keys()
+        available_types = get_available_types()
         target_type = None
         if type and type in available_types:
             target_type = type
@@ -74,4 +77,4 @@ def to(subs, type, language=None):
     return Generator.generate(subs, language=language)
 
 
-__all__ = ['load_from', 'to']
+__all__ = ['load_from', 'to', 'get_available_types']
