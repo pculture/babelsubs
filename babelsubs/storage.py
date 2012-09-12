@@ -51,7 +51,7 @@ def get_contents(el):
 
     """
     parts = ([el.text] +
-             list(etree.tostring(c) for c in el.getchildren()) +
+             list(''.join(filter(None, [c.text, c.tail])) for c in el.getchildren()) +
              [el.tail])
     return ''.join(filter(None, parts)).strip()
 
