@@ -97,8 +97,10 @@ def milliseconds_to_time_clock_exp(milliseconds):
     Converts time components to a string suitable to be used on time expression
     fot ttml
     """
+    if milliseconds is None:
+        return None
     expression = '%(hours)02d:%(minutes)02d:%(seconds)02d.%(milliseconds)03d'
-    return  expression % utils.milliseconds_to_time_clock_components(milliseconds)
+    return expression % utils.milliseconds_to_time_clock_components(milliseconds)
 
 def to_clock_time(time_expression, tick_rate=None):
     """
@@ -187,8 +189,10 @@ class SubtitleSet(object):
 
         """
         
-        begin = 'begin="%s"' % milliseconds_to_time_clock_exp(from_ms)
-        end = 'end="%s"' % milliseconds_to_time_clock_exp(to_ms)
+        begin_value = milliseconds_to_time_clock_exp(from_ms)
+        begin = 'begin="%s"' % begin_value if begin_value else ''
+        end_value = milliseconds_to_time_clock_exp(to_ms)
+        end = 'end="%s"' %  end_value if end_value else ''
 
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         div = self._ttml.xpath('/n:tt/n:body/n:div',
@@ -248,6 +252,16 @@ class SubtitleSet(object):
 
     def __clear_namespace(self, name):
         return name.split("}")[-1] if '}' in name else name
+
+    def item_is_synced(self, el):
+        return 'begin' in el.attrib and 'end' in el.attrib
+
+    @property
+    def fully_synced(self):
+        for item in self.get_subtitles():
+            if not self.item_is_synced(item):
+                return False
+        return True
 
     def get_content_with_markup(self, el, mappings):
         text = [el.text]

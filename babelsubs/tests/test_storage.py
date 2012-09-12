@@ -94,4 +94,26 @@ class AddSubtitlesTest(TestCase):
         self.assertEquals(len(self._paragraphs_in_div(divs[0])), 2)
         self.assertEquals(len(self._paragraphs_in_div(divs[1])), 3)
                      
+    def test_no_timming(self):
+        dfxp = storage.SubtitleSet('en')
+        dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
+        dfxp.append_subtitle(2000, None, "paragraph 1 - B")
+        dfxp.append_subtitle(None, None, "paragraph 1 - C")
+        items = [x for x in dfxp.subtitle_items()]
+        self.assertEquals(len(items), 3)
+        self.assertEquals(items[0][0], 0)
+        self.assertEquals(items[0][1], 1000)
+        self.assertEquals(items[1][0], 2000)
+        self.assertEquals(items[1][1], None)
+        self.assertEquals(items[2][0], None)
+        self.assertEquals(items[2][1], None)
+        self.assertFalse(dfxp.fully_synced)
+        dfxp = storage.SubtitleSet('en')
+        dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
+        dfxp.append_subtitle(1000, 2000, "paragraph 1 - B")
+        dfxp.append_subtitle(2000, 3000, "paragraph 2 - A", new_paragraph=True)
+        dfxp.append_subtitle(3000, 4000, "paragraph 2 - B")
+        dfxp.append_subtitle(3000, 4000, "paragraph 2 - C")
+        self.assertTrue(dfxp.fully_synced)
+
         
