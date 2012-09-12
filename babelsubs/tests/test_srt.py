@@ -3,9 +3,10 @@ try:
 except ImportError:
     from unittest import TestCase
 
+from lxml import etree
+from babelsubs.storage import get_contents
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.srt import SRTParser
-
 from babelsubs.tests import utils
 
 
@@ -77,6 +78,30 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         self.assertEquals(underline.tag, '{http://www.w3.org/ns/ttml}span')
         self.assertIn('textDecoration', underline.attrib)
         self.assertEquals(underline.attrib['textDecoration'], 'underline')
+
+        output = unicode(SRTGenerator(internal))
+        parsed2 = SRTParser(output, 'en')
+        internal2 = parsed2.to_internal()
+
+        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
+                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
+            self.assertEquals(x1, x2)
+
+    def test_speaker_change(self):
+        subs = """1
+00:00:00,004 --> 00:00:02,093
+And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
+"""
+        parsed = SRTParser(subs, 'en')
+        internal = parsed.to_internal()
+
+        self.assertEquals(len(parsed), 1)
+        element = internal.get_subtitles()[0]
+        self.assertTrue(len(element.getchildren()), 2)
+
+        self.assertEquals(get_contents(element), 'And know, Mr. Amara will talk. >> Hello, and welcome.')
+        self.assertEquals(etree.tostring(element), '<p xmlns="http://www.w3.org/ns/ttml" begin="00:00:00.004" end="00:00:02.093">And know, Mr. <span fontWeight="bold">Amara</span> will talk.<br/> &gt;&gt; Hello, and welcome.</p>')
+        self.assertEquals(element.getchildren()[1].tail, ' >> Hello, and welcome.')
 
         output = unicode(SRTGenerator(internal))
         parsed2 = SRTParser(output, 'en')
