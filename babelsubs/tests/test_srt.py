@@ -58,15 +58,25 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
 
         self.assertEquals(br.text, None)
         self.assertEquals(' started ', br.tail)
+        self.assertEquals(br.tag, '{http://www.w3.org/ns/ttml}br')
 
         self.assertEquals(bold.text, 'Universal Subtitles')
         self.assertEquals(bold.tail, ' ')
+        self.assertEquals(bold.tag, '{http://www.w3.org/ns/ttml}span')
+        self.assertIn('fontWeight', bold.attrib)
+        self.assertEquals(bold.attrib['fontWeight'], 'bold')
 
         self.assertEquals(italics.text, 'because')
         self.assertEquals(italics.tail, ' we ')
+        self.assertEquals(italics.tag, '{http://www.w3.org/ns/ttml}span')
+        self.assertIn('fontStyle', italics.attrib)
+        self.assertEquals(italics.attrib['fontStyle'], 'italic')
 
         self.assertEquals(underline.text, 'believe')
         self.assertEquals(underline.tail, None)
+        self.assertEquals(underline.tag, '{http://www.w3.org/ns/ttml}span')
+        self.assertIn('textDecoration', underline.attrib)
+        self.assertEquals(underline.attrib['textDecoration'], 'underline')
 
         output = unicode(SRTGenerator(internal))
         parsed2 = SRTParser(output, 'en')
