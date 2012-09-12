@@ -19,4 +19,4 @@ class TXTParsingTest(TestCase):
     def test_basic(self):
         subs = TXTParser.parse(TXT_TEXT.encode('utf-8'))
         self.assertEquals(len(subs), 2)
-        subs.to_internal()
+        [x for x in subs.to_internal().subtitle_items()]

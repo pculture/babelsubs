@@ -22,8 +22,8 @@ class TXTParser(BaseTextParser):
     def _result_iter(self):
         for item in self.input_string:
             output = {}
-            output['start'] = -1
-            output['end'] = -1
+            output['start'] = None
+            output['end'] = None
             output['text'] = utils.strip_tags(item)
             yield output
 
@@ -33,5 +33,6 @@ class TXTParser(BaseTextParser):
             for item in self._result_iter():
                 self.sub_set.append_subtitle(item['start'], item['end'], item['text'])
         return self.sub_set
+
 
 register(TXTParser)
