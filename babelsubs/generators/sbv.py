@@ -10,7 +10,7 @@ class SBVGenerator(BaseGenerator):
     def __unicode__(self):
         output = []
 
-        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=self.allows_formatting):
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items():
             if self.isnumber(from_ms) and self.isnumber(to_ms):
                 start = self.format_time(from_ms)
                 end = self.format_time(to_ms)

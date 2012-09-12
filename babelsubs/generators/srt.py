@@ -15,7 +15,7 @@ class SRTGenerator(BaseGenerator):
         output = []
         i = 1
         # FIXME: allow formatting tags
-        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(allow_format_tags=True, mappings=self.MAPPINGS):
+        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
             output.append(unicode(i))
             output.append(u'%s --> %s' % (
                 self._format_srt_time(from_ms),

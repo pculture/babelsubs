@@ -224,15 +224,12 @@ class SubtitleSet(object):
         el.attrib['begin'] = begin
         el.attrib['end'] = end
 
-    def subtitle_items(self, allow_format_tags=False, mappings=None):
+    def subtitle_items(self, mappings=None):
         """A generator over the subs, yielding (from_ms, to_ms, content) tuples.
 
         The from and to millisecond values may be any time expression
         that we can parse.
         """
-
-        if not mappings:
-            mappings = dict()
 
         for el in self.get_subtitles():
             begin = get_attr(el, 'begin')
@@ -242,7 +239,7 @@ class SubtitleSet(object):
                      if begin else None)
             to_ms = (time_expression_to_milliseconds(end)
                        if end else None)
-            if not allow_format_tags:
+            if not mappings:
                 content = get_contents(el)
             else:
                 content = self.get_content_with_markup(el, mappings).strip()
