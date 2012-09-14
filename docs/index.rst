@@ -68,3 +68,4 @@ Supported formats
 * ssa
 * ttml
 * txt
+* json
