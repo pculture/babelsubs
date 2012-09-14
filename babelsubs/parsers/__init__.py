@@ -6,3 +6,4 @@ from srt import SRTParser
 from ssa import SSAParser
 from ttml import TTMLParser
 from txt import TXTParser
+from json_parser import JSONParser
