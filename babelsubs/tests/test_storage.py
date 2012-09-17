@@ -117,3 +117,11 @@ class AddSubtitlesTest(TestCase):
         self.assertTrue(dfxp.fully_synced)
 
         
+
+    def test_escaping(self):
+        dfxp = storage.SubtitleSet('en')
+        dfxp.append_subtitle(0, 1000, "Hey <a>html anchor</a>", escape=False)
+        dfxp.append_subtitle(0, 1000, "Hey <a>html anchor</a>", escape=True)
+        self.assertEqual( storage.get_contents(dfxp.get_subtitles()[0]), 'Hey html anchor')
+        self.assertEqual( storage.get_contents(dfxp.get_subtitles()[1]), 'Hey <a>html anchor</a>')
+        

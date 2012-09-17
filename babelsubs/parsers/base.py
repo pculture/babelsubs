@@ -56,7 +56,7 @@ class BaseTextParser(object):
                 item = self._get_data(match)
                 # fix me: support markup
                 text = self.get_markup(item['text'])
-                self.sub_set.append_subtitle(item['start'], item['end'], text) 
+                self.sub_set.append_subtitle(item['start'], item['end'], text, escape=False)
 
         return self.sub_set
 

@@ -19,6 +19,8 @@
 from lxml import etree
 import os
 import re
+from xml.sax.saxutils import escape as escape_xml
+
 from babelsubs import utils
 
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
@@ -182,7 +184,8 @@ class SubtitleSet(object):
     def get_subtitles(self):
         return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': TTML_NAMESPACE_URI})
 
-    def append_subtitle(self, from_ms, to_ms, content, new_paragraph=False):
+    def append_subtitle(self, from_ms, to_ms, content, new_paragraph=False,
+                        escape=True):
         """Append a subtitle to the end of the list.
 
         NO UNICODE ALLOWED!  USE XML ENTITIES TO REPRESENT UNICODE CHARACTERS!
@@ -194,6 +197,8 @@ class SubtitleSet(object):
         end_value = milliseconds_to_time_clock_exp(to_ms)
         end = 'end="%s"' %  end_value if end_value else ''
 
+        if escape:
+            content = escape_xml(content)
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         div = self._ttml.xpath('/n:tt/n:body/n:div',
                                namespaces={'n': TTML_NAMESPACE_URI})[-1]
