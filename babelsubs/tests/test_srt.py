@@ -54,7 +54,7 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         self.assertEquals(len(parsed), 1)
         element = internal.get_subtitles()[0]
 
-        self.assertTrue(len(element.getchildren()), 3)
+        self.assertEquals(len(element.getchildren()), 4)
         br, bold, italics, underline = element.getchildren()
 
         self.assertEquals(br.text, None)
