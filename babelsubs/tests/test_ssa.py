@@ -15,7 +15,6 @@ class SSAParsingTest(TestCase):
         self.assertEquals(len(subs), 19)
 
     def test_self_generate(self):
-        from ipdb import set_trace; set_trace()
         parsed_subs1 = utils.get_subs("simple.ssa")
         parsed_subs2 = SSAParser(unicode(parsed_subs1), 'en')
 
