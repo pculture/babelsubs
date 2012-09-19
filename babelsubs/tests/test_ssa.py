@@ -26,7 +26,7 @@ class SSAParsingTest(TestCase):
 Title: 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We started {\\b1}Universal Subtitles{\\b0} {\i1}because{\i0} we {\u1}believe{\u0}
+Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Universal Subtitles{\\b0} {\i1}because{\i0} we {\u1}believe{\u0}
 """
         parsed = SSAParser(subs, 'en')
         internal = parsed.to_internal()
@@ -34,7 +34,7 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We started {\\b1}Univ
         self.assertEquals(len(parsed), 1)
         element = internal.get_subtitles()[0]
 
-        self.assertEquals(len(element.getchildren()), 3)
+        self.assertEquals(len(element.getchildren()), 4)
         bold, italics, underline = element.getchildren()
 
         self.assertEquals(bold.text, 'Universal Subtitles')
