@@ -47,6 +47,9 @@ class BaseTextParser(object):
 
     def to(self, type):
         from babelsubs import to
+        if isinstance(type, list):
+            type = type[0]
+
         return to(self.to_internal(), type, language=self.language)
 
     def to_internal(self):
