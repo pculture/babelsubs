@@ -15,6 +15,13 @@ class YoutubeParser(BaseTextParser):
         self.input_string = input_string
         self.language = language_code
 
+    def __iter__(self):
+        if not hasattr(self, 'sub_set'):
+            self.to_internal()
+
+        for sub in self.sub_set:
+            yield sub
+
     def to_internal(self):
         if not hasattr(self, 'sub_set'):
             self.sub_set = SubtitleSet(self.language)
