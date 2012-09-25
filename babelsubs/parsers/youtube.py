@@ -29,7 +29,7 @@ class YoutubeParser(BaseTextParser):
 
             for item in xml:
                 start = int(float(item.get('start')) * 1000)
-                duration = int(float(item.get('dur')) * 1000)
+                duration = int(float(item.get('dur', 0)) * 1000)
                 end = start + duration
                 text = item.text and unescape_html(item.text) or u''
                 self.sub_set.append_subtitle(start, end, text)
