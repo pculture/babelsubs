@@ -163,7 +163,7 @@ class SubtitleSet(object):
 
         """
         if initial_data:
-            self._ttml = etree.fromstring(initial_data )
+            self._ttml = etree.fromstring(initial_data)
             self.tick_rate = self._get_tick_rate()
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
