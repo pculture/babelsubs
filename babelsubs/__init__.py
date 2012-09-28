@@ -62,8 +62,15 @@ def load_from(sub_from, type=None, language=None):
     else:
         parser = parsers.discover(type)
 
-    if not isinstance(sub_from, unicode) and not getattr(parser, 'no_unicode', False):
-        sub_from = sub_from.decode("utf-8")
+    no_unicode = getattr(parser, 'no_unicode', False)
+
+    if not isinstance(sub_from, unicode):
+        if not no_unicode:
+            sub_from = sub_from.decode("utf-8")
+    else:
+        if no_unicode:
+            sub_from = sub_from.encode("utf-8")
+
 
     return parser.parse(sub_from, language=language)
 
