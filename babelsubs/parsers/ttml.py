@@ -8,6 +8,7 @@ MAX_SUB_TIME = (60 * 60 * 100) - 1
 class TTMLParser(BaseTextParser):
 
     file_type = ['xml', 'ttml']
+    no_unicode = True
 
     def __init__(self, input_string, language=None):
         try:
