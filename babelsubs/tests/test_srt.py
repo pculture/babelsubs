@@ -9,6 +9,7 @@ from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.srt import SRTParser
 from babelsubs.tests import utils
 
+import babelsubs
 
 class SRTParsingTest(TestCase):
 
@@ -42,6 +43,18 @@ class SRTParsingTest(TestCase):
 
         for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in parsed_subs2.to_internal()]):
             self.assertEquals(x1, x2)
+
+    def test_timed_data_parses_correctly(self):
+        subs = utils.get_data_file_path('timed_text.srt')
+        parsed = babelsubs.load_from(subs, type='srt', language='en')
+
+        self.assertNotEquals(parsed, None)
+
+        try:
+            srt = parsed.to('srt')
+            self.assertNotEquals(srt, None)
+        except Exception, e:
+            self.fail(e)
 
     def test_formatting(self):
         subs = u"""1

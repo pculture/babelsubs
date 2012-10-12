@@ -299,7 +299,7 @@ class SubtitleSet(object):
         if el.tail:
             text.append(el.tail)
 
-        return ''.join(text)
+        return ''.join(filter(None, text))
 
 
     @classmethod
