@@ -23,7 +23,7 @@ class JSONGenerator(BaseGenerator):
         output = []
         # FIXME: allow formatting tags
         i = 1
-        for from_ms, to_ms, content in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
+        for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
             output.append({
                 'start': from_ms,
                 'end': to_ms,

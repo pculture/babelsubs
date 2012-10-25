@@ -29,6 +29,7 @@ SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))')
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
+NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 
 def get_attr(el, attr):
@@ -182,7 +183,19 @@ class SubtitleSet(object):
         return self.subtitle_items()
 
     def get_subtitles(self):
-        return self._ttml.xpath('/n:tt/n:body/n:div/n:p', namespaces={'n': TTML_NAMESPACE_URI})
+        divs = self._ttml.xpath('/n:tt/n:body/n:div', namespaces={'n': TTML_NAMESPACE_URI})
+        result = []
+
+        for div in divs:
+            el_count = 0
+
+            for el in div.xpath('n:p', namespaces={'n': TTML_NAMESPACE_URI}):
+                if el_count == 0:
+                    el.attrib[NEW_PARAGRAPH_META_KEY] = 'true'
+                el_count += 1
+                result.append(el)
+
+        return result
 
     def append_subtitle(self, from_ms, to_ms, content, new_paragraph=False,
                         escape=True):
@@ -234,26 +247,36 @@ class SubtitleSet(object):
         el.attrib['end'] = end
 
     def subtitle_items(self, mappings=None):
-        """A generator over the subs, yielding (from_ms, to_ms, content) tuples.
+        """
+        A generator over the subs, yielding (from_ms, to_ms, content, meta)
+        tuples.
 
         The from and to millisecond values may be any time expression
         that we can parse.
+
+        Meta is a dict with additional information.
         """
-
         for el in self.get_subtitles():
-            begin = get_attr(el, 'begin')
-            end = get_attr(el, 'end')
+            meta = {
+                NEW_PARAGRAPH_META_KEY: el.attrib.get(NEW_PARAGRAPH_META_KEY,
+                    'false')
+            }
+            yield self._extract_from_el(el, meta, mappings)
 
-            from_ms = (time_expression_to_milliseconds(begin)
-                     if begin else None)
-            to_ms = (time_expression_to_milliseconds(end)
-                       if end else None)
-            if not mappings:
-                content = get_contents(el)
-            else:
-                content = self.get_content_with_markup(el, mappings).strip()
+    def _extract_from_el(self, el, meta, mappings):
+        begin = get_attr(el, 'begin')
+        end = get_attr(el, 'end')
 
-            yield (from_ms, to_ms, content)
+        from_ms = (time_expression_to_milliseconds(begin)
+                if begin else None)
+        to_ms = (time_expression_to_milliseconds(end)
+                if end else None)
+        if not mappings:
+            content = get_contents(el)
+        else:
+            content = self.get_content_with_markup(el, mappings).strip()
+
+        return (from_ms, to_ms, content, meta)
 
     def __clear_namespace(self, name):
         return name.split("}")[-1] if '}' in name else name

@@ -26,7 +26,7 @@ class SBVParsingTest(TestCase):
     def test_line_breaks(self):
         subs  = utils.get_subs("simple.sbv")
         parsed = subs.to_internal()
-        lines = [text for _, _, text in parsed.subtitle_items(SBVGenerator.MAPPINGS)]
+        lines = [text for _, _, text, _ in parsed.subtitle_items(SBVGenerator.MAPPINGS)]
         self.assertEquals(lines[13], 'We support videos on [br]YouTube, Blip.TV, Ustream, and many more.')
 
     def test_with_information_headers(self):
@@ -47,6 +47,6 @@ class SBVParsingTest(TestCase):
         subs2  = SBVParser(output, 'en')
         parsed2 = subs2.to_internal()
         self.assertEquals(len(subs1), len(subs2))
-        for x1, x2 in zip([x for x in  parsed1.subtitle_items()], [x for x in parsed2.subtitle_items()]):
+        for x1, x2 in zip([x for x in parsed1.subtitle_items()], [x for x in parsed2.subtitle_items()]):
             self.assertEquals(x1, x2)
  

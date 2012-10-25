@@ -6,7 +6,7 @@ class TXTGenerator(BaseGenerator):
 
     def __unicode__(self):
         output = []
-        for _, _, content in self.subtitle_set.subtitle_items():
+        for _, _, content, _ in self.subtitle_set.subtitle_items():
             content and output.append(content.strip())
 
         return self.line_delimiter.join(output)
