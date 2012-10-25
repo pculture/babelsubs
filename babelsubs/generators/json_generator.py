@@ -28,7 +28,8 @@ class JSONGenerator(BaseGenerator):
                 'start': from_ms,
                 'end': to_ms,
                 'text': content,
-                'position': i
+                'position': i,
+                'meta': meta
             })
             i += 1
         return json.dumps(output)
