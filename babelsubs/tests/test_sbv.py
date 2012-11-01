@@ -1,7 +1,4 @@
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
+from unittest2 import TestCase
 
 from babelsubs.generators.sbv import SBVGenerator
 from babelsubs.parsers.sbv import SBVParser
