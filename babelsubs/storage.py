@@ -181,9 +181,6 @@ class SubtitleSet(object):
     def __len__(self):
         return len(self.get_subtitles())
 
-    def __iter__(self):
-        return self.subtitle_items()
-
     def __getitem__(self, key):
         return self.subtitles[key]
 
@@ -260,9 +257,6 @@ class SubtitleSet(object):
 
         Meta is a dict with additional information.
         """
-        if hasattr(self, 'subtitles'):
-            return self.subtitles
-
         result = []
 
         for el in self.get_subtitles():
