@@ -36,9 +36,6 @@ def get_available_formats():
     return parsers.base.ParserList.keys()
 
 def load_from(sub_from, type=None, language=None):
-    if os.path.isfile(sub_from):
-        sub_from = open(sub_from)
-
     if hasattr(sub_from, 'read'):
         if type is None and not getattr(sub_from, 'name', None):
             raise TypeError("Couldn't find out the type by myself. Care to specify?")
@@ -71,8 +68,14 @@ def load_from(sub_from, type=None, language=None):
         if no_unicode:
             sub_from = sub_from.encode("utf-8")
 
-
     return parser.parse(sub_from, language=language)
+
+def load_from_file(filename, type=None, language=None):
+    if not os.path.isfile(filename):
+        raise ValueError('Invalid filename "%s".' % filename)
+
+    with open(filename) as f:
+        return load_from(f, type, language)
 
 
 def to(subs, type, language=None):
@@ -84,4 +87,4 @@ def to(subs, type, language=None):
     return Generator.generate(subs, language=language)
 
 
-__all__ = ['load_from', 'to', 'get_available_formats']
+__all__ = ['load_from', 'load_from_file', 'to', 'get_available_formats']
