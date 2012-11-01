@@ -29,8 +29,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import parsers
-import generators
+import babelsubs.parsers as parsers
+import babelsubs.generators as generators
 
 def get_available_formats():
     return parsers.base.ParserList.keys()
