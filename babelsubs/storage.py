@@ -266,6 +266,7 @@ class SubtitleSet(object):
             }
             result.append(self._extract_from_el(el, meta, mappings))
 
+        self.subtitles = result
         return result
 
     def _extract_from_el(self, el, meta, mappings):
