@@ -1,8 +1,5 @@
 # encoding: utf-8
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
+from unittest2 import TestCase
 
 from babelsubs.tests import utils
 from babelsubs.generators.ssa import SSAGenerator
