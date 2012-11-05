@@ -6,6 +6,7 @@ from lxml.etree import XMLSyntaxError
 from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator
 from babelsubs.parsers.base import SubtitleParserError
+from babelsubs.storage import  SubtitleSet, get_attr
 
 from babelsubs.tests import utils
 from babelsubs import load_from
@@ -58,3 +59,24 @@ class DFXPParsingTest(TestCase):
 
         with self.assertRaises(SubtitleParserError):
             DFXPParser.parse(SRT_TEXT)
+
+    def test_unsynced_generator(self):
+        subs = SubtitleSet('en')
+        for x in xrange(0,5):
+            subs.append_subtitle(None, None,"%s" % x)
+        output = unicode(DFXPGenerator(subs))
+
+        parsed = DFXPParser(output, 'en')
+        internal = parsed.to_internal()
+
+        subs = [x for x in internal.subtitle_items()]
+        self.assertEqual(len(internal), 5)
+        for i,sub in enumerate(subs):
+            self.assertIsNone(sub[0])
+            self.assertIsNone(sub[1])
+            self.assertEqual(sub[2], str(i))
+
+        for node in internal.get_subtitles():
+            self.assertIsNone(get_attr(node, 'begin'))
+            self.assertIsNone(get_attr(node, 'end'))
+
