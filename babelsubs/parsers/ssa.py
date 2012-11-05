@@ -37,8 +37,8 @@ class SSAParser(SRTParser):
 
         return output
 
-    def _get_time(self, hour, min, sec, secfr):
-        milliseconds = centiseconds_to_milliseconds(secfr)
+    def _get_time(self, hour, min, sec, milliseconds):
+        milliseconds = centiseconds_to_milliseconds(milliseconds)
         res =  (1000 * (
             (int(hour)*60*60 )+
             (int(min)*60) +

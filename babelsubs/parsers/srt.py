@@ -22,10 +22,12 @@ class SRTParser(BaseTextParser):
         self.input_string = input_string.replace('\r\n', '\n')+'\n\n'
         self.language = language_code
 
-    def _get_time(self, hour, min, sec, secfr):
-        if secfr is None:
-            secfr = '0'
-        res  =  (int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)) * 1000
+    def _get_time(self, hour, min, sec, milliseconds):
+        if milliseconds is None:
+            milliseconds = '0'
+        res  =  (int(hour)*60*60+int(min)*60+int(sec)+float('.'+milliseconds)) * 1000
+        if res == utils.UNSYNCED_TIME_FULL:
+            res = None
         return res
 
     def _get_data(self, match):

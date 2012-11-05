@@ -1,7 +1,7 @@
 from unittest2 import TestCase
 
 from lxml import etree
-from babelsubs.storage import get_contents
+from babelsubs.storage import get_contents, SubtitleSet
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.srt import SRTParser
 from babelsubs.tests import utils
@@ -120,3 +120,23 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
                 [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
+
+    def test_unsynced_generator(self):
+        subs = SubtitleSet('en')
+        for x in xrange(0,5):
+            subs.append_subtitle(None, None,"%s" % x)
+        output = unicode(SRTGenerator(subs))
+
+        parsed = SRTParser(output,'en')
+        internal = parsed.to_internal()
+
+        subs = [x for x in internal.subtitle_items()]
+        self.assertEqual(len(internal), 5)
+        for i,sub in enumerate(subs):
+            self.assertEqual(sub[0], None )
+            self.assertEqual(sub[1], None )
+        generated = SRTGenerator(internal)
+        self.assertEqual(generated.format_time(None), u'99:59:59,999')
+        self.assertIn(u'''1\r\n99:59:59,999 --> 99:59:59,999\r\n0\r\n\r\n2\r\n99:59:59,999 --> 99:59:59,999\r\n1\r\n\r\n3\r\n99:59:59,999 --> 99:59:59,999\r\n2\r\n\r\n4\r\n99:59:59,999 --> 99:59:59,999\r\n3\r\n\r\n5\r\n99:59:59,999 --> 99:59:59,999\r\n4\r\n''',
+                    unicode(generated))
+

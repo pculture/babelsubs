@@ -91,7 +91,7 @@ class AddSubtitlesTest(TestCase):
         self.assertEquals(len(self._paragraphs_in_div(divs[0])), 2)
         self.assertEquals(len(self._paragraphs_in_div(divs[1])), 3)
                      
-    def test_no_timming(self):
+    def test_no_timing(self):
         dfxp = storage.SubtitleSet('en')
         dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
         dfxp.append_subtitle(2000, None, "paragraph 1 - B")
