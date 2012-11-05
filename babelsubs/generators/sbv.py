@@ -14,12 +14,11 @@ class SBVGenerator(BaseGenerator):
         output = []
 
         for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(self.MAPPINGS):
-            if self.isnumber(from_ms) and self.isnumber(to_ms):
-                start = self.format_time(from_ms)
-                end = self.format_time(to_ms)
-                output.append(u'%s,%s' % (start, end))
-                output.append(content.strip())
-                output.append(u'')
+            start = self.format_time(from_ms)
+            end = self.format_time(to_ms)
+            output.append(u'%s,%s' % (start, end))
+            output.append(content.strip())
+            output.append(u'')
 
         return self.line_delimiter.join(output)
 

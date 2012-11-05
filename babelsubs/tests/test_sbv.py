@@ -4,6 +4,7 @@ from babelsubs.generators.sbv import SBVGenerator
 from babelsubs.parsers.sbv import SBVParser
 
 from babelsubs.tests import utils
+from babelsubs.storage import  SubtitleSet
 
 class SBVParsingTest(TestCase):
     def test_basic(self):
@@ -42,4 +43,23 @@ class SBVParsingTest(TestCase):
         self.assertEquals(len(subs1), len(subs2))
         for x1, x2 in zip([x for x in parsed1.subtitle_items()], [x for x in parsed2.subtitle_items()]):
             self.assertEquals(x1, x2)
+
+    def test_unsynced_generator(self):
+        subs = SubtitleSet('en')
+        for x in xrange(0,5):
+            subs.append_subtitle(None, None,"%s" % x)
+        output = unicode(SBVGenerator(subs))
+
+        parsed = SBVParser(output,'en')
+        internal = parsed.to_internal()
+
+        subs = [x for x in internal.subtitle_items()]
+        self.assertEqual(len(internal), 5)
+        for i,sub in enumerate(subs):
+            self.assertEqual(sub[0], None )
+            self.assertEqual(sub[1], None )
+        generated = SBVGenerator(internal)
+        self.assertEqual(generated.format_time(None), u'9:59:59.990')
+        self.assertIn(u'''9:59:59.990,9:59:59.990\r\n0\r\n\r\n9:59:59.990,9:59:59.990\r\n1\r\n\r\n9:59:59.990,9:59:59.990\r\n2\r\n\r\n9:59:59.990,9:59:59.990\r\n3\r\n\r\n9:59:59.990,9:59:59.990\r\n4\r\n''',
+            unicode(generated))
 
