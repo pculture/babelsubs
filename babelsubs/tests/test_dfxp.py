@@ -1,8 +1,5 @@
 # encoding: utf-8
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
+from unittest2 import TestCase
 
 from lxml.etree import XMLSyntaxError
 
@@ -33,7 +30,7 @@ We need <i>italics</i> <b>bold</b> <u>underline</u> and speaker change >>Hey .
 class DFXPParsingTest(TestCase):
 
     def test_basic(self):
-        subs  = utils.get_subs("simple.dfxp")
+        subs = utils.get_subs("simple.dfxp")
         self.assertEquals(len(subs), 76)
         
     def test_internal_format(self):

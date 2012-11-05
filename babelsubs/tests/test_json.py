@@ -1,7 +1,4 @@
-try:
-    from unittest2 import TestCase
-except ImportError:
-    from unittest import TestCase
+from unittest2 import TestCase
 
 from babelsubs.generators.json_generator import JSONGenerator
 from babelsubs.tests import utils

@@ -176,11 +176,13 @@ class SubtitleSet(object):
                 'language_code': language_code or '',
             })
 
+        self.subtitles = self.subtitle_items()
+
     def __len__(self):
         return len(self.get_subtitles())
 
-    def __iter__(self):
-        return self.subtitle_items()
+    def __getitem__(self, key):
+        return self.subtitles[key]
 
     def get_subtitles(self):
         divs = self._ttml.xpath('/n:tt/n:body/n:div', namespaces={'n': TTML_NAMESPACE_URI})
@@ -248,20 +250,24 @@ class SubtitleSet(object):
 
     def subtitle_items(self, mappings=None):
         """
-        A generator over the subs, yielding (from_ms, to_ms, content, meta)
-        tuples.
+        Return a list of (from_ms, to_ms, content, meta) tuples.
 
         The from and to millisecond values may be any time expression
         that we can parse.
 
         Meta is a dict with additional information.
         """
+        result = []
+
         for el in self.get_subtitles():
             meta = {
                 NEW_PARAGRAPH_META_KEY: el.attrib.get(NEW_PARAGRAPH_META_KEY,
                     'false')
             }
-            yield self._extract_from_el(el, meta, mappings)
+            result.append(self._extract_from_el(el, meta, mappings))
+
+        self.subtitles = result
+        return result
 
     def _extract_from_el(self, el, meta, mappings):
         begin = get_attr(el, 'begin')
