@@ -85,10 +85,11 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         for x in xrange(0,5):
             subs.append_subtitle(None, None,"%s" % x)
         output = unicode(SSAGenerator(subs))
+
         parsed = SSAParser(output,'en')
         internal = parsed.to_internal()
-        subs = [x for x in internal]
-        self.assertEqual(len(subs), 5)
+        subs = [x for x in internal.subtitle_items()]
+        self.assertEqual(len(internal), 5)
         for i,sub in enumerate(subs):
             self.assertEqual(sub[0], UNSYNCED_TIME_ONE_HOUR_DIGIT )
             self.assertEqual(sub[1], UNSYNCED_TIME_ONE_HOUR_DIGIT )
