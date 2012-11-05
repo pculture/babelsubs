@@ -241,10 +241,10 @@ class SubtitleSet(object):
                 time_expression_to_milliseconds(begin, self.tick_rate) + \
                 time_expression_to_milliseconds(dur, self.tick_rate))
             el.attrib.pop('dur')
-        if not begin or not end:
-            raise ValueError("Timed nodes must have either begin or end values")
-        el.attrib['begin'] = begin
-        el.attrib['end'] = end
+        if begin:
+            el.attrib['begin'] = begin
+        if end:
+            el.attrib['end'] = end
 
     def subtitle_items(self, mappings=None):
         """

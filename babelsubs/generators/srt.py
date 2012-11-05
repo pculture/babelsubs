@@ -14,7 +14,7 @@ class SRTGenerator(BaseGenerator):
     def __unicode__(self):
         output = []
         i = 1
-        # FIXME: allow formatting tags
+        # FIX ME: allow formatting tags
         for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
             output.append(unicode(i))
             output.append(u'%s --> %s' % (

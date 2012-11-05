@@ -1,7 +1,10 @@
+from babelsubs.utils import UNSYNCED_TIME_FULL
+
 class BaseGenerator(object):
     file_type = ''
     allows_formatting = False
 
+    UNSYNCED_TIME = UNSYNCED_TIME_FULL
     def __init__(self, subtitle_set, line_delimiter=u'\n', language=None):
         """
         Generator is list of {'text': 'text', 'start': 'seconds', 'end': 'seconds'}

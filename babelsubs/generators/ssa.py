@@ -8,6 +8,7 @@ class SSAGenerator(BaseGenerator):
     MAPPINGS = dict(bold="{\\b1}%s{\\b0}",
                     italics="{\i1}%s{\i0}", underline="{\u1}%s{\u0}")
 
+
     def __unicode__(self):
         #add BOM to fix python default behaviour, because players don't play without it
         return u''.join([unicode(codecs.BOM_UTF8, "utf8"), self._start(), self._content(), self._end()])
@@ -20,7 +21,13 @@ class SSAGenerator(BaseGenerator):
         return u''
 
     def format_time(self, milliseconds):
-        components = utils.milliseconds_to_time_clock_components(milliseconds)
+        if not milliseconds:
+            components = utils.unsynced_time_components(one_hour_digit=True, uses_centiseconds=True)
+        else:
+            components = utils.milliseconds_to_time_clock_components(
+            milliseconds,
+            unsynced_val=utils.UNSYNCED_TIME_ONE_HOUR_DIGIT,
+            use_centiseconds=True)
         return u'%(hours)i:%(minutes)02i:%(seconds)02i.%(milliseconds)02i' % components
 
     def _clean_text(self, text):

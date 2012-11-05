@@ -26,12 +26,11 @@ class SBVParser(BaseTextParser):
         return res
 
     def _get_data(self, match):
-        r = match.groupdict()
         output = {}
-        output['start'] = self._get_time(r['s_hour'], r['s_min'], r['s_sec'], r['s_secfr'])
-        output['end'] = self._get_time(r['e_hour'], r['e_min'], r['e_sec'], r['e_secfr'])
+        output['start'] = self._get_time(match['s_hour'], match['s_min'], match['s_sec'], match['s_secfr'])
+        output['end'] = self._get_time(match['e_hour'], match['e_min'], match['e_sec'], match['e_secfr'])
         # [br] are linebreaks:
-        text = '' if r['text'] is None else r['text']
+        text = '' if match['text'] is None else match['text']
         text = text.replace("[br]", "<br/>")
         output['text'] = text
         return output

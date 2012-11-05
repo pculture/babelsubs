@@ -1,4 +1,5 @@
 from babelsubs.generators.base import BaseGenerator, register
+from babelsubs.utils import UNSYNCED_TIME_ONE_HOUR_DIGIT
 
 class SBVGenerator(BaseGenerator):
     file_type = 'sbv'
@@ -23,6 +24,8 @@ class SBVGenerator(BaseGenerator):
         return self.line_delimiter.join(output)
 
     def format_time(self, time):
+        if not time:
+            time = UNSYNCED_TIME_ONE_HOUR_DIGIT
         seconds, milliseconds = divmod(int(time), 1000)
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)

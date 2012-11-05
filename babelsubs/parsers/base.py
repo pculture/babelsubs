@@ -30,10 +30,10 @@ class BaseTextParser(object):
         start_time and end_time in seconds. If it is not defined use -1.
         """
         for item in self._matches:
-            yield self._get_data(item)
+            yield self._get_data(item.groupdict())
 
     def _get_data(self, match):
-        return match.groupdict()
+        return match
 
     def _get_matches(self):
         return self._pattern.finditer(self.input_string)
@@ -56,7 +56,7 @@ class BaseTextParser(object):
         if not hasattr(self, 'sub_set'):
             self.sub_set = SubtitleSet(self.language)
             for match in self._matches:
-                item = self._get_data(match)
+                item = self._get_data(match.groupdict())
                 # fix me: support markup
                 text = self.get_markup(item['text'])
                 self.sub_set.append_subtitle(item['start'], item['end'], text, escape=False)

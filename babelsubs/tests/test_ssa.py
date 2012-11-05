@@ -5,8 +5,10 @@ except ImportError:
     from unittest import TestCase
 
 from babelsubs.tests import utils
+from babelsubs.utils import UNSYNCED_TIME_ONE_HOUR_DIGIT
 from babelsubs.generators.ssa import SSAGenerator
 from babelsubs.parsers.ssa import SSAParser
+from babelsubs import storage
 
 class SSAParsingTest(TestCase):
 
@@ -16,9 +18,9 @@ class SSAParsingTest(TestCase):
 
     def test_self_generate(self):
         parsed_subs1 = utils.get_subs("simple.ssa")
-        parsed_subs2 = SSAParser(unicode(parsed_subs1), 'en')
+        generated = SSAParser(unicode(parsed_subs1), 'en')
 
-        for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in parsed_subs2.to_internal()]):
+        for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in generated.to_internal()]):
             self.assertEquals(x1, x2)
 
     def test_formatting(self):
@@ -31,7 +33,12 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         parsed = SSAParser(subs, 'en')
         internal = parsed.to_internal()
 
+        # make sure timming looks right
+        subs = [x for x in internal.subtitle_items()]
+        self.assertEqual(subs[0][0], 40)
+        self.assertEqual(subs[0][1], 2930)
         self.assertEquals(len(parsed), 1)
+
         element = internal.get_subtitles()[0]
 
         self.assertEquals(len(element.getchildren()), 4)
@@ -63,3 +70,28 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
                 [x for x in internal2.subtitle_items(SSAGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
 
+
+    def test_timing_parser(self):
+        parsed_subs = utils.get_subs("simple.ssa")
+        subs = [a for a in parsed_subs.to_internal()]
+        self.assertEqual(subs[0][0], 40)
+        self.assertEqual(subs[0][1], 2930)
+
+    def test_timing_generator(self):
+        sset = storage.SubtitleSet('en')
+        sset.append_subtitle(40, 2930,"We started Universal Subtitles because we believe")
+        generated = unicode(SSAGenerator(sset))
+        self.assertIn('Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We started Universal Subtitles because we believe', generated)
+
+    def test_unsynced_generator(self):
+        subs = storage.SubtitleSet('en')
+        for x in xrange(0,5):
+            subs.append_subtitle(None, None,"%s" % x)
+        output = unicode(SSAGenerator(subs))
+        parsed = SSAParser(output,'en')
+        internal = parsed.to_internal()
+        subs = [x for x in internal]
+        self.assertEqual(len(subs), 5)
+        for i,sub in enumerate(subs):
+            self.assertEqual(sub[0], UNSYNCED_TIME_ONE_HOUR_DIGIT )
+            self.assertEqual(sub[1], UNSYNCED_TIME_ONE_HOUR_DIGIT )

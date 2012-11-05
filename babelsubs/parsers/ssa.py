@@ -1,11 +1,15 @@
 import re
 
 from babelsubs.parsers.srt import SRTParser
+from babelsubs.utils import (
+    centiseconds_to_milliseconds, UNSYNCED_TIME_ONE_HOUR_DIGIT
+)
 from base import register
 
 class SSAParser(SRTParser):
 
     file_type = ['ssa', 'ass']
+    MAX_SUB_TIME = UNSYNCED_TIME_ONE_HOUR_DIGIT
 
     def __init__(self, file, language=None):
         pattern = r'Dialogue: [\w=]+,' #Dialogue: <Marked> or <Layer>,
@@ -26,20 +30,22 @@ class SSAParser(SRTParser):
         return self.markup_re.sub(self.__replace, text)
     
     def _get_data(self, match):
-        r = match.groupdict()
         output = {}
-        output['start'] = self._get_time(r['s_hour'], r['s_min'], r['s_sec'], r['s_secfr'])
-        output['end'] = self._get_time(r['e_hour'], r['e_min'], r['e_sec'], r['e_secfr'])
-        output['text'] = '' if r['text'] is None else r['text']
+        output['start'] = self._get_time(match['s_hour'], match['s_min'], match['s_sec'], match['s_secfr'])
+        output['end'] = self._get_time(match['e_hour'], match['e_min'], match['e_sec'], match['e_secfr'])
+        output['text'] = '' if match['text'] is None else match['text']
 
         return output
 
     def _get_time(self, hour, min, sec, secfr):
-        if secfr is None:
-            secfr = '0'
-
-        hour, min, sec, fr = int(hour) * 3600, int(min) * 60, int(sec), float('.'+secfr)/10
-        return (hour + min + sec + fr) * 1000
+        milliseconds = centiseconds_to_milliseconds(secfr)
+        res =  (1000 * (
+            (int(hour)*60*60 )+
+            (int(min)*60) +
+            int(sec))) + milliseconds
+        if res >= self.MAX_SUB_TIME:
+            return None
+        return res
 
     def __replace(self, match):
         group = match.groupdict()

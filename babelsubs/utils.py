@@ -8,6 +8,12 @@ from itertools import chain
 DEFAULT_ALLOWED_TAGS = ['i', 'b', 'u']
 MULTIPLE_SPACES = re.compile('\s{2,}')
 BLANK_CHARS = re.compile('[\n\t\r]*')
+# We support unsyced subs, meaning there is not timing data for them
+# in which case we flag them with the largest possible time value
+UNSYNCED_TIME_FULL = (60 * 60 * 100 * 1000) - 1
+# some formats limit hours to 1 digit, so the max available time must
+# be adjusted
+UNSYNCED_TIME_ONE_HOUR_DIGIT = (60 * 60 * 10 * 1000) - 10
 
 def unescape_html(s):
     p = htmllib.HTMLParser(formatter.NullFormatter() )
@@ -100,7 +106,14 @@ def from_xmlish_text(input_str):
     # collapse whitespace on each new line
     return "\n".join( MULTIPLE_SPACES.sub(u" ", x).strip() for x in input_str.split('\n'))
 
-def milliseconds_to_time_clock_components(milliseconds):
+def unsynced_time_components(one_hour_digit=False, uses_centiseconds=False):
+    return {
+        'hours': 9 if one_hour_digit else 99,
+        'minutes': 59,
+        'seconds': 59,
+        'milliseconds': 99 if uses_centiseconds else 999,
+    }
+def milliseconds_to_time_clock_components(milliseconds, unsynced_val=UNSYNCED_TIME_FULL, use_centiseconds=False):
     """
     Converts milliseconds (as an int) to the
     hours, minutes, seconds and milliseconds.
@@ -112,5 +125,21 @@ def milliseconds_to_time_clock_components(milliseconds):
         components['seconds'], components['milliseconds'] = divmod(int(milliseconds), 1000)
         components['minutes'], components['seconds'] = divmod(components['seconds'], 60 )
         components['hours'], components['minutes'] = divmod(components['minutes'], 60 )
-
+    if use_centiseconds:
+        components['milliseconds'] /= 10
     return components
+
+def fraction_to_milliseconds(str_milli):
+    """
+    Converts milliseonds as an integer string to a 3 padded string, e.g.
+    1 -> 001
+    10 -> 010
+    100 -> 100
+    """
+    if not str_milli:
+        return 0
+    return int(str_milli.ljust(3, '0')) % 1000
+
+
+def centiseconds_to_milliseconds(centi):
+    return int(centi) * 10 if centi else 0
