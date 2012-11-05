@@ -70,7 +70,7 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
 
     def test_timing_parser(self):
         parsed_subs = utils.get_subs("simple.ssa")
-        subs = [a for a in parsed_subs.to_internal()]
+        subs = [a for a in parsed_subs.to_internal().subtitle_items()]
         self.assertEqual(subs[0][0], 40)
         self.assertEqual(subs[0][1], 2930)
 
@@ -91,5 +91,9 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         subs = [x for x in internal.subtitle_items()]
         self.assertEqual(len(internal), 5)
         for i,sub in enumerate(subs):
-            self.assertEqual(sub[0], UNSYNCED_TIME_ONE_HOUR_DIGIT )
-            self.assertEqual(sub[1], UNSYNCED_TIME_ONE_HOUR_DIGIT )
+            self.assertEqual(sub[0], None )
+            self.assertEqual(sub[1], None )
+        generated = SSAGenerator(internal)
+        self.assertEqual(generated.format_time(None), u'9:59:59.99')
+        self.assertIn(u'Dialogue: 0,9:59:59.99,9:59:59.99,Default,,0000,0000,0000,,2', unicode(generated))
+
