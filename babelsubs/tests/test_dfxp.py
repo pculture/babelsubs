@@ -80,3 +80,7 @@ class DFXPParsingTest(TestCase):
             self.assertIsNone(get_attr(node, 'begin'))
             self.assertIsNone(get_attr(node, 'end'))
 
+    def test_invalid(self):
+        with self.assertRaises(SubtitleParserError):
+            DFXPParser ("this\n\nisnot a valid subs format","en")
+

@@ -1,4 +1,4 @@
-from base import discover
+from base import discover, SubtitleParserError
 
 from dfxp import DFXPParser
 from sbv import SBVParser

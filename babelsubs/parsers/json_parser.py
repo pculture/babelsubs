@@ -8,10 +8,12 @@ from babelsubs.parsers.base import (
 class JSONParser(BaseTextParser):
     file_type = 'json'
 
-    def __init__(self, input_string, pattern, language=None, flags=[]):
+    def __init__(self, input_string, pattern, language=None, flags=[], eager_parse=True):
         self.input_string = input_string
         self.pattern = pattern
         self.language = language
+        super(JSONParser, self).__init__(input_string, pattern, language=language,
+            flags=[], eager_parse=eager_parse)
 
     def to_internal(self):
         if not hasattr(self, 'sub_set'):

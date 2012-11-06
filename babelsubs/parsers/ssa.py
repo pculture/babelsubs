@@ -11,7 +11,7 @@ class SSAParser(SRTParser):
     file_type = ['ssa', 'ass']
     MAX_SUB_TIME = UNSYNCED_TIME_ONE_HOUR_DIGIT
 
-    def __init__(self, file, language=None):
+    def __init__(self, input_string, language=None, eager_parse=True):
         pattern = r'Dialogue: [\w=]+,' #Dialogue: <Marked> or <Layer>,
         pattern += r'(?P<s_hour>\d):(?P<s_min>\d{2}):(?P<s_sec>\d{2})[\.\:](?P<s_secfr>\d+),' #<Start>,
         pattern += r'(?P<e_hour>\d):(?P<e_min>\d{2}):(?P<e_sec>\d{2})[\.\:](?P<e_secfr>\d+),' #<End>,
@@ -20,11 +20,11 @@ class SSAParser(SRTParser):
         pattern += r'\d{4},\d{4},\d{4},' #<MarginL>,<MarginR>,<MarginV>,
         pattern += r'[\w ]*,' #<Efect>,
         pattern += r'(?:\{.*?\})?(?P<text>.+?)\n' #[{<Override control codes>}]<Text>
-        super(SRTParser, self).__init__(file, pattern, [re.DOTALL])
         #replace \r\n to \n and fix end of last subtitle
-        self.input_string = self.input_string.replace('\r\n', '\n')+u'\n'
-        self.language = language
+        input_string = input_string.replace('\r\n', '\n')+u'\n'
         self.markup_re = re.compile(r"{\\(?P<start>[biu])1}(?P<text>.+?){\\(?P<end>[biu])0}")
+        super(SRTParser, self).__init__(input_string, pattern, flags=[re.DOTALL],
+            language=language, eager_parse=eager_parse)
 
     def get_markup(self, text):
         return self.markup_re.sub(self.__replace, text)

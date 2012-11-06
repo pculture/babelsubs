@@ -30,6 +30,7 @@
 
 import os
 import babelsubs.parsers as parsers
+from  babelsubs.parsers.base import SubtitleParserError
 import babelsubs.generators as generators
 
 def get_available_formats():

@@ -1,8 +1,8 @@
 # encoding: utf-8
 from unittest2 import TestCase
 
+from babelsubs import SubtitleParserError
 from babelsubs.tests import utils
-from babelsubs.utils import UNSYNCED_TIME_ONE_HOUR_DIGIT
 from babelsubs.generators.ssa import SSAGenerator
 from babelsubs.parsers.ssa import SSAParser
 from babelsubs import storage
@@ -96,4 +96,8 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         generated = SSAGenerator(internal)
         self.assertEqual(generated.format_time(None), u'9:59:59.99')
         self.assertIn(u'Dialogue: 0,9:59:59.99,9:59:59.99,Default,,0000,0000,0000,,2', unicode(generated))
+
+    def test_invalid(self):
+        with self.assertRaises(SubtitleParserError):
+            SSAParser ("this\n\nisnot a valid subs format","en")
 

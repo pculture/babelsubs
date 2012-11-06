@@ -1,6 +1,6 @@
 from lxml import etree
 from babelsubs.utils import unescape_html
-from babelsubs.parsers.base import BaseTextParser, register
+from babelsubs.parsers.base import BaseTextParser, register, SubtitleParserError
 from babelsubs.storage import SubtitleSet
 
 
@@ -24,15 +24,21 @@ class YoutubeParser(BaseTextParser):
 
     def to_internal(self):
         if not hasattr(self, 'sub_set'):
-            self.sub_set = SubtitleSet(self.language)
-            xml = etree.fromstring(self.input_string.encode('utf-8'))
+            try:
+                self.sub_set = SubtitleSet(self.language)
+                xml = etree.fromstring(self.input_string.encode('utf-8'))
 
-            for item in xml:
-                start = int(float(item.get('start')) * 1000)
-                duration = int(float(item.get('dur', 0)) * 1000)
-                end = start + duration
-                text = item.text and unescape_html(item.text) or u''
-                self.sub_set.append_subtitle(start, end, text)
+                item = None
+                for item in xml:
+                    start = int(float(item.get('start')) * 1000)
+                    duration = int(float(item.get('dur', 0)) * 1000)
+                    end = start + duration
+                    text = item.text and unescape_html(item.text) or u''
+                    self.sub_set.append_subtitle(start, end, text)
+                if not item:
+                    raise ValueError("No subs")
+            except Exception as e:
+                raise SubtitleParserError(original_error=e)
 
         return self.sub_set
 

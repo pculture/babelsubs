@@ -1,6 +1,7 @@
 # encoding: utf-8
 from unittest2 import TestCase
 
+from babelsubs import SubtitleParserError
 from babelsubs.parsers.txt import TXTParser
 
 
@@ -17,3 +18,8 @@ class TXTParsingTest(TestCase):
         subs = TXTParser.parse(TXT_TEXT.encode('utf-8'))
         self.assertEquals(len(subs), 2)
         [x for x in subs.to_internal().subtitle_items()]
+
+    def test_invalid(self):
+        with self.assertRaises(SubtitleParserError):
+            TXTParser("\n\n","en")
+

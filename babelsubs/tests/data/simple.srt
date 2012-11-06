@@ -28,7 +28,8 @@ Take an existing video on the web, submit the <b>URL<br/></b> to our website
 
 8
 00:00:32,033 --> 00:00:39,003
-and then type along with the dialog to create the subtitles
+and then type along with the dialog
+to create the subtitles
 
 9
 00:00:39,003 --> 00:00:44,049

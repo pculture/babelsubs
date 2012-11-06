@@ -3,6 +3,7 @@ from unittest2 import TestCase
 from lxml import etree
 from babelsubs.storage import get_contents, SubtitleSet
 from babelsubs.generators.srt import SRTGenerator
+from babelsubs.parsers import SubtitleParserError
 from babelsubs.parsers.srt import SRTParser
 from babelsubs.tests import utils
 
@@ -43,7 +44,7 @@ class SRTParsingTest(TestCase):
 
     def test_timed_data_parses_correctly(self):
         subs = utils.get_data_file_path('timed_text.srt')
-        parsed = babelsubs.load_from(subs, type='srt', language='en')
+        parsed = babelsubs.load_from_file(subs, type='srt', language='en')
 
         self.assertNotEquals(parsed, None)
 
@@ -139,4 +140,9 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         self.assertEqual(generated.format_time(None), u'99:59:59,999')
         self.assertIn(u'''1\r\n99:59:59,999 --> 99:59:59,999\r\n0\r\n\r\n2\r\n99:59:59,999 --> 99:59:59,999\r\n1\r\n\r\n3\r\n99:59:59,999 --> 99:59:59,999\r\n2\r\n\r\n4\r\n99:59:59,999 --> 99:59:59,999\r\n3\r\n\r\n5\r\n99:59:59,999 --> 99:59:59,999\r\n4\r\n''',
                     unicode(generated))
+
+
+    def test_invalid(self):
+        with self.assertRaises(SubtitleParserError):
+            SRTParser ("this\n\nisnot a valid subs format","en")
 
