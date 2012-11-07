@@ -30,7 +30,7 @@ class GeneratorListClass(dict):
         self[type or handler.file_type] = handler
 
     def __getitem__(self, item):
-        return self.get(item, None)
+        return super(GeneratorListClass, self).__getitem__(item.lower())
 
 GeneratorList = GeneratorListClass()
 
