@@ -88,12 +88,12 @@ class ParserListClass(dict):
 
         if isinstance(file_type, list):
             for ft in file_type:
-                self[ft] = parser
+                self[ft.lower()] = parser
         else:
             self[file_type] = parser
 
     def __getitem__(self, item):
-        return self.get(item, None)
+        return super(ParserListClass, self).__getitem__(item.lower())
 
 ParserList = ParserListClass()
 
