@@ -16,10 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
-from lxml import etree
 import os
 import re
+from lxml import etree
 from xml.sax.saxutils import escape as escape_xml
+from collections import namedtuple
 
 from babelsubs import utils
 
@@ -31,6 +32,8 @@ TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
+
+SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
 
 def get_attr(el, attr):
     """Get the string of an attribute, or None if it's not present.
@@ -277,12 +280,13 @@ class SubtitleSet(object):
                 if begin else None)
         to_ms = (time_expression_to_milliseconds(end)
                 if end else None)
+
         if not mappings:
             content = get_contents(el)
         else:
             content = self.get_content_with_markup(el, mappings).strip()
 
-        return (from_ms, to_ms, content, meta)
+        return SubtitleLine(from_ms, to_ms, content, meta)
 
     def __clear_namespace(self, name):
         return name.split("}")[-1] if '}' in name else name

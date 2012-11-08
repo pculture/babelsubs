@@ -19,9 +19,9 @@ class SRTParsingTest(TestCase):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
         sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
-        self.assertEquals(sub_data[0][0], 4)
-        self.assertEquals(sub_data[0][1], 2093)
-        self.assertEquals(sub_data[0][2], "We started <b>Universal Subtitles</b> because we believe")
+        self.assertEquals(sub_data[0].start_time, 4)
+        self.assertEquals(sub_data[0].end_time, 2093)
+        self.assertEquals(sub_data[0].text, "We started <b>Universal Subtitles</b> because we believe")
 
     def test_round_trip(self):
         subs1  = utils.get_subs("simple.srt")
@@ -133,9 +133,11 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
 
         subs = [x for x in internal.subtitle_items()]
         self.assertEqual(len(internal), 5)
+
         for i,sub in enumerate(subs):
-            self.assertEqual(sub[0], None )
-            self.assertEqual(sub[1], None )
+            self.assertEqual(sub.start_time, None)
+            self.assertEqual(sub.end_time, None)
+
         generated = SRTGenerator(internal)
         self.assertEqual(generated.format_time(None), u'99:59:59,999')
         self.assertIn(u'''1\r\n99:59:59,999 --> 99:59:59,999\r\n0\r\n\r\n2\r\n99:59:59,999 --> 99:59:59,999\r\n1\r\n\r\n3\r\n99:59:59,999 --> 99:59:59,999\r\n2\r\n\r\n4\r\n99:59:59,999 --> 99:59:59,999\r\n3\r\n\r\n5\r\n99:59:59,999 --> 99:59:59,999\r\n4\r\n''',
