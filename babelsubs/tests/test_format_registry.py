@@ -1,6 +1,7 @@
 from unittest2 import TestCase
 from babelsubs import get_available_formats
 from babelsubs.parsers import base, discover
+from babelsubs.parsers.base import ParserList
 from babelsubs.generators.base import GeneratorList
 from babelsubs.generators.base import discover as generator_discover
 
@@ -8,7 +9,7 @@ from babelsubs.generators.base import discover as generator_discover
 class FormatRegistryTest(TestCase):
     def test_available_formats(self):
         actual_formats = sorted(get_available_formats())
-        expected_formats = sorted(['ass', 'ttml', 'srt', 'dfxp', 'ssa', 'sbv', 'txt', 'json', 'xml', 'youtube'])
+        expected_formats = sorted(['ass', 'ttml', 'srt', 'dfxp', 'ssa', 'sbv', 'txt', 'json', 'xml'])
         self.assertEqual(actual_formats, expected_formats)
 
     def test_parsing_discover_lowercase(self):
@@ -17,12 +18,12 @@ class FormatRegistryTest(TestCase):
         self.assertTrue(discover('srt'))
         self.assertTrue(discover('SRT'))
 
-
     def test_parsing_discover_missing(self):
         with self.assertRaises(KeyError):
-            base.ParserList['badformat']
+            ParserList['badformat']
         with self.assertRaises(KeyError):
             discover('badformat')
+
     def test_generator_discover_lowercase(self):
         self.assertTrue(GeneratorList['srt'])
         self.assertTrue(GeneratorList['SRT'])
@@ -30,7 +31,7 @@ class FormatRegistryTest(TestCase):
         self.assertTrue(generator_discover('SRT'))
 
 
-    def test_parsing_discover_missing(self):
+    def test_generating_discover_missing(self):
         with self.assertRaises(KeyError):
             GeneratorList['badformat']
         with self.assertRaises(KeyError):
