@@ -28,14 +28,15 @@ class YoutubeParser(BaseTextParser):
                 self.sub_set = SubtitleSet(self.language)
                 xml = etree.fromstring(self.input_string.encode('utf-8'))
 
-                item = None
+                has_subs = False
                 for item in xml:
                     start = int(float(item.get('start')) * 1000)
                     duration = int(float(item.get('dur', 0)) * 1000)
                     end = start + duration
                     text = item.text and unescape_html(item.text) or u''
                     self.sub_set.append_subtitle(start, end, text)
-                if not item:
+                    has_subs = True
+                if not has_subs:
                     raise ValueError("No subs")
             except Exception as e:
                 raise SubtitleParserError(original_error=e)
