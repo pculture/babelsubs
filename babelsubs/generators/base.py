@@ -27,7 +27,13 @@ class BaseGenerator(object):
 class GeneratorListClass(dict):
 
     def register(self, handler, type=None):
-        self[type or handler.file_type] = handler
+        file_type = handler.file_type
+
+        if isinstance(file_type, list):
+            for ft in file_type:
+                self[ft.lower()] = handler
+        else:
+            self[file_type] = handler
 
     def __getitem__(self, item):
         return super(GeneratorListClass, self).__getitem__(item.lower())
