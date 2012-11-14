@@ -6,7 +6,7 @@ from babelsubs.utils import to_bcp47
 from babelsubs.generators.base import BaseGenerator, register
 
 class TTMLGenerator(BaseGenerator):
-    file_type = 'xml'
+    file_type = ['xml', 'ttml']
     remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
     use_named_styles = True
     STYLES = {
