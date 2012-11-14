@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
+from itertools import izip_longest
 import os
 import re
 from lxml import etree
@@ -116,6 +117,60 @@ def to_clock_time(time_expression, tick_rate=None):
     if match:
         return time_expression
     return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression, tick_rate))
+
+def diff(set_1, set_2):
+    """
+    Performs a simple diff, only taking into account:
+    - Start and end time
+    - Text
+
+    The returned data structure looks like this:
+    {
+        changed : bool (true if either text_changed or time_changed > 0)
+        text_changed: (float between 0 and 1)
+        time_changed: (float between 0 and 1)
+        subtitle_data: [
+            {
+                time_changed: bool,
+                text_changed: bool,
+                subtitle_1: [the subtitle data, (start_time, end_time, text),
+                subtitle_2: [the subtitle data, (start_time, end_time, text),
+            }, ... ordered list with both subtitles. If one list is longer , you
+            will get an empty SubtitleLine named tupple
+        ]
+    """
+    result = {
+        'subtitle_data' : [],
+        'changed': False,
+        'text_changed': 0,
+        'time_changed': 0,
+        }
+    text_change_count = 0
+    time_change_count = 0
+    if len(set_1) == 0 and len(set_2) == 0:
+        # empty sets are the same
+        return result
+    for sub_1, sub_2 in izip_longest([x for x in set_1.subtitle_items()],
+                                       [x for x in set_2.subtitle_items()]):
+        sub_1 = sub_1 or SubtitleLine(None, None, None, None)
+        sub_2 = sub_2 or SubtitleLine(None, None, None, None)
+        subtitle_result  = {
+            'time_changed': False,
+            'text_changed': False,
+            'subtitles' : [(sub_1.start_time, sub_1.end_time, sub_1.text), (sub_2.start_time, sub_2.end_time, sub_2.text)]
+        }
+        subtitle_result['time_changed'] = sub_1.start_time != sub_2.start_time or sub_1.end_time != sub_2.end_time
+        if subtitle_result['time_changed']:
+            time_change_count +=1
+        subtitle_result['text_changed']  = sub_1.text != sub_2.text
+        if subtitle_result['text_changed']:
+            text_change_count +=1
+        result['subtitle_data'].append(subtitle_result)
+    longest_set_count = max(len(set_1),len(set_2))
+    result['text_changed'] = text_change_count / (longest_set_count * 1.0)
+    result['time_changed'] = time_change_count / (longest_set_count * 1.0)
+    result['changed'] = (time_change_count + text_change_count) > 0
+    return result
 
 class SubtitleSet(object):
     BASE_TTML = r'''
@@ -373,7 +428,6 @@ class SubtitleSet(object):
 
     def validate(self):
         raise NotImplementedError("Validation isnt working so far")
-        schema.assertValid(self._ttml)
-        
+
     def to_xml(self):
         return etree.tostring(self._ttml, pretty_print=True)
