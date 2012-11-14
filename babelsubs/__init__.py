@@ -30,11 +30,12 @@
 
 import os
 import babelsubs.parsers as parsers
-from  babelsubs.parsers.base import SubtitleParserError
+from babelsubs.parsers.base import ParserList, SubtitleParserError
+from babelsubs.generators.base import GeneratorList
 import babelsubs.generators as generators
 
 def get_available_formats():
-    return parsers.base.ParserList.keys()
+    return sorted(list(set(ParserList.keys()).intersection(set(GeneratorList.keys()))))
 
 def load_from(sub_from, type=None, language=None):
     if hasattr(sub_from, 'read'):
