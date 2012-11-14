@@ -157,7 +157,7 @@ def diff(set_1, set_2):
         subtitle_result  = {
             'time_changed': False,
             'text_changed': False,
-            'subtitles' : [(sub_1.start_time, sub_1.end_time, sub_1.text), (sub_2.start_time, sub_2.end_time, sub_2.text)]
+            'subtitles' : [sub_1, sub_2]
         }
         subtitle_result['time_changed'] = sub_1.start_time != sub_2.start_time or sub_1.end_time != sub_2.end_time
         if subtitle_result['time_changed']:
