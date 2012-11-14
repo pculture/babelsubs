@@ -313,18 +313,18 @@ class SubtitleSet(object):
                 value = "%s"
 
                 if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
-                    value = value % mappings["bold"]
+                    value = value % mappings.get("bold", "")
 
                 if attrs.get('fontStyle', '') == 'italic' and 'italics' in mappings:
-                    value = value % mappings["italics"]
+                    value = value % mappings.get("italics", "")
 
                 if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
-                    value = value % mappings["underline"]
+                    value = value % mappings.get("underline", "")
 
                 text.append(value % child.text)
 
             if tag == "br":
-                text.append(mappings["linebreaks"])
+                text.append(mappings.get("linebreaks", ""))
 
             if child.tail:
                 text.append(child.tail)
