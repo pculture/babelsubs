@@ -85,3 +85,16 @@ class DiffingTest(TestCase):
         self.assertEqual(subs_result[0].text , None)
         self.assertEqual(subs_result[1].text , "Hey 3")
 
+    def test_unsynced_reflect_time_changes(self):
+        set_1 = SubtitleSet.from_list('en', [
+            (0, 1000, "Hey 1"),
+            ])
+        set_2 = SubtitleSet.from_list('en', [
+            (0, 1000, "Hey 1"),
+            (None, None, "Hey 2"),
+            ])
+        result = diff(set_1, set_2)
+
+        self.assertEqual(result['time_changed'], 0.5)
+
+

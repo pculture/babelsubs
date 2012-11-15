@@ -152,6 +152,7 @@ def diff(set_1, set_2):
         return result
     for sub_1, sub_2 in izip_longest([x for x in set_1.subtitle_items()],
                                        [x for x in set_2.subtitle_items()]):
+        sub_added = (sub_1 is None) or (sub_2 is None)
         sub_1 = sub_1 or SubtitleLine(None, None, None, None)
         sub_2 = sub_2 or SubtitleLine(None, None, None, None)
         subtitle_result  = {
@@ -159,10 +160,14 @@ def diff(set_1, set_2):
             'text_changed': False,
             'subtitles' : [sub_1, sub_2]
         }
-        subtitle_result['time_changed'] = sub_1.start_time != sub_2.start_time or sub_1.end_time != sub_2.end_time
+        if sub_added:
+            subtitle_result['text_changed']  = True
+            subtitle_result['time_changed'] = True
+        else:
+            subtitle_result['text_changed']  = sub_1.text != sub_2.text
+            subtitle_result['time_changed'] = sub_1.start_time != sub_2.start_time or sub_1.end_time != sub_2.end_time
         if subtitle_result['time_changed']:
-            time_change_count +=1
-        subtitle_result['text_changed']  = sub_1.text != sub_2.text
+                time_change_count +=1
         if subtitle_result['text_changed']:
             text_change_count +=1
         result['subtitle_data'].append(subtitle_result)
