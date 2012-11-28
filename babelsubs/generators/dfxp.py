@@ -7,7 +7,7 @@ class DFXPGenerator(BaseGenerator):
     a small shim to keep the public interface between all generators
     regular.
     """
-    file_type = 'dfxp'
+    file_type = ['dfxp', 'xml' ]
 
     def __init__(self, subtitle_set, line_delimiter=u'\n', language=None):
         super(DFXPGenerator, self).__init__(subtitle_set, line_delimiter,

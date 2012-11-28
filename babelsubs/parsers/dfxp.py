@@ -11,7 +11,7 @@ class DFXPParser(BaseTextParser):
     mechanism we're using. So most things should be done over storage.py
     """
 
-    file_type = ['dfxp', 'xml', 'ttml']
+    file_type = ['dfxp', 'xml']
     no_unicode = True
 
     def __init__(self, input_string, language=None):
