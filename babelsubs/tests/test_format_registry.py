@@ -37,3 +37,7 @@ class FormatRegistryTest(TestCase):
         with self.assertRaises(KeyError):
             generator_discover('badformat')
 
+    def test_dfxp_aliases(self):
+        self.assertTrue(discover('ttml'))
+        self.assertTrue(discover('xml'))
+
