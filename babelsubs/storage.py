@@ -404,15 +404,20 @@ class SubtitleSet(object):
 
         For example:
 
-            [(0, 1000, "Hello, "),
+            [(0, 1000, "Hello, ", {'new_paragraph':True}),
              (1100, None, "world!")]
 
         """
         subs = SubtitleSet(language_code=language_code)
 
-        for s in subtitles:
-            subs.append_subtitle( *s, **{'escape':escape})
 
+        for s in subtitles:
+            extra = {}
+            if len(s) >= 3:
+               extra = s[3]
+               s = s[:-1]
+            extra['escape'] = escape
+            subs.append_subtitle( *s, **extra)
         return subs
 
     def _get_tick_rate(self):
