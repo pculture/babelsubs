@@ -325,7 +325,7 @@ class SubtitleSet(object):
         for el in self.get_subtitles():
             meta = {
                 NEW_PARAGRAPH_META_KEY: el.attrib.get(NEW_PARAGRAPH_META_KEY,
-                    'false')
+                    'false') == 'true'
             }
             result.append(self._extract_from_el(el, meta, mappings))
 

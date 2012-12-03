@@ -84,7 +84,7 @@ class AddSubtitlesTest(TestCase):
         dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
         dfxp.append_subtitle(1000, 2000, "paragraph 1 - B")
         dfxp.append_subtitle(2000, 3000, "paragraph 2 - A", new_paragraph=True)
-        dfxp.append_subtitle(3000, 4000, "paragraph 2 - B")
+        dfxp.append_subtitle(3000, 4000, "paragraph 2 - B", new_paragraph=False)
         dfxp.append_subtitle(3000, 4000, "paragraph 2 - C")
         divs = dfxp._ttml.xpath('/n:tt/n:body/n:div', namespaces={'n': storage.TTML_NAMESPACE_URI})
         self.assertEquals(len(divs), 2)
