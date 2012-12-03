@@ -413,7 +413,7 @@ class SubtitleSet(object):
 
         for s in subtitles:
             extra = {}
-            if len(s) >= 3:
+            if len(s) > 3:
                extra = s[3]
                s = s[:-1]
             extra['escape'] = escape
