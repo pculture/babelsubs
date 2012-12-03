@@ -255,8 +255,6 @@ class SubtitleSet(object):
             el_count = 0
 
             for el in div.xpath('n:p', namespaces={'n': TTML_NAMESPACE_URI}):
-                if el_count == 0:
-                    el.attrib[NEW_PARAGRAPH_META_KEY] = 'true'
                 el_count += 1
                 result.append(el)
 
