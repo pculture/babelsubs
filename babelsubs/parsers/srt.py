@@ -15,8 +15,9 @@ class SRTParser(BaseTextParser):
         pattern += r' --> '
         pattern += r'(?P<e_hour>\d{2}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})(,(?P<e_secfr>\d*))?'
         pattern += r'\n(\n|(?P<text>.+?)\n\n)'
-        #replace \r\n to \n and fix end of last subtitle
-        input_string = input_string.replace('\r\n', '\n')+'\n\n'
+        # normalize line endings to \n and
+        # add line end for last sub
+        input_string = input_string.replace('\r\n', '\n').replace('\r', '\n')+'\n\n'
         super(SRTParser, self).__init__(input_string, pattern, language=language_code,
             flags=[re.DOTALL], eager_parse=eager_parse)
 

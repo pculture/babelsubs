@@ -148,3 +148,15 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         with self.assertRaises(SubtitleParserError):
             SRTParser ("this\n\nisnot a valid subs format","en")
 
+    def test_mixed_newlines(self):
+        # some folks will have valid srts, then edit them on an editor
+        # that will save line breaks on the current platform separator
+        # e.g. \n on unix , \r...
+        # make sure we normalize this stuff
+        subs = utils.get_subs("Untimed_text.srt")
+        parsed = subs.to_internal()
+        self.assertEqual(len(subs), 43)
+        # second sub should have a line break
+        self.assertIn('<p begin="99:59:59.000" end="99:59:59.000">I\'m gutted. <br/>Absolutely gutted.</p>',
+            parsed.to_xml())
+
