@@ -321,9 +321,10 @@ class SubtitleSet(object):
         result = []
 
         for el in self.get_subtitles():
+            # bool(el.getprevious()) doesn't do what you'd think
+            # use 'is None'
             meta = {
-                NEW_PARAGRAPH_META_KEY: el.attrib.get(NEW_PARAGRAPH_META_KEY,
-                    'false') == 'true'
+                NEW_PARAGRAPH_META_KEY: True if el.getprevious()is None  else False
             }
             result.append(self._extract_from_el(el, meta, mappings))
 

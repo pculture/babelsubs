@@ -81,6 +81,7 @@ class AddSubtitlesTest(TestCase):
         
     def test_new_paragraph(self):
         dfxp = storage.SubtitleSet('en')
+        # first sub is always a paragraph break ;)
         dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
         dfxp.append_subtitle(1000, 2000, "paragraph 1 - B")
         dfxp.append_subtitle(2000, 3000, "paragraph 2 - A", new_paragraph=True)
@@ -90,7 +91,14 @@ class AddSubtitlesTest(TestCase):
         self.assertEquals(len(divs), 2)
         self.assertEquals(len(self._paragraphs_in_div(divs[0])), 2)
         self.assertEquals(len(self._paragraphs_in_div(divs[1])), 3)
-                     
+        sub_lines = dfxp.subtitle_items()
+
+        # make sure subtitle items returns the right metadata
+        self.assertTrue(sub_lines[0].meta['new_paragraph'])
+        self.assertFalse(sub_lines[1].meta['new_paragraph'])
+        self.assertTrue(sub_lines[2].meta['new_paragraph'])
+        self.assertFalse(sub_lines[3].meta['new_paragraph'])
+
     def test_no_timing(self):
         dfxp = storage.SubtitleSet('en')
         dfxp.append_subtitle(0, 1000, "paragraph 1 - A")
