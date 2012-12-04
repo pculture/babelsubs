@@ -69,8 +69,8 @@ such as MP4, theora, webM and over HTML 5.
 
 18
 00:01:13,079 --> 00:01:19,041
-Our goal is for every video on the web to be subtitle-able so that anyone who cares about
+Our goal is for every video on the web to be subtitle-able so that anyone who cares about \<script\>alert\<script\>
 
 19
 00:01:19,041 --> 00:01:22,066
-the video can help make it more accessible.
+the video can help make it more accessible.<script>alert</script>
