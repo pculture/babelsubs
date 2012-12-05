@@ -118,7 +118,7 @@ def to_clock_time(time_expression, tick_rate=None):
         return time_expression
     return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression, tick_rate))
 
-def diff(set_1, set_2):
+def diff(set_1, set_2, mappings=None):
     """
     Performs a simple diff, only taking into account:
     - Start and end time
@@ -150,8 +150,8 @@ def diff(set_1, set_2):
     if len(set_1) == 0 and len(set_2) == 0:
         # empty sets are the same
         return result
-    for sub_1, sub_2 in izip_longest([x for x in set_1.subtitle_items()],
-                                       [x for x in set_2.subtitle_items()]):
+    for sub_1, sub_2 in izip_longest([x for x in set_1.subtitle_items(mappings)],
+                                       [x for x in set_2.subtitle_items(mappings)]):
         sub_added = (sub_1 is None) or (sub_2 is None)
         sub_1 = sub_1 or SubtitleLine(None, None, None, None)
         sub_2 = sub_2 or SubtitleLine(None, None, None, None)
