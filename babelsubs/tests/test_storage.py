@@ -147,5 +147,6 @@ class AccessTest(TestCase):
             (2000, 3000, 'How are you?'),
         ]
         ss = storage.SubtitleSet.from_list('en', subs)
-        ss[0]
-        ss[1]
+        # make sure that from_list ends up with a usable list
+        self.assertIsNotNone(ss[0])
+        self.assertIsNotNone(ss[1])

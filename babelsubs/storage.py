@@ -239,12 +239,17 @@ class SubtitleSet(object):
                 'language_code': language_code or '',
             })
 
-        self.subtitles = self.subtitle_items()
+        if initial_data:
+            self.subtitles = self.subtitle_items()
+        else:
+            self.subtitles = None
 
     def __len__(self):
         return len(self.get_subtitles())
 
     def __getitem__(self, key):
+        if self.subtitles is None:
+            self.subtitles = self.get_subtitles()
         return self.subtitles[key]
 
     def get_subtitles(self):
