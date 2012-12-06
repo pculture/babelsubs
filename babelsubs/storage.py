@@ -249,7 +249,7 @@ class SubtitleSet(object):
 
     def __getitem__(self, key):
         if self.subtitles is None:
-            self.subtitles = self.get_subtitles()
+            self.subtitles = self.subtitle_items()
         return self.subtitles[key]
 
     def get_subtitles(self):
