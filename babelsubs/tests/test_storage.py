@@ -137,3 +137,15 @@ class AddSubtitlesTest(TestCase):
 
         dfxp = storage.SubtitleSet.from_list('en', subtitles, escape=True)
         self.assertEqual( storage.get_contents(dfxp.get_subtitles()[0]), 'Hey <a>html anchor</a>')
+
+
+class AccessTest(TestCase):
+
+    def test_indexing(self):
+        subs = [
+            (0, 1000, 'Hi'),
+            (2000, 3000, 'How are you?'),
+        ]
+        ss = storage.SubtitleSet.from_list('en', subs)
+        ss[0]
+        ss[1]
