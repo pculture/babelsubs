@@ -213,7 +213,7 @@ class SubtitleSet(object):
         </tt>
     '''
 
-    SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
+    SUBTITLE_XML = r'''<p xmlns:tts="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
 
     SUBTITLE_DIV_XML = r'''<div xmlns="http://www.w3.org/ns/ttml"></div>'''
     
