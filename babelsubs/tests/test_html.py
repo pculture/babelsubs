@@ -25,7 +25,3 @@ class HTMLGeneratorTest(TestCase):
         # script tag should be gone
         self.assertText("the video can help make it more accessible.alert", 18)
 
-    def test_escaping(self):
-        # FIXME: we need to figure out how to keep markup like data in the system
-        self.assertText("the video can help make it more accessible.alert", 17)
-
