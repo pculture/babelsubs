@@ -20,6 +20,13 @@ class SSAParsingTest(TestCase):
         for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in generated.to_internal()]):
             self.assertEquals(x1, x2)
 
+    def test_generate_centiseconds(self):
+        sset = storage.SubtitleSet('en')
+        sset.append_subtitle(138, 238,'hey')
+        output = unicode(SSAGenerator(sset))
+        # make sure time is 230 milliseconds not 38
+        self.assertIn("Dialogue: 0,0:00:00.13,0:00:00.23", output)
+
     def test_formatting(self):
         subs = """[Script Info]
 Title: 
