@@ -1,6 +1,7 @@
 import re
 import bleach
 import htmllib
+import htmlentitydefs
 import formatter
 
 from itertools import chain
@@ -89,6 +90,37 @@ def strip_tags(text, tags=None):
     if tags is None:
         tags = DEFAULT_ALLOWED_TAGS
     return bleach.clean(text, tags=tags, strip=True)
+
+
+def escape_ampersands(text):
+    """Take a string of chars and replace ampersands with &amp;"""
+    return text.replace('&', '&amp;')
+
+def entities_to_chars(text):
+    """Removes HTML or XML character references and entities from a text string.
+
+    http://effbot.org/zone/re-sub.htm#unescape-html
+
+    """
+    def fixup(m):
+        text = m.group(0)
+        if text[:2] == "&#":
+            # character reference
+            try:
+                if text[:3] == "&#x":
+                    return unichr(int(text[3:-1], 16))
+                else:
+                    return unichr(int(text[2:-1]))
+            except ValueError:
+                pass
+        else:
+            # named entity
+            try:
+                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+            except KeyError:
+                pass
+        return text # leave as is
+    return re.sub("&#?\w+;", fixup, text)
 
 def from_xmlish_text(input_str):
     """
