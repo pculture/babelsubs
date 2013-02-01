@@ -13,3 +13,5 @@ docs/_build
 /coverage.xml
 /nosetests.xml
 /.idea/
+tags
+tags.bak

@@ -30,12 +30,23 @@ class SBVParser(BaseTextParser):
 
     def _get_data(self, match):
         output = {}
-        output['start'] = self._get_time(match['s_hour'], match['s_min'], match['s_sec'], match['s_secfr'])
-        output['end'] = self._get_time(match['e_hour'], match['e_min'], match['e_sec'], match['e_secfr'])
-        # [br] are linebreaks:
-        text = '' if match['text'] is None else match['text']
+        output['start'] = self._get_time(match['s_hour'],
+                                         match['s_min'],
+                                         match['s_sec'],
+                                         match['s_secfr'])
+        output['end'] = self._get_time(match['e_hour'],
+                                       match['e_min'],
+                                       match['e_sec'],
+                                       match['e_secfr'])
+        text = ('' if match['text'] is None
+                else utils.escape_ampersands(match['text']))
+        print text
+
+        # [br] are linebreaks
         text = text.replace("[br]", "<br/>")
+
         output['text'] = text
+
         return output
 
 

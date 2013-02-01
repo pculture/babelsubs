@@ -2,7 +2,8 @@ import re
 
 from babelsubs.parsers.srt import SRTParser
 from babelsubs.utils import (
-    centiseconds_to_milliseconds, UNSYNCED_TIME_ONE_HOUR_DIGIT
+    centiseconds_to_milliseconds, escape_ampersands,
+    UNSYNCED_TIME_ONE_HOUR_DIGIT
 )
 from base import register
 
@@ -31,9 +32,16 @@ class SSAParser(SRTParser):
     
     def _get_data(self, match):
         output = {}
-        output['start'] = self._get_time(match['s_hour'], match['s_min'], match['s_sec'], match['s_secfr'])
-        output['end'] = self._get_time(match['e_hour'], match['e_min'], match['e_sec'], match['e_secfr'])
-        output['text'] = '' if match['text'] is None else match['text']
+        output['start'] = self._get_time(match['s_hour'],
+                                         match['s_min'],
+                                         match['s_sec'],
+                                         match['s_secfr'])
+        output['end'] = self._get_time(match['e_hour'],
+                                       match['e_min'],
+                                       match['e_sec'],
+                                       match['e_secfr'])
+        output['text'] = ('' if match['text'] is None else
+                          escape_ampersands(match['text']))
 
         return output
 
