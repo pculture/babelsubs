@@ -138,6 +138,16 @@ class AddSubtitlesTest(TestCase):
         dfxp = storage.SubtitleSet.from_list('en', subtitles, escape=True)
         self.assertEqual( storage.get_contents(dfxp.get_subtitles()[0]), 'Hey <a>html anchor</a>')
 
+    def test_paragraph_from_list(self):
+        subs = []
+        for x in xrange(0,10):
+            subs.append((x * 1000, x*1000 + 999, "Sub %x" % x , {'new_paragraph': x%2 == 0}))
+
+        dfxp = storage.SubtitleSet.from_list('en', subs)
+        self.assertEqual(len(dfxp.get_subtitles()), 10)
+        self.assertEqual(len(dfxp.subtitle_items()), 10)
+        for i,sub in enumerate(dfxp.subtitle_items()):
+            self.assertEqual(sub.meta['new_paragraph'] , i % 2 ==0)
 
 class AccessTest(TestCase):
 
