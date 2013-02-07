@@ -145,11 +145,17 @@ def unsynced_time_components(one_hour_digit=False, uses_centiseconds=False):
         'seconds': 59,
         'milliseconds': 99 if uses_centiseconds else 999,
     }
-def milliseconds_to_time_clock_components(milliseconds, unsynced_val=UNSYNCED_TIME_FULL, use_centiseconds=False):
-    """
-    Converts milliseconds (as an int) to the
-    hours, minutes, seconds and milliseconds.
-    None will be converted to all zeros
+def milliseconds_to_time_clock_components(milliseconds,
+                                          unsynced_val=UNSYNCED_TIME_FULL,
+                                          use_centiseconds=False):
+    """Convert milliseconds to a dict of hours, minutes, seconds, milliseconds.
+
+    Milliseconds should be given as an integer, or None.  None will be converted
+    to all zeros.
+
+    If use_centiseconds is True, the resulting dict will have a centiseconds
+    entry instead of a milliseconds one.
+
     """
     components = dict(hours=0, minutes=0, seconds=0, milliseconds=0)
 
@@ -157,8 +163,11 @@ def milliseconds_to_time_clock_components(milliseconds, unsynced_val=UNSYNCED_TI
         components['seconds'], components['milliseconds'] = divmod(int(milliseconds), 1000)
         components['minutes'], components['seconds'] = divmod(components['seconds'], 60 )
         components['hours'], components['minutes'] = divmod(components['minutes'], 60 )
+
     if use_centiseconds:
-        components['milliseconds'] /= 10
+        ms = components.pop('milliseconds')
+        components['centiseconds'] = round(ms / 10.0)
+
     return components
 
 def fraction_to_milliseconds(str_milli):

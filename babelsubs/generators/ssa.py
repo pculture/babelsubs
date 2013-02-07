@@ -28,7 +28,7 @@ class SSAGenerator(BaseGenerator):
             milliseconds,
             unsynced_val=utils.UNSYNCED_TIME_ONE_HOUR_DIGIT,
             use_centiseconds=True)
-        return u'%(hours)i:%(minutes)02i:%(seconds)02i.%(milliseconds)02i' % components
+        return u'%(hours)i:%(minutes)02i:%(seconds)02i.%(centiseconds)02i' % components
 
     def _clean_text(self, text):
         return text.replace('\n', ' ')
