@@ -24,8 +24,9 @@ class SSAParsingTest(TestCase):
         sset = storage.SubtitleSet('en')
         sset.append_subtitle(138, 238,'hey')
         output = unicode(SSAGenerator(sset))
-        # make sure time is 230 milliseconds not 38
-        self.assertIn("Dialogue: 0,0:00:00.13,0:00:00.23", output)
+        # make sure time is 230 milliseconds not 38 and that
+        # we are rounding to 0.24 (instead of truncating to 0.23
+        self.assertIn("Dialogue: 0,0:00:00.13,0:00:00.24", output)
 
     def test_formatting(self):
         subs = """[Script Info]
