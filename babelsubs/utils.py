@@ -144,6 +144,7 @@ def unsynced_time_components(one_hour_digit=False, uses_centiseconds=False):
         'minutes': 59,
         'seconds': 59,
         'milliseconds': 99 if uses_centiseconds else 999,
+        'centiseconds': 99,
     }
 def milliseconds_to_time_clock_components(milliseconds,
                                           unsynced_val=UNSYNCED_TIME_FULL,
