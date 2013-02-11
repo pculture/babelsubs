@@ -22,7 +22,7 @@ class SSAParsingTest(TestCase):
 
     def test_generate_centiseconds(self):
         sset = storage.SubtitleSet('en')
-        sset.append_subtitle(138, 238,'hey')
+        sset.append_subtitle(133, 238,'hey')
         output = unicode(SSAGenerator(sset))
         # make sure time is 230 milliseconds not 38 and that
         # we are rounding to 0.24 (instead of truncating to 0.23
