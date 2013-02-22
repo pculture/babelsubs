@@ -68,20 +68,21 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         self.assertEquals(bold.text, 'Universal Subtitles')
         self.assertEquals(bold.tail, ' ')
         self.assertEquals(bold.tag, '{http://www.w3.org/ns/ttml}span')
-        self.assertIn('fontWeight', bold.attrib)
-        self.assertEquals(bold.attrib['fontWeight'], 'bold')
+        print bold, bold.attrib
+        self.assertIn('{http://www.w3.org/ns/ttml}fontWeight', bold.attrib)
+        self.assertEquals(bold.attrib['{http://www.w3.org/ns/ttml}fontWeight'], 'bold')
 
         self.assertEquals(italics.text, 'because')
         self.assertEquals(italics.tail, ' we ')
         self.assertEquals(italics.tag, '{http://www.w3.org/ns/ttml}span')
-        self.assertIn('fontStyle', italics.attrib)
-        self.assertEquals(italics.attrib['fontStyle'], 'italic')
+        self.assertIn('{http://www.w3.org/ns/ttml}fontStyle', italics.attrib)
+        self.assertEquals(italics.attrib['{http://www.w3.org/ns/ttml}fontStyle'], 'italic')
 
         self.assertEquals(underline.text, 'believe')
         self.assertEquals(underline.tail, None)
         self.assertEquals(underline.tag, '{http://www.w3.org/ns/ttml}span')
-        self.assertIn('textDecoration', underline.attrib)
-        self.assertEquals(underline.attrib['textDecoration'], 'underline')
+        self.assertIn('{http://www.w3.org/ns/ttml}textDecoration', underline.attrib)
+        self.assertEquals(underline.attrib['{http://www.w3.org/ns/ttml}textDecoration'], 'underline')
 
         output = unicode(SRTGenerator(internal))
         parsed2 = SRTParser(output, 'en')
@@ -104,7 +105,8 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         self.assertTrue(len(element.getchildren()), 2)
 
         self.assertEquals(get_contents(element), 'And know, Mr. Amara will talk. >> Hello, and welcome.')
-        self.assertEquals(etree.tostring(element), '<p xmlns="http://www.w3.org/ns/ttml" begin="00:00:00.004" end="00:00:02.093">And know, Mr. <span fontWeight="bold">Amara</span> will talk.<br/> &gt;&gt; Hello, and welcome.</p>')
+        self.assertEquals(etree.tostring(element),
+                          '<p xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" begin="00:00:00.004" end="00:00:02.093">And know, Mr. <span tts:fontWeight="bold">Amara</span> will talk.<br/> &gt;&gt; Hello, and welcome.</p>')
         self.assertEquals(element.getchildren()[1].tail, ' >> Hello, and welcome.')
 
         output = unicode(SRTGenerator(internal))

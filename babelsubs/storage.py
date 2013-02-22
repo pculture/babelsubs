@@ -33,6 +33,7 @@ TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
+TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
 
 SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
 
@@ -213,7 +214,7 @@ class SubtitleSet(object):
         </tt>
     '''
 
-    SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
+    SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
 
     SUBTITLE_DIV_XML = r'''<div xmlns="http://www.w3.org/ns/ttml"></div>'''
     
@@ -281,6 +282,16 @@ class SubtitleSet(object):
         if escape:
             content = escape_xml(content)
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
+        # fromstring has no sane way to set an attribute namespace (yay)
+        spans = [el for el in p.getchildren() if el.tag.endswith('span')]
+        for span in spans:
+            # so we delete the old attrib, and add the new one with the
+            # prefixed namespace
+            for attr_name, value in span.attrib.items():
+                if attr_name in ('fontStyle', 'textDecoration', 'fontWeight'):
+                    span.set('{%s}%s' % (TTS_NAMESPACE_URI , attr_name), value)
+                    del span.attrib[attr_name]
+
         div = self._ttml.xpath('/n:tt/n:body/n:div',
                                namespaces={'n': TTML_NAMESPACE_URI})[-1]
         if new_paragraph:
