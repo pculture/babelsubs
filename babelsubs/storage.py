@@ -179,7 +179,7 @@ def diff(set_1, set_2, mappings=None):
 
 class SubtitleSet(object):
     BASE_TTML = r'''
-        <tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s">
+        <tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" >
             <head>
                 <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
                     <ttm:title>%(title)s</ttm:title>
