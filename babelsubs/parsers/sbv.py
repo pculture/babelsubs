@@ -40,7 +40,6 @@ class SBVParser(BaseTextParser):
                                        match['e_secfr'])
         text = ('' if match['text'] is None
                 else utils.escape_ampersands(match['text']))
-        print text
 
         # [br] are linebreaks
         text = text.replace("[br]", "<br/>")

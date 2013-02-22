@@ -1,7 +1,7 @@
 from unittest2 import TestCase
 
 from lxml import etree
-from babelsubs.storage import get_contents, SubtitleSet
+from babelsubs.storage import get_contents, SubtitleSet, TTS_NAMESPACE_URI
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers import SubtitleParserError
 from babelsubs.parsers.srt import SRTParser
@@ -68,21 +68,20 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         self.assertEquals(bold.text, 'Universal Subtitles')
         self.assertEquals(bold.tail, ' ')
         self.assertEquals(bold.tag, '{http://www.w3.org/ns/ttml}span')
-        print bold, bold.attrib
-        self.assertIn('{http://www.w3.org/ns/ttml}fontWeight', bold.attrib)
-        self.assertEquals(bold.attrib['{http://www.w3.org/ns/ttml}fontWeight'], 'bold')
+        self.assertIn('{%s}fontWeight' % TTS_NAMESPACE_URI, bold.attrib)
+        self.assertEquals(bold.attrib['{%s}fontWeight' % TTS_NAMESPACE_URI], 'bold')
 
         self.assertEquals(italics.text, 'because')
         self.assertEquals(italics.tail, ' we ')
         self.assertEquals(italics.tag, '{http://www.w3.org/ns/ttml}span')
-        self.assertIn('{http://www.w3.org/ns/ttml}fontStyle', italics.attrib)
-        self.assertEquals(italics.attrib['{http://www.w3.org/ns/ttml}fontStyle'], 'italic')
+        self.assertIn('{%s}fontStyle' % TTS_NAMESPACE_URI, italics.attrib)
+        self.assertEquals(italics.attrib['{%s}fontStyle' % TTS_NAMESPACE_URI], 'italic')
 
         self.assertEquals(underline.text, 'believe')
         self.assertEquals(underline.tail, None)
         self.assertEquals(underline.tag, '{http://www.w3.org/ns/ttml}span')
-        self.assertIn('{http://www.w3.org/ns/ttml}textDecoration', underline.attrib)
-        self.assertEquals(underline.attrib['{http://www.w3.org/ns/ttml}textDecoration'], 'underline')
+        self.assertIn('{%s}textDecoration' % TTS_NAMESPACE_URI, underline.attrib)
+        self.assertEquals(underline.attrib['{%s}textDecoration' % TTS_NAMESPACE_URI], 'underline')
 
         output = unicode(SRTGenerator(internal))
         parsed2 = SRTParser(output, 'en')
