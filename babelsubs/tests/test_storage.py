@@ -1,6 +1,7 @@
 from unittest2 import TestCase
 
 from babelsubs import storage
+from babelsubs.generators.srt import SRTGenerator
 from babelsubs.tests import utils
 from babelsubs import utils as main_utils
 
@@ -152,6 +153,16 @@ class AddSubtitlesTest(TestCase):
     def test_nested_tags(self):
         dfxp = utils.get_subs("simple.dfxp").to_internal()
         self.assertEqual( storage.get_contents(dfxp.get_subtitles()[37]), 'nested spans')
+        self.assertEqual( storage.get_contents(dfxp.get_subtitles()[38]), 'a word on nested spans')
+
+    def test_nested_with_markup(self):
+        dfxp = utils.get_subs("simple.dfxp").to_internal()
+        # FIXME: actually this is wrong, as it's nested and we should have
+        # the same text with underline and italics. At least we're not
+        # loosing any text, and that's good enough for now, should be
+        # fixed though.
+        self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38], SRTGenerator.MAPPINGS),
+                          'a <u>word on </u><i>nested spans</i>')
 
 class AccessTest(TestCase):
 

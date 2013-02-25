@@ -367,7 +367,7 @@ class SubtitleSet(object):
 
     def get_content_with_markup(self, el, mappings):
         text = [el.text]
-        for child in el.getchildren():
+        for child in el.iterdescendants():
             # no i don't want  to deal with namespaces right now sorry
             attrs = dict([(self.__clear_namespace(n), v) for n, v in child.items()])
 
@@ -396,7 +396,7 @@ class SubtitleSet(object):
         if el.tail:
             text.append(el.tail)
 
-        return ''.join(filter(None, text))
+        return ''.join(filter(None, text)).strip()
 
 
     @classmethod
