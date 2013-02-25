@@ -366,7 +366,7 @@ class SubtitleSet(object):
         return True
 
     def get_content_with_markup(self, el, mappings):
-        text = [el.text]
+        text = [el.text or '']
         for child in el.iterdescendants():
             # no i don't want  to deal with namespaces right now sorry
             attrs = dict([(self.__clear_namespace(n), v) for n, v in child.items()])
@@ -385,7 +385,7 @@ class SubtitleSet(object):
                 if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
                     value = value % mappings.get("underline", "")
 
-                text.append(value % child.text)
+                text.append(value % (child.text or ''))
 
             if tag == "br":
                 text.append(mappings.get("linebreaks", ""))
