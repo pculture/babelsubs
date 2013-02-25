@@ -149,6 +149,10 @@ class AddSubtitlesTest(TestCase):
         for i,sub in enumerate(dfxp.subtitle_items()):
             self.assertEqual(sub.meta['new_paragraph'] , i % 2 ==0)
 
+    def test_nested_tags(self):
+        dfxp = utils.get_subs("simple.dfxp").to_internal()
+        self.assertEqual( storage.get_contents(dfxp.get_subtitles()[37]), 'nested spans')
+
 class AccessTest(TestCase):
 
     def test_indexing(self):

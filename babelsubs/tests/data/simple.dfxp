@@ -44,7 +44,7 @@
 		<p begin="00:01:47.500" end="00:01:48.867">POGUE: Is it safe to say</p>
 		<p begin="00:01:48.867" end="00:01:51.000">there&apos;s no cheese pit here<br />somewhere?</p>
 		<p begin="00:01:51.000" end="00:01:52.100">Uh, gruyere, gruyere!</p>
-		<p begin="00:01:52.100" end="00:01:53.200">Cheddar, cheddar!</p>
+        <p xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" begin="00:01:52.100" end="00:01:53.200"><span tts:textDecoration="underline"><span tts:fontStyle="italic">nested spans</span></span></p>'
 		<p begin="00:01:53.200" end="00:01:54.867">David, you have to go<br />to Chicago for that.</p>
 		<p begin="00:01:54.867" end="00:01:56.300">They still do that?</p>
 		<p begin="00:01:56.300" end="00:01:58.000">Yeah, they still trade<br />agricultural products.</p>

@@ -49,19 +49,8 @@ def get_attr(el, attr):
 
 def get_contents(el):
     """Get the contents of the given element as a string of XML.
-
-    Based on
-    http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
-    but edited to actually work.
-
-    I cannot believe this is not part of lxml.  Seriously, what are they
-    thinking?  This is one of the most basic things people would need.
-
     """
-    parts = ([el.text] +
-             list(''.join(filter(None, [c.text, c.tail])) for c in el.getchildren()) +
-             [el.tail])
-    return ''.join(filter(None, parts)).strip()
+    return "".join([x for x in el.itertext()]).strip()
 
 def time_expression_to_milliseconds(time_expression, tick_rate=None):
     """
