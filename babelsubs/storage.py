@@ -33,10 +33,37 @@ TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
+TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
-VALID_ROOT_ELS = '/n:tt/n:body/n:div'
+
+
+NAMESPACE_DECL = {
+    'n': TTML_NAMESPACE_URI,
+    'legacy':  TTML_NAMESPACE_URI_LEGACY,
+    'styling': TTS_NAMESPACE_URI,
+}
+VALID_ROOT_ELS = ('tt', 'body', 'div')
 
 SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
+
+def find_els(root_el, plain_xpath):
+    """
+    Since we might be using more than one namespace
+    this simplifies searching for els that might be
+    present in more than one namespace.
+    You should send the plain_xpath string with no namespace
+    declarations.
+    Will return a list with 0 or more matching elements.
+    """
+    namespaces_names = NAMESPACE_DECL.keys()
+    els = []
+    for namespace_name in namespaces_names:
+        if plain_xpath.startswith("/"):
+            namespaced_xpath = "".join(['/%s:%s' % (namespace_name, el_name) for el_name in plain_xpath.split("/")[1:]])
+        else:
+            namespaced_xpath = "%s:%s" % (namespace_name, plain_xpath)
+        els +=  root_el.xpath(namespaced_xpath, namespaces=NAMESPACE_DECL)
+    return els
 
 def get_attr(el, attr):
     """Get the string of an attribute, or None if it's not present.
@@ -244,13 +271,13 @@ class SubtitleSet(object):
         return self.subtitles[key]
 
     def get_subtitles(self):
-        divs = self._ttml.xpath(VALID_ROOT_ELS, namespaces={'n': TTML_NAMESPACE_URI})
+        divs = find_els(self._ttml, "/tt/body/div")
         result = []
 
         for div in divs:
             el_count = 0
 
-            for el in div.xpath('n:p', namespaces={'n': TTML_NAMESPACE_URI}):
+            for el in find_els(div, 'p'):
                 el_count += 1
                 result.append(el)
 
@@ -282,11 +309,10 @@ class SubtitleSet(object):
                     span.set('{%s}%s' % (TTS_NAMESPACE_URI , attr_name), value)
                     del span.attrib[attr_name]
 
-        div = self._ttml.xpath('/n:tt/n:body/n:div',
-                               namespaces={'n': TTML_NAMESPACE_URI})[-1]
+
+        div = find_els(self._ttml, '/tt/body/div')[-1]
         if new_paragraph:
-            body = self._ttml.xpath('/n:tt/n:body',
-                                   namespaces={'n': TTML_NAMESPACE_URI})[-1]
+            body = find_els(self._ttml, '/tt/body')[-1]
             div = etree.fromstring(SubtitleSet.SUBTITLE_DIV_XML)
             body.append(div)
         div.append(p)
@@ -427,7 +453,7 @@ class SubtitleSet(object):
 
     def _get_tick_rate(self):
         try:
-            tt = self._ttml.xpath(VALID_ROOT_ELS, namespaces={'n': TTML_NAMESPACE_URI})[0]
+            tt = find_els(self._ttml, '/tt/body/div')[0]
         except IndexError as e:
             from babelsubs.parsers.base import SubtitleParserError
             raise SubtitleParserError(

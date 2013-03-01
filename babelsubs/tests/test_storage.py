@@ -2,6 +2,7 @@ from unittest2 import TestCase
 
 from babelsubs import storage
 from babelsubs.generators.srt import SRTGenerator
+from babelsubs.parsers import SubtitleParserError
 from babelsubs.tests import utils
 from babelsubs import utils as main_utils
 
@@ -164,6 +165,7 @@ class AddSubtitlesTest(TestCase):
         self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38], SRTGenerator.MAPPINGS),
                           'a <u>word on </u><i>nested spans</i>')
 
+
 class AccessTest(TestCase):
 
     def test_indexing(self):
@@ -175,3 +177,17 @@ class AccessTest(TestCase):
         # make sure that from_list ends up with a usable list
         self.assertIsNotNone(ss[0])
         self.assertIsNotNone(ss[1])
+
+class ParsingTest(TestCase):
+
+    def test_f_dfxp(self):
+        # tests a pretty feature rich dfpx file
+        dfxp = self.assertRaises(SubtitleParserError,utils.get_subs("from-n.dfxp").to_internal)
+        self.assertEqual(len(dfxp), 742)
+
+    def test_pre_drm_dfxp(self):
+        # tests a pretty feature rich dfpx file
+        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
+        self.assertEqual(len(dfxp), 419)
+        dfxp = utils.get_subs("pre-drm2.dfxp").to_internal()
+        self.assertEqual(len(dfxp), 19)

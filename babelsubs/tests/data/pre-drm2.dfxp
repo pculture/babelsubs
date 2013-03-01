@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns:tts="http://www.w3.org/2006/04/ttaf1#styling" xmlns="http://www.w3.org/2006/04/ttaf1">
+  <head/>
+  <body>
+    <div>
+      <p begin="00:00:00.71" end="00:00:03.37">We started Universal Subtitles because we believe</p>
+      <p begin="00:00:03.37" end="00:00:07.04">every video on the web should be subtitle-able.</p>
+      <p begin="00:00:09.10" end="00:00:11.17">Millions of deaf and hard of hearing viewers require subtitles to access video.</p>
+      <p begin="00:00:11.17" end="00:00:15.40">Videomakers and websites should really care about this stuff too.</p>
+      <p begin="00:00:15.40" end="00:00:20.86">Subtitles give them access to a wider audience and they also get better search rankings.</p>
+      <p begin="00:00:20.86" end="00:00:26.93">Universal Subtitles makes it incredibly easy to add subtitles to almost any video.</p>
+      <p begin="00:00:26.93" end="00:00:32.43">Take an existing video on the web, submit the URL to our website</p>
+      <p begin="00:00:32.43" end="00:00:39.54">and then type along with the dialog to create the subtitles</p>
+      <p begin="00:00:39.54" end="00:00:44.83">After that, tap on your keyboard to sync them with the video.</p>
+      <p begin="00:00:44.83" end="00:00:49.97">Then you're done-- we give you an embed code for the video</p>
+      <p begin="00:00:49.97" end="00:00:51.93">that you can put on any website</p>
+      <p begin="00:00:51.93" end="00:00:53.42">at that point, viewers are able to use the subtitles and can also</p>
+      <p begin="00:00:53.42" end="00:00:56.04">contribute to translations.</p>
+      <p begin="00:00:56.04" end="00:01:01.83">We support videos on YouTube, Blip.TV, Ustream, and many more.</p>
+      <p begin="00:01:01.83" end="00:01:05.67">Plus we're adding more services all the time</p>
+      <p begin="00:01:05.67" end="00:01:13.74">Universal Subtitles works with many popular video formats,</p>
+      <p begin="00:01:13.74" end="00:01:17.55">such as MP4, theora, webM and over html5.</p>
+      <p begin="00:01:17.55" end="00:01:21.36">Our goal is for every video on the web to be subtitlable so that anyone who cares about</p>
+      <p begin="00:01:21.36" end="99:59:59.00">the video can help make it more accessible.</p>
+    </div>
+  </body>
+</tt>
