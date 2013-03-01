@@ -34,6 +34,7 @@ TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
+VALID_ROOT_ELS = '/n:tt/n:body/n:div'
 
 SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
 
@@ -243,7 +244,7 @@ class SubtitleSet(object):
         return self.subtitles[key]
 
     def get_subtitles(self):
-        divs = self._ttml.xpath('/n:tt/n:body/n:div', namespaces={'n': TTML_NAMESPACE_URI})
+        divs = self._ttml.xpath(VALID_ROOT_ELS, namespaces={'n': TTML_NAMESPACE_URI})
         result = []
 
         for div in divs:
@@ -425,7 +426,13 @@ class SubtitleSet(object):
         return subs
 
     def _get_tick_rate(self):
-        tt = self._ttml.xpath('/n:tt', namespaces={'n': TTML_NAMESPACE_URI})[0] 
+        try:
+            tt = self._ttml.xpath(VALID_ROOT_ELS, namespaces={'n': TTML_NAMESPACE_URI})[0]
+        except IndexError as e:
+            from babelsubs.parsers.base import SubtitleParserError
+            raise SubtitleParserError(
+                "No valid root elements found, we'll accept 'tt, body and div",
+                original_error=e)
         for name,value in tt.attrib.items():
             if name == "tickRate":
                 return int(value)
