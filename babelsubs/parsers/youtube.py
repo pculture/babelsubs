@@ -29,9 +29,21 @@ class YoutubeParser(BaseTextParser):
                 xml = etree.fromstring(self.input_string.encode('utf-8'))
 
                 has_subs = False
-                for item in xml:
+                total_items = len(xml)
+                for i,item in enumerate(xml):
+                    duration = 0
                     start = int(float(item.get('start')) * 1000)
-                    duration = int(float(item.get('dur', 0)) * 1000)
+                    if hasattr(item, 'duration'):
+                        duration = int(float(item.get('dur', 0)) * 1000)
+                    elif i+1 < total_items:
+                        # youtube sometimes omits the duration attribute
+                        # in this case we're displaying until the next sub
+                        # starts
+                        next_item = xml[i+1]
+                        duration = int(float(next_item.get('start')) * 1000) - start
+                    else:
+                        # hardcode the last sub duration at 3 seconds
+                        duration = 3000
                     end = start + duration
                     text = item.text and unescape_html(item.text) or u''
                     self.sub_set.append_subtitle(start, end, text)
@@ -39,7 +51,9 @@ class YoutubeParser(BaseTextParser):
                 if not has_subs:
                     raise ValueError("No subs")
             except Exception as e:
+                raise
                 raise SubtitleParserError(original_error=e)
+
 
         return self.sub_set
 
