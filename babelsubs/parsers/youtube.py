@@ -51,7 +51,6 @@ class YoutubeParser(BaseTextParser):
                 if not has_subs:
                     raise ValueError("No subs")
             except Exception as e:
-                raise
                 raise SubtitleParserError(original_error=e)
 
 
