@@ -65,7 +65,7 @@ Universal Subtitles works with many popular video formats,
 
 17
 00:01:08,068 --> 00:01:13,079
-such as MP4, theora, webM and over HTML 5.
+such as MP4, theora, webM and & HTML 5.
 
 18
 00:01:13,079 --> 00:01:19,041

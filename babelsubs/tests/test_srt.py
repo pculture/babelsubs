@@ -116,6 +116,12 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
                 [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
 
+    def test_ampersand_escaping(self):
+        subs  = utils.get_subs("simple.srt")
+        parsed = subs.to_internal()
+        sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
+        self.assertEquals(sub_data[16].text, "such as MP4, theora, webM and & HTML 5.")
+
     def test_unsynced_generator(self):
         subs = SubtitleSet('en')
         for x in xrange(0,5):
