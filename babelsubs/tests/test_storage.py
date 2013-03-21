@@ -191,3 +191,22 @@ class ParsingTest(TestCase):
         self.assertEqual(len(dfxp), 419)
         dfxp = utils.get_subs("pre-drm2.dfxp").to_internal()
         self.assertEqual(len(dfxp), 19)
+
+class UpdateTest(TestCase):
+
+    def test_update_start_time(self):
+        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
+        dfxp_updated = utils.get_subs("pre-drm.dfxp").to_internal()
+        for i in xrange(0, len(dfxp)):
+            dfxp_updated.update(i, from_ms=1000*i)
+        for i,sub in enumerate(dfxp_updated.subtitle_items()):
+            self.assertEqual(i * 1000, sub.start_time)
+
+
+    def test_update_end_time(self):
+        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
+        dfxp_updated = utils.get_subs("pre-drm.dfxp").to_internal()
+        for i in xrange(0, len(dfxp)):
+            dfxp_updated.update(i, to_ms=1000*i)
+        for i,sub in enumerate(dfxp_updated.subtitle_items()):
+            self.assertEqual(i * 1000, sub.end_time)

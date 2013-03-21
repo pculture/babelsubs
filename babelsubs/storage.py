@@ -292,9 +292,9 @@ class SubtitleSet(object):
         """
         
         begin_value = milliseconds_to_time_clock_exp(from_ms)
-        begin = 'begin="%s"' % begin_value if begin_value else ''
+        begin = 'begin="%s"' % begin_value if begin_value  is not None else ''
         end_value = milliseconds_to_time_clock_exp(to_ms)
-        end = 'end="%s"' %  end_value if end_value else ''
+        end = 'end="%s"' %  end_value if end_value is not None else ''
 
         if escape:
             content = escape_xml(content)
@@ -368,9 +368,9 @@ class SubtitleSet(object):
         end = get_attr(el, 'end')
 
         from_ms = (time_expression_to_milliseconds(begin)
-                if begin else None)
+                if begin is not None else None)
         to_ms = (time_expression_to_milliseconds(end)
-                if end else None)
+                if end is not None else None)
 
         if not mappings:
             content = get_contents(el)
@@ -425,6 +425,18 @@ class SubtitleSet(object):
 
         return ''.join(filter(None, text)).strip()
 
+
+    def update(self, subtitle_index, from_ms=None, to_ms=None):
+        """Updates the subtitle on index subtitle_index with the
+        new timing data. (in place)
+
+        TODO: Implement content change (beware of escaping
+        """
+        el = self.get_subtitles()[subtitle_index]
+        if from_ms is not None:
+            el.set('begin',   milliseconds_to_time_clock_exp(from_ms) if from_ms else '')
+        if to_ms is not None:
+            el.set('end',  milliseconds_to_time_clock_exp(to_ms) if to_ms else '')
 
     @classmethod
     def from_list(cls, language_code, subtitles, escape=False):
