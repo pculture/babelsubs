@@ -1,0 +1,21 @@
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <head>
+        <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+            <ttm:title/>
+            <ttm:description/>
+            <ttm:copyright/>
+        </metadata>
+
+        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+        </styling>
+
+        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+        </layout>
+    </head>
+    <body region="amara-subtitle-area">
+        <div><p begin="" end="">One</p><p begin="" end="">two</p><p begin="" end="">three</p><p begin="" end="">four</p>
+        </div>
+    </body>
+</tt>
