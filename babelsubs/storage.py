@@ -430,6 +430,8 @@ class SubtitleSet(object):
         """Updates the subtitle on index subtitle_index with the
         new timing data. (in place)
 
+        If you need to update timing to mark as the unsynced value use
+        utils.UNSYNCED_TIME_FULL  as the value to pass
         TODO: Implement content change (beware of escaping
         """
         el = self.get_subtitles()[subtitle_index]
