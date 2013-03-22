@@ -367,11 +367,11 @@ class SubtitleSet(object):
         begin = get_attr(el, 'begin')
         end = get_attr(el, 'end')
 
-        from_ms = (time_expression_to_milliseconds(begin)
-                if begin is not None else None)
-        to_ms = (time_expression_to_milliseconds(end)
-                if end is not None else None)
 
+        from_ms = (time_expression_to_milliseconds(begin)
+                if begin  is not None and begin is not '' else None)
+        to_ms = (time_expression_to_milliseconds(end)
+                if end is not None and end is not '' else None)
         if not mappings:
             content = get_contents(el)
         else:
@@ -434,9 +434,9 @@ class SubtitleSet(object):
         """
         el = self.get_subtitles()[subtitle_index]
         if from_ms is not None:
-            el.set('begin',   milliseconds_to_time_clock_exp(from_ms) if from_ms else '')
+            el.set('begin',   milliseconds_to_time_clock_exp(from_ms) )
         if to_ms is not None:
-            el.set('end',  milliseconds_to_time_clock_exp(to_ms) if to_ms else '')
+            el.set('end',  milliseconds_to_time_clock_exp(to_ms) )
 
     @classmethod
     def from_list(cls, language_code, subtitles, escape=False):

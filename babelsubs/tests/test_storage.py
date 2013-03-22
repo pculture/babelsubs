@@ -192,6 +192,12 @@ class ParsingTest(TestCase):
         dfxp = utils.get_subs("pre-drm2.dfxp").to_internal()
         self.assertEqual(len(dfxp), 19)
 
+    def test_unsynced_as_generated_from_frontend(self):
+        dfxp = utils.get_subs("dfxp-as-front-end-no-sync.dfxp").to_internal()
+        for sub in dfxp.subtitle_items():
+            self.assertEqual(None, sub.start_time)
+            self.assertEqual(None, sub.end_time)
+
 class UpdateTest(TestCase):
 
     def test_update_start_time(self):
