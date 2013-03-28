@@ -182,8 +182,7 @@ class ParsingTest(TestCase):
 
     def test_f_dfxp(self):
         # tests a pretty feature rich dfpx file
-        dfxp = self.assertRaises(SubtitleParserError,utils.get_subs("from-n.dfxp").to_internal)
-        self.assertEqual(len(dfxp), 742)
+        self.assertRaises(SubtitleParserError, utils.get_subs, "from-n.dfxp")
 
     def test_pre_drm_dfxp(self):
         # tests a pretty feature rich dfpx file

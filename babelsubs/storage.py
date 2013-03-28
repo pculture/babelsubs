@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
-from itertools import izip_longest
+import difflib
+from itertools import izip_longest, izip
 import os
 import re
 from lxml import etree
@@ -136,6 +137,73 @@ def to_clock_time(time_expression, tick_rate=None):
         return time_expression
     return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression, tick_rate))
 
+class _Differ(object):
+    """Class that does the work for diff()."""
+    def __init__(self, set_1, set_2, mappings):
+        if len(set_1) == 0 and len(set_2) == 0:
+            # special case empty sets
+            self.result = {
+                'subtitle_data' : [],
+                'changed': False,
+                'text_changed': 0.0,
+                'time_changed': 0.0,
+            }
+            return
+        items1 = set_1.subtitle_items(mappings)
+        items2 = set_2.subtitle_items(mappings)
+
+        text_changed = self.calc_changed_amout([s.text for s in items1],
+                                               [s.text for s in items2])
+        time_changed = self.calc_changed_amout(
+            [(s.start_time, s.end_time) for s in items1],
+            [(s.start_time, s.end_time) for s in items2])
+        self.calc_subtitle_data(items1, items2)
+        self.result = {
+            'text_changed': text_changed,
+            'time_changed': time_changed,
+            'changed': items1 != items2,
+            'subtitle_data': self._subtitle_data,
+        }
+
+    def calc_changed_amout(self, seq1, seq2):
+        sm = difflib.SequenceMatcher(None, seq1, seq2)
+        return 1.0 - sm.ratio()
+
+    def calc_subtitle_data(self, items1, items2):
+        sm = difflib.SequenceMatcher(
+            None,
+            [(i.start_time, i.end_time, i.text) for i in items1],
+            [(i.start_time, i.end_time, i.text) for i in items2])
+        empty_line = SubtitleLine(None, None, None, None)
+        self._subtitle_data = []
+        for tag, i1, i2, j1, j2 in sm.get_opcodes():
+            if tag == 'equal':
+                for i, j in izip(xrange(i1, i2), xrange(j1, j2)):
+                    self.make_subtitle_data_item(items1[i], items2[j])
+            elif tag == 'replace':
+                for i, j in izip_longest(xrange(i1, i2), xrange(j1, j2)):
+                    if i is None:
+                        self.make_subtitle_data_item(empty_line, items2[j])
+                    elif j is None:
+                        self.make_subtitle_data_item(items1[j], empty_line)
+                    else:
+                        self.make_subtitle_data_item(items1[i], items2[j])
+
+            elif tag == 'delete':
+                for i in xrange(i1, i2):
+                    self.make_subtitle_data_item(items1[i], empty_line)
+            elif tag == 'insert':
+                for j in xrange(j1, j2):
+                    self.make_subtitle_data_item(empty_line, items2[j])
+
+    def make_subtitle_data_item(self, s1, s2):
+        self._subtitle_data.append({
+            'time_changed': ((s1.start_time, s1.end_time) !=
+                             (s2.start_time, s2.end_time)),
+            'text_changed': s1.text != s2.text,
+            'subtitles': (s1, s2),
+        })
+
 def diff(set_1, set_2, mappings=None):
     """
     Performs a simple diff, only taking into account:
@@ -151,49 +219,12 @@ def diff(set_1, set_2, mappings=None):
             {
                 time_changed: bool,
                 text_changed: bool,
-                subtitle_1: [the subtitle data, (start_time, end_time, text),
-                subtitle_2: [the subtitle data, (start_time, end_time, text),
+                subtitles: [subtitle_line1, subtitle_line2],
             }, ... ordered list with both subtitles. If one list is longer , you
             will get an empty SubtitleLine named tupple
         ]
     """
-    result = {
-        'subtitle_data' : [],
-        'changed': False,
-        'text_changed': 0,
-        'time_changed': 0,
-        }
-    text_change_count = 0
-    time_change_count = 0
-    if len(set_1) == 0 and len(set_2) == 0:
-        # empty sets are the same
-        return result
-    for sub_1, sub_2 in izip_longest([x for x in set_1.subtitle_items(mappings)],
-                                       [x for x in set_2.subtitle_items(mappings)]):
-        sub_added = (sub_1 is None) or (sub_2 is None)
-        sub_1 = sub_1 or SubtitleLine(None, None, None, None)
-        sub_2 = sub_2 or SubtitleLine(None, None, None, None)
-        subtitle_result  = {
-            'time_changed': False,
-            'text_changed': False,
-            'subtitles' : [sub_1, sub_2]
-        }
-        if sub_added:
-            subtitle_result['text_changed']  = True
-            subtitle_result['time_changed'] = True
-        else:
-            subtitle_result['text_changed']  = sub_1.text != sub_2.text
-            subtitle_result['time_changed'] = sub_1.start_time != sub_2.start_time or sub_1.end_time != sub_2.end_time
-        if subtitle_result['time_changed']:
-                time_change_count +=1
-        if subtitle_result['text_changed']:
-            text_change_count +=1
-        result['subtitle_data'].append(subtitle_result)
-    longest_set_count = max(len(set_1),len(set_2))
-    result['text_changed'] = text_change_count / (longest_set_count * 1.0)
-    result['time_changed'] = time_change_count / (longest_set_count * 1.0)
-    result['changed'] = (time_change_count + text_change_count) > 0
-    return result
+    return _Differ(set_1, set_2, mappings).result
 
 class SubtitleSet(object):
     BASE_TTML = r'''
