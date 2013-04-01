@@ -151,7 +151,9 @@ class _Differ(object):
             return
         items1 = set_1.subtitle_items(mappings)
         items2 = set_2.subtitle_items(mappings)
-
+        # We calculate text_changed/time_changed by using
+        # SequenceMatcher.ratio() method that targets the text/time data
+        # specifically.
         text_changed = self.calc_changed_amout([s.text for s in items1],
                                                [s.text for s in items2])
         time_changed = self.calc_changed_amout(
@@ -170,6 +172,8 @@ class _Differ(object):
         return 1.0 - sm.ratio()
 
     def calc_subtitle_data(self, items1, items2):
+        # when calculating the diff, we only match against the times/text and
+        # ignore the meta.
         sm = difflib.SequenceMatcher(
             None,
             [(i.start_time, i.end_time, i.text) for i in items1],
@@ -185,7 +189,7 @@ class _Differ(object):
                     if i is None:
                         self.make_subtitle_data_item(empty_line, items2[j])
                     elif j is None:
-                        self.make_subtitle_data_item(items1[j], empty_line)
+                        self.make_subtitle_data_item(items1[i], empty_line)
                     else:
                         self.make_subtitle_data_item(items1[i], items2[j])
 
