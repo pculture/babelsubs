@@ -151,6 +151,18 @@ class AddSubtitlesTest(TestCase):
         for i,sub in enumerate(dfxp.subtitle_items()):
             self.assertEqual(sub.meta['new_paragraph'] , i % 2 ==0)
 
+    def test_control_chars_from_list(self):
+        subs = [
+            # normal sub
+            (1000,  1100, "Sub 1", {'new_paragraph': True}),
+            # sub with an invalid control char
+            (2000,  2100, "Sub 2\x15", {'new_paragraph': False}),
+        ]
+        dfxp = storage.SubtitleSet.from_list('en', subs)
+        subtitle_items = dfxp.subtitle_items()
+        self.assertEquals(subtitle_items[0].text, u'Sub 1')
+        self.assertEquals(subtitle_items[1].text, u'Sub 2')
+
     def test_nested_tags(self):
         dfxp = utils.get_subs("simple.dfxp").to_internal()
         self.assertEqual( storage.get_contents(dfxp.get_subtitles()[37]), 'nested spans')
