@@ -333,6 +333,7 @@ class SubtitleSet(object):
 
         if escape:
             content = escape_xml(content)
+        content = self._fix_xml_content(content)
         p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
         # fromstring has no sane way to set an attribute namespace (yay)
         spans = [el for el in p.getchildren() if el.tag.endswith('span')]
@@ -351,6 +352,19 @@ class SubtitleSet(object):
             div = etree.fromstring(SubtitleSet.SUBTITLE_DIV_XML)
             body.append(div)
         div.append(p)
+
+    _invalid_xml_control_chars = ''.join(chr(i) for i in xrange(32)
+                                         if chr(i) not in "\n\r\t")
+    def _fix_xml_content(self, content):
+        """Fixup XML content.
+
+        This method ensures:
+            - The content is plain ASCII
+            - The content doesn't include control chars that aren't valid in
+            XML
+        """
+        return content.encode("ascii", "replace").translate(
+            None, self._invalid_xml_control_chars)
 
     def normalize_time(self, el):
         """
