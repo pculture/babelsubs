@@ -36,6 +36,7 @@ class TXTParser(BaseTextParser):
             self.sub_set = SubtitleSet(self.language)
             valid = False
             for item in self._result_iter():
+                item['text'] = item['text'].replace("\n", '<br/>')
                 if not valid and ''.join(item['text'].split()):
                     valid = True
                 self.sub_set.append_subtitle(item['start'], item['end'], item['text'])

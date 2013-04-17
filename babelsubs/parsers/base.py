@@ -3,6 +3,10 @@ from babelsubs.storage import SubtitleSet
 
 
 class BaseTextParser(object):
+    # xml based formats must let encoding handling to the xml parser
+    # as the encoding will be declared on the root el. All other
+    # pasrser should allow unicode
+    NO_UNICODE = False
 
     def __init__(self, input_string, pattern, language=None, flags=[], eager_parse=True):
         '''
@@ -44,6 +48,8 @@ class BaseTextParser(object):
         return match
 
     def _get_matches(self):
+        if not isinstance(self.input_string, unicode) and not self.NO_UNICODE:
+            self.input_string = self.input_string.decode('utf-8')
         return self._pattern.finditer(self.input_string)
 
     def __unicode__(self):

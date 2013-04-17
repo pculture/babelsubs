@@ -12,7 +12,7 @@ class DFXPParser(BaseTextParser):
     """
 
     file_type = ['dfxp', 'xml']
-    no_unicode = True
+    NO_UNICODE = True
 
     def __init__(self, input_string, language=None):
         try:

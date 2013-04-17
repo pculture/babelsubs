@@ -353,18 +353,19 @@ class SubtitleSet(object):
             body.append(div)
         div.append(p)
 
-    _invalid_xml_control_chars = ''.join(chr(i) for i in xrange(32)
+    _invalid_xml_control_chars_ascii = ''.join(chr(i) for i in xrange(32)
                                          if chr(i) not in "\n\r\t")
+    _invalid_xml_control_chars_unicode = ''.join(unichr(i) for i in xrange(32)
+                                               if chr(i) not in "\n\r\t")
     def _fix_xml_content(self, content):
-        """Fixup XML content.
+        """Fix XML content.
 
-        This method ensures:
-            - The content is plain ASCII
-            - The content doesn't include control chars that aren't valid in
-            XML
+        This method ensures the content doesn't include control chars that aren't valid in
+            XML, should work for unicode or byte strings.
         """
-        return content.encode("ascii", "replace").translate(
-            None, self._invalid_xml_control_chars)
+        if isinstance(content, unicode):
+            return content.translate(self._invalid_xml_control_chars_unicode)
+        return content.translate(None, self._invalid_xml_control_chars_ascii)
 
     def normalize_time(self, el):
         """
