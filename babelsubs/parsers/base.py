@@ -5,7 +5,7 @@ from babelsubs.storage import SubtitleSet
 class BaseTextParser(object):
     # xml based formats must let encoding handling to the xml parser
     # as the encoding will be declared on the root el. All other
-    # pasrser should allow unicode
+    # parsers should allow unicode
     NO_UNICODE = False
 
     def __init__(self, input_string, pattern, language=None, flags=[], eager_parse=True):
