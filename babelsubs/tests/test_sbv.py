@@ -11,6 +11,10 @@ class SBVParsingTest(TestCase):
         subs  = utils.get_subs("simple.sbv")
         self.assertEquals(len(subs), 19)
 
+    def test_unsyced_parsing(self):
+        subs  = utils.get_subs("Untimed_text.sbv")
+        self.assertEquals(len(subs), 43)
+
     def test_internal_format(self):
         subs  = utils.get_subs("simple.sbv")
         parsed = subs.to_internal()
@@ -48,7 +52,7 @@ class SBVParsingTest(TestCase):
         subs = SubtitleSet('en')
         for x in xrange(0,5):
             subs.append_subtitle(None, None,"%s" % x)
-        output = unicode(SBVGenerator(subs))
+        output = unicode(SBVGenerator(subs, language='en' ))
 
         parsed = SBVParser(output,'en')
         internal = parsed.to_internal()

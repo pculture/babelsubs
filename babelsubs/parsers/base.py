@@ -73,7 +73,6 @@ class BaseTextParser(object):
                 self.sub_set = SubtitleSet(self.language)
                 for match in self._matches:
                     item = self._get_data(match.groupdict())
-                    # fix me: support markup
                     text = self.get_markup(item['text'])
                     self.sub_set.append_subtitle(item['start'], item['end'], text, escape=False)
                 if match is None:
@@ -84,7 +83,7 @@ class BaseTextParser(object):
         return self.sub_set
 
     def get_markup(self, text):
-        return text
+        return text.replace("\n", '<br/>')
 
     _matches = property(_get_matches)
 
