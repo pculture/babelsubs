@@ -3,7 +3,7 @@ from babelsubs.utils import UNSYNCED_TIME_FULL
 
 
 class HTMLGenerator(BaseGenerator):
-    file_type = 'srt'
+    file_type = 'html'
 
     MAPPINGS = dict(linebreaks="<br>", bold="<strong>%s</strong>",
         italics="<em>%s</em>", underline="<u>%s</u>")
