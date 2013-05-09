@@ -84,6 +84,10 @@ class DFXPParsingTest(TestCase):
         with self.assertRaises(SubtitleParserError):
             DFXPParser ("this\n\nisnot a valid subs format","en")
 
+    def test_whitespace(self):
+        subs = utils.get_subs("pre-dmr.dfxp")
+        sub = subs.subtitle_set.subtitle_items()[0]
+        self.assertEqual(sub.text, '''Last time, we began talking about\nresonance structures. And I'd like''')
 
 class LegacyDFXPTest(TestCase):
 

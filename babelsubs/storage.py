@@ -288,7 +288,12 @@ class SubtitleSet(object):
         if initial_data:
             # convert legacy ttfa namespace to the final one
             initial_data = _cleanup_legacy_namespace(initial_data)
-            self._ttml = etree.fromstring(initial_data)
+            # we remove *all* extraneous whitespace, since we pretty print
+            # the xml and we introduce space back. Right now, we're taking
+            # the easy way out and ignoring xml:spaces='preserve'
+            initial_data = re.compile("\n\s+").sub("", initial_data)
+            self._ttml = etree.fromstring( initial_data,
+                parser=etree.XMLParser(remove_blank_text=True))
             self.tick_rate = self._get_tick_rate()
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
