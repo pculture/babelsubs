@@ -543,7 +543,7 @@ class SubtitleSet(object):
  
     def __eq__(self, other):
         if type(self) == type(other):
-            return self.to_xml() == other.to_xml()
+            return diff(self, other, None)['changed']
         else:
             return False
 

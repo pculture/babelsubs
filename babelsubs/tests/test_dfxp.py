@@ -89,6 +89,11 @@ class DFXPParsingTest(TestCase):
         sub = subs.subtitle_set.subtitle_items()[0]
         self.assertEqual(sub.text, '''Last time, we began talking about\nresonance structures. And I'd like''')
 
+    def test_equality_ignores_whitespace(self):
+        subs_1 = utils.get_subs('pre-dmr.dfxp').subtitle_set
+        subs_2 = utils.get_subs('pre-dmr-whitespace.dfxp').subtitle_set
+        self.assertEqual(subs_1, subs_2)
+
 class LegacyDFXPTest(TestCase):
 
     def test_ttfa(self):
