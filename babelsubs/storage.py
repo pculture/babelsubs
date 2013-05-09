@@ -21,7 +21,8 @@ from itertools import izip_longest, izip
 import os
 import re
 from lxml import etree
-from xml.sax.saxutils import escape as escape_xml
+from xml.sax.saxutils import (escape as escape_xml,
+                              unescape as unescape_xml)
 from collections import namedtuple
 
 from babelsubs import utils
@@ -36,6 +37,8 @@ NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
+TTML_NAMESPACE_URI_LEGACY_RE = re.compile(r'''('|")(%s)([^"|'])''' % TTML_NAMESPACE_URI_LEGACY)
+
 
 
 NAMESPACE_DECL = {
@@ -46,6 +49,9 @@ NAMESPACE_DECL = {
 VALID_ROOT_ELS = ('tt', 'body', 'div')
 
 SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
+
+def _cleanup_legacy_namespace(input_string):
+    return TTML_NAMESPACE_URI_LEGACY_RE.sub(r'"%s\3' % TTML_NAMESPACE_URI, input_string)
 
 def find_els(root_el, plain_xpath):
     """
@@ -280,6 +286,8 @@ class SubtitleSet(object):
 
         """
         if initial_data:
+            # convert legacy ttfa namespace to the final one
+            initial_data = _cleanup_legacy_namespace(initial_data)
             self._ttml = etree.fromstring(initial_data)
             self.tick_rate = self._get_tick_rate()
             if normalize_time:

@@ -196,12 +196,7 @@ class ParsingTest(TestCase):
         # tests a pretty feature rich dfpx file
         self.assertRaises(SubtitleParserError, utils.get_subs, "from-n.dfxp")
 
-    def test_pre_drm_dfxp(self):
-        # tests a pretty feature rich dfpx file
-        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
-        self.assertEqual(len(dfxp), 419)
-        dfxp = utils.get_subs("pre-drm2.dfxp").to_internal()
-        self.assertEqual(len(dfxp), 19)
+
 
     def test_unsynced_as_generated_from_frontend(self):
         dfxp = utils.get_subs("dfxp-as-front-end-no-sync.dfxp").to_internal()
@@ -212,8 +207,8 @@ class ParsingTest(TestCase):
 class UpdateTest(TestCase):
 
     def test_update_start_time(self):
-        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
-        dfxp_updated = utils.get_subs("pre-drm.dfxp").to_internal()
+        dfxp = utils.get_subs("pre-dmr.dfxp").to_internal()
+        dfxp_updated = utils.get_subs("pre-dmr.dfxp").to_internal()
         for i in xrange(0, len(dfxp)):
             dfxp_updated.update(i, from_ms=1000*i)
         for i,sub in enumerate(dfxp_updated.subtitle_items()):
@@ -221,8 +216,8 @@ class UpdateTest(TestCase):
 
 
     def test_update_end_time(self):
-        dfxp = utils.get_subs("pre-drm.dfxp").to_internal()
-        dfxp_updated = utils.get_subs("pre-drm.dfxp").to_internal()
+        dfxp = utils.get_subs("pre-dmr.dfxp").to_internal()
+        dfxp_updated = utils.get_subs("pre-dmr.dfxp").to_internal()
         for i in xrange(0, len(dfxp)):
             dfxp_updated.update(i, to_ms=1000*i)
         for i,sub in enumerate(dfxp_updated.subtitle_items()):

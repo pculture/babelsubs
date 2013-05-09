@@ -84,3 +84,15 @@ class DFXPParsingTest(TestCase):
         with self.assertRaises(SubtitleParserError):
             DFXPParser ("this\n\nisnot a valid subs format","en")
 
+
+class LegacyDFXPTest(TestCase):
+
+    def test_ttfa(self):
+        subs = utils.get_subs("pre-dmr.dfxp")
+        self.assertEquals(len(subs), 419)
+        # make sure the right namespace is in
+        subs.subtitle_set._ttml.tag = '{http://www.w3.org/ns/ttml}tt'
+        subs = utils.get_subs("pre-dmr2.dfxp")
+        self.assertEquals(len(subs), 19)
+        # make sure the right namespace is in
+        subs.subtitle_set._ttml.tag = '{http://www.w3.org/ns/ttml}tt'
