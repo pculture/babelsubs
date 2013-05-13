@@ -37,7 +37,8 @@ NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
-TTML_NAMESPACE_URI_LEGACY_RE = re.compile(r'''('|")(%s)([^"|'])''' % TTML_NAMESPACE_URI_LEGACY)
+TTML_NAMESPACE_URI_LEGACY_RE =           re.compile(r'''('|")(%s)(#[\w]+)("|')''' % TTML_NAMESPACE_URI_LEGACY)
+TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE = re.compile(r'''('|")(%s)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 
 MULTIPLE_SPACES_RE = re.compile(r"\s{2,}")
 NEW_LINES_RE = re.compile(r'(\n|\r)')
@@ -53,7 +54,23 @@ VALID_ROOT_ELS = ('tt', 'body', 'div')
 SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
 
 def _cleanup_legacy_namespace(input_string):
-    return TTML_NAMESPACE_URI_LEGACY_RE.sub(r'"%s\3' % TTML_NAMESPACE_URI, input_string)
+    """
+    At some point in time, the ttml namespace was TTML_NAMESPACE_URI_LEGACY,
+    then it got changed to TTML_NAMESPACE_URI. There are tons of those floating
+    around, including our pre-dmr dfxps and ttmls files. The backend (this lib)
+    can deal with both namespaces, but the amara front end cannot. We therefore
+    convert all namespaces to the correct one (else a lot of namespace xml magic
+    has to be done on the front end, and trust me, you don't want to do it).
+
+    This function 'converts' all ...ttfa... to ...ttml... with a regex. To be a
+    bit less reckless, we're checking that it's quoted, as in an attribute. (that
+    of course doesn't guarantee the safety of this, just makes it a bit less
+    likely that the legacy url is being used inside a text node. All of this
+    because lxml cannot change namespace attribute values:
+     https://bugs.launchpad.net/lxml/+bug/555602
+    """
+    input_string =  TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE.sub(r'"%s\3' % TTML_NAMESPACE_URI, input_string)
+    return TTML_NAMESPACE_URI_LEGACY_RE.sub(r'"%s\3\4' % TTML_NAMESPACE_URI, input_string)
 
 def find_els(root_el, plain_xpath):
     """

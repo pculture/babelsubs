@@ -7,7 +7,10 @@ from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.base import SubtitleParserError
-from babelsubs.storage import  SubtitleSet, get_attr, diff
+from babelsubs.storage import  (
+    SubtitleSet, get_attr, TTML_NAMESPACE_URI, _cleanup_legacy_namespace,
+    TTML_NAMESPACE_URI_LEGACY
+)
 
 from babelsubs.tests import utils
 from babelsubs import load_from
@@ -103,7 +106,16 @@ class LegacyDFXPTest(TestCase):
         self.assertEquals(len(subs), 419)
         # make sure the right namespace is in
         subs.subtitle_set._ttml.tag = '{http://www.w3.org/ns/ttml}tt'
+        self.assertEqual(subs.subtitle_set._ttml.nsmap[None] , TTML_NAMESPACE_URI)
+
         subs = utils.get_subs("pre-dmr2.dfxp")
         self.assertEquals(len(subs), 19)
         # make sure the right namespace is in
         subs.subtitle_set._ttml.tag = '{http://www.w3.org/ns/ttml}tt'
+
+    def test_cleanup_namespace(self):
+        input_string = open(utils.get_data_file_path("pre-dmr.dfxp")).read()
+        cleaned = _cleanup_legacy_namespace(input_string)
+        self.assertEqual(cleaned.find(TTML_NAMESPACE_URI_LEGACY), -1)
+        sset = SubtitleSet(language_code='en', initial_data=cleaned)
+        self.assertEqual(len(sset), 419)
