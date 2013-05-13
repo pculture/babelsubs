@@ -5,8 +5,9 @@ from lxml.etree import XMLSyntaxError
 
 from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator
+from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.base import SubtitleParserError
-from babelsubs.storage import  SubtitleSet, get_attr
+from babelsubs.storage import  SubtitleSet, get_attr, diff
 
 from babelsubs.tests import utils
 from babelsubs import load_from
@@ -86,8 +87,9 @@ class DFXPParsingTest(TestCase):
 
     def test_whitespace(self):
         subs = utils.get_subs("pre-dmr.dfxp")
-        sub = subs.subtitle_set.subtitle_items()[0]
-        self.assertEqual(sub.text, '''Last time, we began talking about\nresonance structures. And I'd like''')
+        sub = subs.subtitle_set.subtitle_items(mappings=SRTGenerator.MAPPINGS)[0]
+        self.assertEqual(sub.text,
+                         '''Last time, we began talking about\nresonance structures. And I'd like''')
 
     def test_equality_ignores_whitespace(self):
         subs_1 = utils.get_subs('pre-dmr.dfxp').subtitle_set

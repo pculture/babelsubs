@@ -39,6 +39,8 @@ TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
 TTML_NAMESPACE_URI_LEGACY_RE = re.compile(r'''('|")(%s)([^"|'])''' % TTML_NAMESPACE_URI_LEGACY)
 
+MULTIPLE_SPACES_RE = re.compile(r"\s{2,}")
+NEW_LINES_RE = re.compile(r'(\n|\r)')
 
 
 NAMESPACE_DECL = {
@@ -291,7 +293,8 @@ class SubtitleSet(object):
             # we remove *all* extraneous whitespace, since we pretty print
             # the xml and we introduce space back. Right now, we're taking
             # the easy way out and ignoring xml:spaces='preserve'
-            initial_data = re.compile("\n\s+").sub("", initial_data)
+            initial_data = NEW_LINES_RE.sub("", initial_data)
+            initial_data = MULTIPLE_SPACES_RE.sub(" ", initial_data)
             self._ttml = etree.fromstring( initial_data,
                 parser=etree.XMLParser(remove_blank_text=True))
             self.tick_rate = self._get_tick_rate()
