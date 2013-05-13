@@ -312,8 +312,14 @@ class SubtitleSet(object):
             # the easy way out and ignoring xml:spaces='preserve'
             initial_data = NEW_LINES_RE.sub("", initial_data)
             initial_data = MULTIPLE_SPACES_RE.sub(" ", initial_data)
+
             self._ttml = etree.fromstring( initial_data,
                 parser=etree.XMLParser(remove_blank_text=True))
+            # now, if there's a space after a <br> tag, we don't want it here.
+            # most likely it was created by indenting. But *only* it it's after a
+            # <br> tag, so we must loop through them
+            for node in find_els(self._ttml, "/tt/body/div/*/br"):
+                node.tail = node.tail.lstrip()
             self.tick_rate = self._get_tick_rate()
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
