@@ -319,7 +319,7 @@ class SubtitleSet(object):
             # most likely it was created by indenting. But *only* it it's after a
             # <br> tag, so we must loop through them
             for node in find_els(self._ttml, "/tt/body/div/*/br"):
-                node.tail = node.tail.lstrip()
+                node.tail = node.tail.lstrip() if node.tail else None
             self.tick_rate = self._get_tick_rate()
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]

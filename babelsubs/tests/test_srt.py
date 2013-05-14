@@ -160,6 +160,11 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         self.assertIn('<p begin="99:59:59.000" end="99:59:59.000">I\'m gutted. <br/>Absolutely gutted.</p>',
             parsed.to_xml())
 
+    def test_complex_formatting(self):
+        # this is the srt used in our selenium tests
+        subs = utils.get_subs("Timed_en.srt")
+        self.assertEqual(len(subs), 72)
+
 class SRTGeneratorTest(TestCase):
 
     def setUp(self):
