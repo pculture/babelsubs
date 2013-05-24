@@ -472,7 +472,11 @@ class SubtitleSet(object):
         return name.split("}")[-1] if '}' in name else name
 
     def item_is_synced(self, el):
-        return 'begin' in el.attrib and 'end' in el.attrib
+        begin = el.attrib.get('begin', None)
+        end = el.attrib.get('end', None)
+        return begin is not None and begin.strip() != '' and \
+               end is not None and end.strip() != ''
+
 
     @property
     def fully_synced(self):

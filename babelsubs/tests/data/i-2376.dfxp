@@ -1,0 +1,26 @@
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+  <head>
+    <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+      <ttm:title/>
+      <ttm:description/>
+      <ttm:copyright/>
+    </metadata>
+    <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+      <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+    </styling>
+    <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+      <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+    </layout>
+  </head>
+  <body region="amara-subtitle-area">
+    <div>
+      <p begin="00:00:03,503" end="00:00:06,236">asdfadsf</p>
+      <p begin="00:00:06,236" end="00:00:09,237">asdfasdf</p>
+      <p begin="00:00:09,237" end="00:00:12,311">asfasdfasdfasdfadsf</p>
+      <p begin="00:00:12,311" end="00:00:14,837">asdfasdfaf</p>
+      <p begin="00:00:14,837" end="">sDFASDFA</p>
+      <p begin="" end="">asdfadsf</p>
+      <p begin="" end="">asdfadsf</p>
+    </div>
+  </body>
+</tt>

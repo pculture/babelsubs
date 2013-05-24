@@ -99,6 +99,10 @@ class DFXPParsingTest(TestCase):
         subs_2 = utils.get_subs('pre-dmr-whitespace.dfxp').subtitle_set
         self.assertEqual(subs_1, subs_2)
 
+    def test_unsynced(self):
+        sset = utils.get_subs('i-2376.dfxp').subtitle_set
+        self.assertFalse(sset.fully_synced)
+
 class LegacyDFXPTest(TestCase):
 
     def test_ttfa(self):
