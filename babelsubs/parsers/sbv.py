@@ -24,7 +24,7 @@ class SBVParser(BaseTextParser):
         if secfr is None:
             secfr = '0'
         res = (int(hour)*60*60+int(min)*60+int(sec)+float('.'+secfr)) * 1000
-        if res == utils.UNSYNCED_TIME_ONE_HOUR_DIGIT:
+        if res >= utils.UNSYNCED_TIME_ONE_HOUR_DIGIT:
             res = None
         return res
 

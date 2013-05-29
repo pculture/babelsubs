@@ -14,7 +14,7 @@ BLANK_CHARS = re.compile('[\n\t\r]*')
 UNSYNCED_TIME_FULL = (60 * 60 * 100 * 1000) - 1
 # some formats limit hours to 1 digit, so the max available time must
 # be adjusted
-UNSYNCED_TIME_ONE_HOUR_DIGIT = (60 * 60 * 10 * 1000) - 10
+UNSYNCED_TIME_ONE_HOUR_DIGIT = (60 * 60 * 10 * 1000) - 1000
 
 def unescape_html(s):
     p = htmllib.HTMLParser(formatter.NullFormatter() )
