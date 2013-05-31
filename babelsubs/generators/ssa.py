@@ -21,7 +21,7 @@ class SSAGenerator(BaseGenerator):
         return u''
 
     def format_time(self, milliseconds):
-        if not milliseconds:
+        if milliseconds is None:
             components = utils.unsynced_time_components(one_hour_digit=True, uses_centiseconds=True)
         else:
             components = utils.milliseconds_to_time_clock_components(

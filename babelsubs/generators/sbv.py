@@ -23,7 +23,7 @@ class SBVGenerator(BaseGenerator):
         return self.line_delimiter.join(output)
 
     def format_time(self, time):
-        if not time:
+        if time is None:
             time = UNSYNCED_TIME_ONE_HOUR_DIGIT
         seconds, milliseconds = divmod(int(time), 1000)
         minutes, seconds = divmod(seconds, 60)
