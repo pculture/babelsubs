@@ -394,8 +394,8 @@ class SubtitleSet(object):
 
     _invalid_xml_control_chars_ascii = ''.join(chr(i) for i in xrange(32)
                                          if chr(i) not in "\n\r\t")
-    _invalid_xml_control_chars_unicode = ''.join(unichr(i) for i in xrange(32)
-                                               if chr(i) not in "\n\r\t")
+    _invalid_xml_control_chars_unicode = dict((i, None) for i in xrange(32)
+                                              if chr(i) not in "\n\r\t")
     def _fix_xml_content(self, content):
         """Fix XML content.
 
