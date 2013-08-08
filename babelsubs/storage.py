@@ -101,6 +101,17 @@ def get_attr(el, attr):
         if k == attr or k.rsplit('}', 1)[-1] == attr:
             return v
 
+def element_tag(el):
+    """Get the tag name for an element.
+
+    This works around a ETree bug where for most elements, el.tag is a string,
+    but for comment nodes it's a method.
+    """
+    if not hasattr(el.tag, '__call__'):
+        return el.tag
+    else:
+        return el.tag()
+
 def get_contents(el):
     """Get the contents of the given element as a string of XML.
     """
@@ -491,7 +502,7 @@ class SubtitleSet(object):
             # no i don't want  to deal with namespaces right now sorry
             attrs = dict([(self.__clear_namespace(n), v) for n, v in child.items()])
 
-            tag = self.__clear_namespace(child.tag)
+            tag = self.__clear_namespace(element_tag(child))
 
             if tag == 'span':
                 value = "%s"

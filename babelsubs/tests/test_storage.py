@@ -1,6 +1,7 @@
 from unittest2 import TestCase
 
 from babelsubs import storage
+from babelsubs.generators.html import HTMLGenerator
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers import SubtitleParserError
 from babelsubs.tests import utils
@@ -177,7 +178,6 @@ class AddSubtitlesTest(TestCase):
         self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38], SRTGenerator.MAPPINGS),
                           'a <u>word on </u><i>nested spans</i>')
 
-
 class AccessTest(TestCase):
 
     def test_indexing(self):
@@ -203,6 +203,13 @@ class ParsingTest(TestCase):
         for sub in dfxp.subtitle_items():
             self.assertEqual(None, sub.start_time)
             self.assertEqual(None, sub.end_time)
+
+    def test_comments(self):
+        # test that the subtitle_items() method doesn't throw an exception
+        # when there are comments in the DFXP.  See gh-841 for details.
+        dfxp = utils.get_subs("comments.dfxp").to_internal()
+        list(dfxp.subtitle_items())
+        list(dfxp.subtitle_items(mappings=HTMLGenerator.MAPPINGS))
 
 class UpdateTest(TestCase):
 
