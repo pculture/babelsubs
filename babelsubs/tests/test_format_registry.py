@@ -9,7 +9,7 @@ from babelsubs.generators.base import discover as generator_discover
 class FormatRegistryTest(TestCase):
     def test_available_formats(self):
         actual_formats = sorted(get_available_formats())
-        expected_formats = sorted(['ass',  'srt', 'dfxp', 'ssa', 'sbv', 'txt', 'json', 'xml'])
+        expected_formats = sorted(['ass',  'srt', 'dfxp', 'ssa', 'sbv', 'txt', 'json', 'vtt', 'xml'])
         self.assertEqual(actual_formats, expected_formats)
 
     def test_parsing_discover_lowercase(self):
