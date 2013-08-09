@@ -63,7 +63,7 @@ class SBVParsingTest(TestCase):
             self.assertEqual(sub[0], None )
             self.assertEqual(sub[1], None )
         generated = SBVGenerator(internal)
-        self.assertEqual(generated.format_time(None), u'9:59:59.990')
-        self.assertIn(u'''9:59:59.990,9:59:59.990\r\n0\r\n\r\n9:59:59.990,9:59:59.990\r\n1\r\n\r\n9:59:59.990,9:59:59.990\r\n2\r\n\r\n9:59:59.990,9:59:59.990\r\n3\r\n\r\n9:59:59.990,9:59:59.990\r\n4\r\n''',
+        self.assertEqual(generated.format_time(None), u'9:59:59.000')
+        self.assertIn(u'''9:59:59.000,9:59:59.000\r\n0\r\n\r\n9:59:59.000,9:59:59.000\r\n1\r\n\r\n9:59:59.000,9:59:59.000\r\n2\r\n\r\n9:59:59.000,9:59:59.000\r\n3\r\n\r\n9:59:59.000,9:59:59.000\r\n4\r\n''',
             unicode(generated))
 
