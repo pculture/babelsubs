@@ -85,3 +85,22 @@ class WEBVTTGeneratorTest(TestCase):
         self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
         self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
         self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
+
+class WEBVTTMultiLines(TestCase):
+    def setUp(self):
+        self.dfxp = utils.get_subs("multiline-italics.dfxp").to_internal()
+        
+    def test_two_line_italics(self):
+        expected = """<i>multi-line\nitalicized</i>"""
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[2], 
+                         mappings=WEBVTTGenerator.MAPPINGS))
+
+    def test_more_line_italics(self):
+        expected = ("this is the first line\n<i>multi-line\n"
+                    "italicized second and third</i>")
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[3], 
+                         mappings=WEBVTTGenerator.MAPPINGS))

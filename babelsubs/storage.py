@@ -505,8 +505,10 @@ class SubtitleSet(object):
             tag = self.__clear_namespace(element_tag(child))
 
             if tag == 'span':
-                value = "%s"
+                #you have to find the linebreaks within the span
+                tails =  [s.tail for s in child.iterdescendants() if s.tag.endswith('br') ]
 
+                value = "%s"
                 if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
                     value = value % mappings.get("bold", "")
 
@@ -516,12 +518,18 @@ class SubtitleSet(object):
                 if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
                     value = value % mappings.get("underline", "")
 
-                text.append(value % (child.text or ''))
-
-            if tag == "br":
+                
+                if tails:
+                    el_text = [child.text or ''] + tails
+                    text.append(value % (mappings.get("linebreaks").join(el_text)))
+                else:
+                    text.append(value % (child.text or ''))
+            # skip the br tag if it's a child of the span processed above
+            if tag == "br" and not child.getparent().tag.endswith('span'):
                 text.append(mappings.get("linebreaks", ""))
 
-            if child.tail:
+            # skip the tail tag if it's a child of the span processed above
+            if child.tail and not child.getparent().tag.endswith('span'):
                 text.append(child.tail)
 
         if el.tail:
