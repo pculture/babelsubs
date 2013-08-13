@@ -3,7 +3,6 @@ from unittest2 import TestCase
 from lxml import etree
 from babelsubs.storage import get_contents, SubtitleSet, TTS_NAMESPACE_URI
 from babelsubs.generators.srt import SRTGenerator
-from babelsubs.generators.dfxp import DFXPGenerator
 from babelsubs.parsers import SubtitleParserError
 from babelsubs.parsers.srt import SRTParser
 from babelsubs.tests import utils

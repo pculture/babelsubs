@@ -5,7 +5,7 @@ from babelsubs.generators.base import BaseGenerator, register
 class SSAGenerator(BaseGenerator):
     file_type = ['ssa', 'ass']
 
-    MAPPINGS = dict(bold="{\\b1}%s{\\b0}",
+    MAPPINGS = dict(bold="{\\b1}%s{\\b0}", linebreaks = "\N",
                     italics="{\i1}%s{\i0}", underline="{\u1}%s{\u0}")
 
 

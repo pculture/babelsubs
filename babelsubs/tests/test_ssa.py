@@ -111,3 +111,31 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         with self.assertRaises(SubtitleParserError):
             SSAParser ("this\n\nisnot a valid subs format","en")
 
+class SSAMultiLines(TestCase):
+    def setUp(self):
+        self.dfxp = utils.get_subs("multiline-italics.dfxp").to_internal()
+        
+    def test_two_line_italics(self):
+        """Line break inside italics. """
+        expected = '{\\i1}multi-line\\Nitalicized{\\i0}'
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[2], 
+                         mappings=SSAGenerator.MAPPINGS))
+
+    def test_italics_after_linebreak(self):
+        """3 lines with italicized 2nd and 3rd. """
+        expected = ('this is the first line\\N{\\i1}multi-line\\N'
+                    'italicized second and third{\\i0}')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[3], 
+                         mappings=SSAGenerator.MAPPINGS))
+
+    def test_italics_before_linebreak(self):
+        """italicized lines followed by linebreak and regular text."""
+        expected = ('{\\i1}italicized{\\i0}\\Nno italics last line')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[4], 
+                         mappings=SSAGenerator.MAPPINGS))
