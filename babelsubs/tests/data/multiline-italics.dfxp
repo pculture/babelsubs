@@ -27,6 +27,11 @@
       <p begin="00:00:02,307" end="00:00:04,622">
         <span tts:fontStyle="italic">italicized</span><br/> no italics last line
       </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/> this is line 2
+      </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/>
+        <span tts:fontStyle="italic">italicized</span><br/> no italics last line
+      </p>
     </div>
   </body>
 </tt>

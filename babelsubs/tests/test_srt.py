@@ -178,7 +178,7 @@ class SRTGeneratorTest(TestCase):
         self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
         self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
 
-class SRTMMultiLines(TestCase):
+class SRTMultiLines(TestCase):
     def setUp(self):
         self.dfxp = utils.get_subs("multiline-italics.dfxp").to_internal()
         
@@ -205,6 +205,22 @@ class SRTMMultiLines(TestCase):
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[4], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_no_italics(self):
+        """Linebreak with no italics"""
+        expected = ('this is line 1 \nthis is line 2')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[5], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_before_italics(self):
+        """linebreak before italics. """
+        expected = ('this is line 1 \n<i>italicized</i>\nno italics last line')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[6], 
                          mappings=SRTGenerator.MAPPINGS))
 
 
