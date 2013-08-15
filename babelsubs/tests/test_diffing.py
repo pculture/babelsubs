@@ -1,5 +1,5 @@
 from unittest2 import TestCase
-from babelsubs.storage import SubtitleSet, SubtitleLine, diff
+from babelsubs.storage import SubtitleSet, SubtitleLine, diff, calc_changes
 
 class DiffingTest(TestCase):
     def test_empty_subs(self):
@@ -271,3 +271,20 @@ class DiffingTest(TestCase):
         result = diff(set_1, set_2)
 
         self.assertAlmostEqual(result['time_changed'], 1/3.0)
+
+    def test_calc_changes(self):
+        set_1 = SubtitleSet.from_list('en', [
+         (0, 1000, "Hey 1"),
+         (1000, 2000, "Hey 2"),
+         (2000, 3000, "Hey 3"),
+         (3000, 4000, "Hey 4"),
+        ])
+        set_2 = SubtitleSet.from_list('en', [
+         (0, 1000, "Hey 1"),
+         (1000, 2000, "Hey New 2"),
+         (2000, 3000, "Hey 3"),
+         (3000, 4000, "Hey 4"),
+        ])
+        text_changed, time_changed = calc_changes(set_1, set_2)
+        self.assertAlmostEqual(time_changed, 0)
+        self.assertAlmostEqual(text_changed, 2/8.0)

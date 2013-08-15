@@ -176,73 +176,79 @@ def to_clock_time(time_expression, tick_rate=None):
 class _Differ(object):
     """Class that does the work for diff()."""
     def __init__(self, set_1, set_2, mappings):
-        if len(set_1) == 0 and len(set_2) == 0:
-            # special case empty sets
-            self.result = {
-                'subtitle_data' : [],
-                'changed': False,
-                'text_changed': 0.0,
-                'time_changed': 0.0,
-            }
-            return
-        items1 = set_1.subtitle_items(mappings)
-        items2 = set_2.subtitle_items(mappings)
-        # We calculate text_changed/time_changed by using
-        # SequenceMatcher.ratio() method that targets the text/time data
-        # specifically.
-        text_changed = self.calc_changed_amout([s.text for s in items1],
-                                               [s.text for s in items2])
-        time_changed = self.calc_changed_amout(
-            [(s.start_time, s.end_time) for s in items1],
-            [(s.start_time, s.end_time) for s in items2])
-        self.calc_subtitle_data(items1, items2)
-        self.result = {
-            'text_changed': text_changed,
-            'time_changed': time_changed,
-            'changed': items1 != items2,
-            'subtitle_data': self._subtitle_data,
+        self.items1 = set_1.subtitle_items(mappings)
+        self.items2 = set_2.subtitle_items(mappings)
+
+    def _subs_sequence(self, items):
+        return [(i.start_time, i.end_time, i.text) for i in items]
+
+    def _time_sequence(self, items):
+        return [(s.start_time, s.end_time) for s in items]
+
+    def _text_sequence(self, items):
+        return [(s.text,) for s in items]
+
+    def calc_diff(self):
+        return {
+            'text_changed': self.calc_text_changed(),
+            'time_changed': self.calc_time_changed(),
+            'changed': self.items1 != self.items2,
+            'subtitle_data': self.calc_subtitle_data(),
         }
 
-    def calc_changed_amout(self, seq1, seq2):
-        sm = difflib.SequenceMatcher(None, seq1, seq2)
+    def calc_time_changed(self):
+        sm = difflib.SequenceMatcher(None, self._time_sequence(self.items1),
+                                     self._time_sequence(self.items2))
         return 1.0 - sm.ratio()
 
-    def calc_subtitle_data(self, items1, items2):
+    def calc_text_changed(self):
+        sm = difflib.SequenceMatcher(None, self._text_sequence(self.items1),
+                                     self._text_sequence(self.items2))
+        return 1.0 - sm.ratio()
+
+    def calc_subtitle_data(self):
         # when calculating the diff, we only match against the times/text and
         # ignore the meta.
-        sm = difflib.SequenceMatcher(
-            None,
-            [(i.start_time, i.end_time, i.text) for i in items1],
-            [(i.start_time, i.end_time, i.text) for i in items2])
-        empty_line = SubtitleLine(None, None, None, None)
-        self._subtitle_data = []
+        sm = difflib.SequenceMatcher(None,
+                                     self._subs_sequence(self.items1),
+                                     self._subs_sequence(self.items2))
+        rv = []
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
             if tag == 'equal':
                 for i, j in izip(xrange(i1, i2), xrange(j1, j2)):
-                    self.make_subtitle_data_item(items1[i], items2[j])
+                    rv.append(self.make_subtitle_data_item(i, j))
             elif tag == 'replace':
                 for i, j in izip_longest(xrange(i1, i2), xrange(j1, j2)):
                     if i is None:
-                        self.make_subtitle_data_item(empty_line, items2[j])
+                        rv.append(self.make_subtitle_data_item(None, j))
                     elif j is None:
-                        self.make_subtitle_data_item(items1[i], empty_line)
+                        rv.append(self.make_subtitle_data_item(i, None))
                     else:
-                        self.make_subtitle_data_item(items1[i], items2[j])
+                        rv.append(self.make_subtitle_data_item(i, j))
 
             elif tag == 'delete':
                 for i in xrange(i1, i2):
-                    self.make_subtitle_data_item(items1[i], empty_line)
+                    rv.append(self.make_subtitle_data_item(i, None))
             elif tag == 'insert':
                 for j in xrange(j1, j2):
-                    self.make_subtitle_data_item(empty_line, items2[j])
+                    rv.append(self.make_subtitle_data_item(None, j))
+        return rv
 
-    def make_subtitle_data_item(self, s1, s2):
-        self._subtitle_data.append({
+    def make_subtitle_data_item(self, i, j):
+        if i is not None:
+            s1 = self.items1[i]
+        else:
+            s1 = SubtitleLine(None, None, None, None)
+        if j is not None:
+            s2 = self.items2[j]
+        else:
+            s2 = SubtitleLine(None, None, None, None)
+        return {
             'time_changed': ((s1.start_time, s1.end_time) !=
                              (s2.start_time, s2.end_time)),
             'text_changed': s1.text != s2.text,
             'subtitles': (s1, s2),
-        })
+        }
 
 def diff(set_1, set_2, mappings=None):
     """
@@ -264,7 +270,15 @@ def diff(set_1, set_2, mappings=None):
             will get an empty SubtitleLine named tupple
         ]
     """
-    return _Differ(set_1, set_2, mappings).result
+    return _Differ(set_1, set_2, mappings).calc_diff()
+
+def calc_changes(set_1, set_2, mappings=None):
+    """Returns time/text changes for two subtitle sets.
+
+    :returns: (text_changed, time_changed) tuple
+    """
+    differ = _Differ(set_1, set_2, mappings)
+    return differ.calc_text_changed(), differ.calc_time_changed()
 
 class SubtitleSet(object):
     BASE_TTML = r'''
