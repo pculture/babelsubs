@@ -506,7 +506,7 @@ class SubtitleSet(object):
 
             if tag == 'span':
                 #you have to find the linebreaks within the span
-                tails =  [s.tail for s in child.iterdescendants() if s.tag.endswith('br') ]
+                tails =  [s.tail for s in child.iterdescendants() if element_tag(s).endswith('br') ]
 
                 value = "%s"
                 if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
