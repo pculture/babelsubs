@@ -32,6 +32,9 @@
       <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/>
         <span tts:fontStyle="italic">italicized</span><br/> no italics last line
       </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/>
+        <span tts:fontStyle="italic">italicized <span tts:fontWeight="bold">this is bold and italics</span></span><br/> no italics last line
+      </p>
     </div>
   </body>
 </tt>
