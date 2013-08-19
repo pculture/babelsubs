@@ -222,6 +222,3 @@ class SRTMultiLines(TestCase):
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[6], 
                          mappings=SRTGenerator.MAPPINGS))
-
-
-
