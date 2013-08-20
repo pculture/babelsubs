@@ -1,0 +1,40 @@
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+  <head>
+    <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+      <ttm:title/>
+      <ttm:description/>
+      <ttm:copyright/>
+    </metadata>
+    <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+      <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+    </styling>
+    <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+      <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+    </layout>
+  </head>
+  <body region="amara-subtitle-area">
+    <div>
+      <p begin="00:00:00,284" end="00:00:02,307">this is a line</p>
+      <p begin="00:00:02,307" end="00:00:04,622">
+        <span tts:fontStyle="italic">italicized</span>
+      </p>
+      <p begin="00:00:04,622" end="00:00:08,622">
+        <span tts:fontStyle="italic">multi-line<br/>italicized</span>
+      </p>
+      <p begin="00:00:04,622" end="00:00:08,622">this is the first line<br/>
+        <span tts:fontStyle="italic">multi-line<br/>italicized second and third</span>
+      </p>
+      <p begin="00:00:02,307" end="00:00:04,622">
+        <span tts:fontStyle="italic">italicized</span><br/> no italics last line
+      </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/> this is line 2
+      </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/>
+        <span tts:fontStyle="italic">italicized</span><br/> no italics last line
+      </p>
+      <p begin="00:00:02,307" end="00:00:04,622">this is line 1 <br/>
+        <span tts:fontStyle="italic">italicized <span tts:fontWeight="bold">this is bold and italics</span></span><br/> no italics last line
+      </p>
+    </div>
+  </body>
+</tt>

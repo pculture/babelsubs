@@ -177,3 +177,56 @@ class SRTGeneratorTest(TestCase):
         self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
         self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
         self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
+
+class SRTMultiLines(TestCase):
+    def setUp(self):
+        self.dfxp = utils.get_subs("multiline-italics.dfxp").to_internal()
+        
+    def test_two_line_italics(self):
+        """Line break inside italics. """
+        expected = """<i>multi-line\nitalicized</i>"""
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[2], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_italics_after_linebreak(self):
+        """3 lines with italicized 2nd and 3rd. """
+        expected = ("this is the first line\n<i>multi-line\n"
+                    "italicized second and third</i>")
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[3], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_italics_before_linebreak(self):
+        """italicized lines followed by linebreak and regular text."""
+        expected = ("<i>italicized</i>\nno italics last line")
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[4], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_no_italics(self):
+        """Linebreak with no italics"""
+        expected = ('this is line 1 \nthis is line 2')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[5], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_before_italics(self):
+        """linebreak before italics. """
+        expected = ('this is line 1 \n<i>italicized</i>\nno italics last line')
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[6], 
+                         mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_in_nested_tags(self):
+        """italicized lines followed by linebreak and regular text."""
+        expected = ("this is line 1 \n<i>italicized <b>this is bold and italics</b></i>\nno italics last line")
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[7], 
+                         mappings=SRTGenerator.MAPPINGS))

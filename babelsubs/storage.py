@@ -512,37 +512,42 @@ class SubtitleSet(object):
 
     def get_content_with_markup(self, el, mappings):
         text = [el.text or '']
-        for child in el.iterdescendants():
-            # no i don't want  to deal with namespaces right now sorry
-            attrs = dict([(self.__clear_namespace(n), v) for n, v in child.items()])
-
+        for child in el:
             tag = self.__clear_namespace(element_tag(child))
 
             if tag == 'span':
-                value = "%s"
+                template = self._template_for_span(child, mappings)
+                text.append(template %
+                            (self.get_content_with_markup(child, mappings),))
 
-                if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
-                    value = value % mappings.get("bold", "")
-
-                if attrs.get('fontStyle', '') == 'italic' and 'italics' in mappings:
-                    value = value % mappings.get("italics", "")
-
-                if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
-                    value = value % mappings.get("underline", "")
-
-                text.append(value % (child.text or ''))
-
-            if tag == "br":
+            elif tag == "br":
                 text.append(mappings.get("linebreaks", ""))
 
             if child.tail:
                 text.append(child.tail)
 
-        if el.tail:
-            text.append(el.tail)
-
         return ''.join(filter(None, text)).strip()
 
+    def _template_for_span(self, elt, mappings):
+        """String to use for a span for get_content_with_markup().
+
+        The returned string will contain a single "%s" value to be filled in
+        with the contents of the span.
+        """
+        # no i don't want to deal with namespaces right now sorry
+        attrs = dict([(self.__clear_namespace(n), v)
+                      for n, v in elt.items()])
+
+        template = "%s"
+        if attrs.get('fontWeight', '') == 'bold' and 'bold' in mappings:
+            template = template % mappings.get("bold", "")
+
+        if attrs.get('fontStyle', '') == 'italic' and 'italics' in mappings:
+            template = template % mappings.get("italics", "")
+
+        if attrs.get('textDecoration', '') == 'underline' and 'underline' in mappings:
+            template = template % mappings.get("underline", "")
+        return template
 
     def update(self, subtitle_index, from_ms=None, to_ms=None):
         """Updates the subtitle on index subtitle_index with the
