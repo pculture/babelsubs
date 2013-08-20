@@ -222,3 +222,11 @@ class SRTMultiLines(TestCase):
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[6], 
                          mappings=SRTGenerator.MAPPINGS))
+
+    def test_linebreak_in_nested_tags(self):
+        """italicized lines followed by linebreak and regular text."""
+        expected = ("this is line 1 \n<i>italicized <b>this is bold and italics</b></i>\nno italics last line")
+        els = self.dfxp.get_subtitles()
+        self.assertEqual(expected, 
+                         self.dfxp.get_content_with_markup(els[7], 
+                         mappings=SRTGenerator.MAPPINGS))
