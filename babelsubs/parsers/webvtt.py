@@ -10,8 +10,7 @@ class WEBVTTParser(BaseTextParser):
     _clean_pattern = re.compile(r'\{.*?\}', re.DOTALL)
 
     def __init__(self, input_string, language_code, eager_parse=True):
-        pattern = r'\d+\s*?\n'
-        pattern += r'(?P<s_hour>\d{2}):(?P<s_min>\d{2}):(?P<s_sec>\d{2})(.(?P<s_secfr>\d*))?'
+        pattern = r'(?P<s_hour>\d{2}):(?P<s_min>\d{2}):(?P<s_sec>\d{2})(.(?P<s_secfr>\d*))?'
         pattern += r' --> '
         pattern += r'(?P<e_hour>\d{2}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})(.(?P<e_secfr>\d*))?'
         pattern += r'\n(\n|(?P<text>.+?)\n\n)'

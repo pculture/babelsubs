@@ -69,3 +69,4 @@ Supported formats
 * ttml
 * txt
 * json
+* vtt
