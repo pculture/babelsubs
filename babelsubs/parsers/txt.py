@@ -46,3 +46,24 @@ class TXTParser(BaseTextParser):
 
 
 register(TXTParser)
+
+
+class TXTTranscriptParser(BaseTextParser):
+
+    file_type = 'trans'
+
+    _linebreak_re = re.compile(r"\n\n|\r\n\r\n|\r\r")
+
+    def __init__(self, input_string, language=None, linebreak_re=_linebreak_re):
+        self.language = language
+        self.input_string = linebreak_re.split(input_string)
+
+
+    def __len__(self):
+        return len(self.input_string)
+
+    def __nonzero__(self):
+        return bool(self.input_string)
+
+
+register(TXTTranscriptParser)
