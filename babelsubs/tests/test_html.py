@@ -1,4 +1,5 @@
 from unittest2 import TestCase
+from babelsubs import load_from
 from babelsubs.generators.html import HTMLGenerator
 from babelsubs.tests import utils
 
@@ -24,4 +25,11 @@ class HTMLGeneratorTest(TestCase):
     def test_bad_input(self):
         # script tag should be gone
         self.assertText("the video can help make it more accessible.alert", 18)
+
+class HTMLMappingsTest(TestCase):
+    def test_escape(self):
+        subs = utils.get_subs("simple.dfxp").to_internal()
+        items = subs.subtitle_items(HTMLGenerator.MAPPINGS)
+        self.assertEquals(items[75].text,
+                          '&lt;script&gt;alert&lt;/script&gt;')
 
