@@ -511,7 +511,10 @@ class SubtitleSet(object):
         return True
 
     def get_content_with_markup(self, el, mappings):
-        text = [el.text or '']
+        quote_text = mappings.get('quote_text', lambda x: x)
+        text = []
+        if el.text:
+            text.append(quote_text(el.text))
         for child in el:
             tag = self.__clear_namespace(element_tag(child))
 
@@ -521,12 +524,13 @@ class SubtitleSet(object):
                             (self.get_content_with_markup(child, mappings),))
 
             elif tag == "br":
-                text.append(mappings.get("linebreaks", ""))
+                if 'linebreaks' in mappings:
+                    text.append(mappings['linebreaks'])
 
             if child.tail:
-                text.append(child.tail)
+                text.append(quote_text(child.tail))
 
-        return ''.join(filter(None, text)).strip()
+        return ''.join(text).strip()
 
     def _template_for_span(self, elt, mappings):
         """String to use for a span for get_content_with_markup().

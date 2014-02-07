@@ -1,3 +1,5 @@
+from cgi import escape
+
 from babelsubs.generators.base import BaseGenerator, register
 from babelsubs.utils import UNSYNCED_TIME_FULL
 
@@ -6,7 +8,7 @@ class HTMLGenerator(BaseGenerator):
     file_type = 'html'
 
     MAPPINGS = dict(linebreaks="<br>", bold="<strong>%s</strong>",
-        italics="<em>%s</em>", underline="<u>%s</u>")
+        italics="<em>%s</em>", underline="<u>%s</u>", quote_text=escape)
 
     def __init__(self, subtitle_set, language=None):
         super(HTMLGenerator, self).__init__(subtitle_set, language)

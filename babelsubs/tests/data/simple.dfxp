@@ -82,7 +82,7 @@
 		<p begin="00:03:35.367" end="00:03:37.000">Get your commodities!</p>
 		<p begin="00:03:37.000" end="00:03:39.333">Got copper at 80 cents a pound.</p>
 		<p begin="00:03:39.333" end="00:03:40.867">Anybody?</p>
-		<p begin="00:03:40.867" end="00:03:42.833">Anybody?</p>
+		<p begin="00:03:40.867" end="00:03:42.833">&lt;script&gt;alert&lt;/script&gt;</p>
 </div>
 </body>
 </tt>
