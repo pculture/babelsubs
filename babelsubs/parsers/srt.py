@@ -7,7 +7,6 @@ from babelsubs.parsers.base import BaseTextParser, register
 class SRTParser(BaseTextParser):
 
     file_type = 'srt'
-    _clean_pattern = re.compile(r'\{.*?\}', re.DOTALL)
 
     def __init__(self, input_string, language_code, eager_parse=True):
         pattern = r'\d+\s*?\n'
@@ -42,8 +41,7 @@ class SRTParser(BaseTextParser):
                                        match['e_secfr'])
         output['text'] = (
             '' if match['text'] is None else
-            utils.escape_ampersands(utils.strip_tags(
-                self._clean_pattern.sub('', match['text'])))
+            utils.escape_ampersands(utils.strip_tags(match['text']))
         )
         return output
 
