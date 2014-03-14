@@ -47,6 +47,13 @@ class SRTParsingTest(TestCase):
         except Exception, e:
             self.fail(e)
 
+    def test_curly_brackets(self):
+        subs  = utils.get_subs("curly_brackets.srt")
+        parsed = subs.to_internal()
+        sub_data = list(parsed.subtitle_items(SRTGenerator.MAPPINGS))
+        self.assertEquals(len(sub_data), 1)
+        self.assertEquals(sub_data[0].text, "{ a } {{ b }} c")
+
     def test_formatting(self):
         subs = u"""1
 00:00:00,004 --> 00:00:02,093
