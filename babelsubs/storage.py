@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program.  If not, see http://www.gnu.org/licenses/agpl-3.0.html.
 
+import copy
 import difflib
 from itertools import izip_longest, izip
 import os
@@ -281,40 +282,40 @@ def calc_changes(set_1, set_2, mappings=None):
     return differ.calc_text_changed(), differ.calc_time_changed()
 
 class SubtitleSet(object):
-    BASE_TTML = r'''
-        <tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" >
-            <head>
-                <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
-                    <ttm:title>%(title)s</ttm:title>
-                    <ttm:description>%(description)s</ttm:description>
-                    <ttm:copyright></ttm:copyright>
-                </metadata>
+    BASE_TTML = '''\
+<tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" >
+    <head>
+        <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+            <ttm:title>%(title)s</ttm:title>
+            <ttm:description>%(description)s</ttm:description>
+            <ttm:copyright></ttm:copyright>
+        </metadata>
 
-                <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
-                    <style xml:id="amara-style"
-                        tts:color="white"
-                        tts:fontFamily="proportionalSansSerif"
-                        tts:fontSize="18px"
-                        tts:textAlign="center"
-                    />
-                </styling>
+        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <style xml:id="amara-style"
+                tts:color="white"
+                tts:fontFamily="proportionalSansSerif"
+                tts:fontSize="18px"
+                tts:textAlign="center"
+            />
+        </styling>
 
-                <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
-                    <region xml:id="amara-subtitle-area"
-                            style="amara-style"
-                            tts:extent="560px 62px"
-                            tts:padding="5px 3px"
-                            tts:backgroundColor="black"
-                            tts:displayAlign="after"
-                    />
-                </layout>
-            </head>
-            <body region="amara-subtitle-area">
-                <div>
-                </div>
-            </body>
-        </tt>
-    '''
+        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <region xml:id="amara-subtitle-area"
+                    style="amara-style"
+                    tts:extent="560px 62px"
+                    tts:padding="5px 3px"
+                    tts:backgroundColor="black"
+                    tts:displayAlign="after"
+            />
+        </layout>
+    </head>
+    <body region="amara-subtitle-area">
+        <div>
+        </div>
+    </body>
+</tt>
+'''
 
     SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
 
@@ -619,3 +620,6 @@ class SubtitleSet(object):
 
     def to_xml(self):
         return etree.tostring(self._ttml, pretty_print=True)
+
+    def as_etree_node(self):
+        return copy.deepcopy(self._ttml)

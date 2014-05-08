@@ -1,7 +1,8 @@
 # encoding: utf-8
 from unittest2 import TestCase
+import copy
 
-from lxml.etree import XMLSyntaxError
+from lxml import etree
 
 from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator
@@ -123,3 +124,45 @@ class LegacyDFXPTest(TestCase):
         self.assertEqual(cleaned.find(TTML_NAMESPACE_URI_LEGACY), -1)
         sset = SubtitleSet(language_code='en', initial_data=cleaned)
         self.assertEqual(len(sset), 419)
+
+class DFXPMergeTest(TestCase):
+    def test_dfxp_merge(self):
+        en_subs = SubtitleSet('en')
+        es_subs = SubtitleSet('es')
+        fr_subs = SubtitleSet('fr')
+        en_subs.append_subtitle(1000, 1500, 'content')
+        es_subs.append_subtitle(1000, 1500, 'spanish content')
+        fr_subs.append_subtitle(1000, 1500, 'french content')
+
+        correct_xml = """\
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="">
+    <head>
+        <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+            <ttm:title/>
+            <ttm:description/>
+            <ttm:copyright/>
+        </metadata>
+
+        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+        </styling>
+
+        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+        </layout>
+    </head>
+    <body region="amara-subtitle-area">
+        <div xml:lang="en">
+        <p begin="00:00:01.000" end="00:00:01.500">content</p></div>
+        <div xml:lang="es">
+        <p begin="00:00:01.000" end="00:00:01.500">spanish content</p></div>
+        <div xml:lang="fr">
+        <p begin="00:00:01.000" end="00:00:01.500">french content</p></div>
+    </body>
+</tt>
+"""
+
+        self.assertEquals(
+            DFXPGenerator.merge_subtitles([en_subs, es_subs, fr_subs]),
+            etree.tostring(etree.fromstring(correct_xml))
+        )

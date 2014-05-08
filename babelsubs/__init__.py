@@ -88,5 +88,8 @@ def to(subs, type, language=None):
 
     return Generator.generate(subs, language=language)
 
+def dfxp_merge(subtitle_sets):
+    return generators.DFXPGenerator.merge_subtitles(subtitle_sets)
 
-__all__ = ['load_from', 'load_from_file', 'to', 'get_available_formats']
+__all__ = ['load_from', 'load_from_file', 'to', 'get_available_formats',
+           'dfxp_merge']
