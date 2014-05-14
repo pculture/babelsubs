@@ -38,6 +38,7 @@ NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
+XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace'
 TTML_NAMESPACE_URI_LEGACY_RE =           re.compile(r'''('|")(%s)(#[\w]+)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE = re.compile(r'''('|")(%s)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 
@@ -567,6 +568,13 @@ class SubtitleSet(object):
             el.set('begin',   milliseconds_to_time_clock_exp(from_ms) )
         if to_ms is not None:
             el.set('end',  milliseconds_to_time_clock_exp(to_ms) )
+
+    def set_language(self, language_code):
+        lang_attr_name = '{%s}lang' % (XML_NAMESPACE_URI,)
+        self._ttml.set(lang_attr_name, language_code)
+        div = self._ttml.find('{%s}body/{%s}div' % (TTML_NAMESPACE_URI,
+                                                    TTML_NAMESPACE_URI))
+        div.set(lang_attr_name, language_code)
 
     @classmethod
     def from_list(cls, language_code, subtitles, escape=False):

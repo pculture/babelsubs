@@ -225,3 +225,13 @@ class UpdateTest(TestCase):
             dfxp_updated.update(i, to_ms=1000*i)
         for i,sub in enumerate(dfxp_updated.subtitle_items()):
             self.assertEqual(i * 1000, sub.end_time)
+
+    def test_update_language_code(self):
+        subs = utils.get_subs("simple.dfxp").to_internal()
+        subs.set_language('fr')
+        lang_attr_name = '{http://www.w3.org/XML/1998/namespace}lang'
+        self.assertEquals(subs._ttml.get(lang_attr_name), 'fr')
+
+        div = subs._ttml.find('{http://www.w3.org/ns/ttml}body'
+                              '/{http://www.w3.org/ns/ttml}div')
+        self.assertEquals(div.get(lang_attr_name), 'fr')
