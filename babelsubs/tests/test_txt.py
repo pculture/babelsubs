@@ -44,9 +44,8 @@ class TXTGeneraorTest(TestCase):
 
     def test_linebreaks(self):
         sset = SubtitleSet('en')
-        sset.append_subtitle(0, 1000, '''line 1
-line 2
-line 3''')
+        sset.append_subtitle(0, 1000, '''line 1<br />line 2<br />line 3''',
+                             escape=False)
         sset.append_subtitle(1000,200, 'second sub')
         output = unicode(TXTGenerator(sset))
         self.assertEqual(output, TXT_LINEBREAKS)
