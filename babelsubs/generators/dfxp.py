@@ -41,14 +41,9 @@ class DFXPGenerator(BaseGenerator):
         for i, subtitle_set in enumerate(subtitle_sets):
             root_elt = subtitle_set.as_etree_node()
             language_code = root_elt.get(lang)
-            content_div = root_elt.find(body).find(div)
-            content_div.set(lang, language_code)
-            result_body.append(content_div)
-            # for every subtitle set except the last, we add some extra
-            # whitespace to make things look pretty
-            if i < len(subtitle_sets) - 1:
-                if content_div.tail is not None:
-                    content_div.tail += '    '
+            lang_div = etree.SubElement(result_body, 'div')
+            lang_div.set(lang, language_code)
+            lang_div.extend(root_elt.find(body).findall(div))
         return etree.tostring(result)
 
 register(DFXPGenerator)

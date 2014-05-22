@@ -10,7 +10,7 @@ from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.base import SubtitleParserError
 from babelsubs.storage import  (
     SubtitleSet, get_attr, TTML_NAMESPACE_URI, _cleanup_legacy_namespace,
-    TTML_NAMESPACE_URI_LEGACY
+    TTML_NAMESPACE_URI_LEGACY, find_els,
 )
 
 from babelsubs.tests import utils
@@ -132,6 +132,8 @@ class DFXPMergeTest(TestCase):
         fr_subs = SubtitleSet('fr')
         en_subs.append_subtitle(1000, 1500, 'content')
         es_subs.append_subtitle(1000, 1500, 'spanish content')
+        es_subs.append_subtitle(2000, 2500, 'spanish content 2',
+                                new_paragraph=True)
         fr_subs.append_subtitle(1000, 1500, 'french content')
 
         correct_xml = """\
@@ -153,16 +155,49 @@ class DFXPMergeTest(TestCase):
     </head>
     <body region="amara-subtitle-area">
         <div xml:lang="en">
-        <p begin="00:00:01.000" end="00:00:01.500">content</p></div>
+            <div>
+                <p begin="00:00:01.000" end="00:00:01.500">content</p></div>
+        </div>
         <div xml:lang="es">
-        <p begin="00:00:01.000" end="00:00:01.500">spanish content</p></div>
+            <div>
+                <p begin="00:00:01.000" end="00:00:01.500">spanish content</p>
+            </div>
+            <div>
+                <p begin="00:00:02.000" end="00:00:02.500">spanish content 2</p>
+            </div>
+        </div>
         <div xml:lang="fr">
-        <p begin="00:00:01.000" end="00:00:01.500">french content</p></div>
+            <div>
+                <p begin="00:00:01.000" end="00:00:01.500">french content</p></div>
+        </div>
     </body>
 </tt>
 """
+        lang = '{http://www.w3.org/XML/1998/namespace}lang'
 
+        merged = etree.fromstring(DFXPGenerator.merge_subtitles(
+            [en_subs, es_subs, fr_subs]))
+
+        self.assertEqual(
+            etree.tostring(find_els(merged, '/tt/head')[0]),
+            etree.tostring(find_els(en_subs._ttml, '/tt/head')[0]))
+
+        merged_divs = find_els(merged, '/tt/body/div')
+        self.assertEqual(len(merged_divs), 3)
+
+        self.assertEqual(merged_divs[0].get(lang), 'en')
+        self.assertEqual(merged_divs[1].get(lang), 'es')
+        self.assertEqual(merged_divs[2].get(lang), 'fr')
+
+        self.assertNodeContentEqual(merged_divs[0],
+                                    find_els(en_subs._ttml, '/tt/body')[0])
+        self.assertNodeContentEqual(merged_divs[1],
+                                    find_els(es_subs._ttml, '/tt/body')[0])
+        self.assertNodeContentEqual(merged_divs[2],
+                                    find_els(fr_subs._ttml, '/tt/body')[0])
+
+
+    def assertNodeContentEqual(self, node, node2):
         self.assertEquals(
-            DFXPGenerator.merge_subtitles([en_subs, es_subs, fr_subs]),
-            etree.tostring(etree.fromstring(correct_xml))
-        )
+            ''.join(etree.tostring(child) for child in node),
+            ''.join(etree.tostring(child) for child in node2))

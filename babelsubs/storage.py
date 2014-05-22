@@ -582,9 +582,6 @@ class SubtitleSet(object):
     def set_language(self, language_code):
         lang_attr_name = '{%s}lang' % (XML_NAMESPACE_URI,)
         self._ttml.set(lang_attr_name, language_code)
-        div = self._ttml.find('{%s}body/{%s}div' % (TTML_NAMESPACE_URI,
-                                                    TTML_NAMESPACE_URI))
-        div.set(lang_attr_name, language_code)
 
     @classmethod
     def from_list(cls, language_code, subtitles, escape=False):

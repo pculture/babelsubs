@@ -231,7 +231,3 @@ class UpdateTest(TestCase):
         subs.set_language('fr')
         lang_attr_name = '{http://www.w3.org/XML/1998/namespace}lang'
         self.assertEquals(subs._ttml.get(lang_attr_name), 'fr')
-
-        div = subs._ttml.find('{http://www.w3.org/ns/ttml}body'
-                              '/{http://www.w3.org/ns/ttml}div')
-        self.assertEquals(div.get(lang_attr_name), 'fr')
