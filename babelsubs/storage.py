@@ -318,10 +318,6 @@ class SubtitleSet(object):
 </tt>
 '''
 
-    SUBTITLE_XML = r'''<p xmlns="http://www.w3.org/ns/ttml" %s %s>%s</p>'''
-
-    SUBTITLE_DIV_XML = r'''<div xmlns="http://www.w3.org/ns/ttml"></div>'''
-    
     def __init__(self, language_code, initial_data=None, title=None,
                  description=None, normalize_time=True):
         """Create a new set of Subtitles, either empty or from a hunk of TTML.
@@ -340,8 +336,8 @@ class SubtitleSet(object):
             initial_data = NEW_LINES_RE.sub("", initial_data)
             initial_data = MULTIPLE_SPACES_RE.sub(" ", initial_data)
 
-            self._ttml = etree.fromstring( initial_data,
-                parser=etree.XMLParser(remove_blank_text=True))
+            self._set_ttml(etree.fromstring(initial_data,
+                parser=etree.XMLParser(remove_blank_text=True)))
             # now, if there's a space after a <br> tag, we don't want it here.
             # most likely it was created by indenting. But *only* it it's after a
             # <br> tag, so we must loop through them
@@ -351,17 +347,21 @@ class SubtitleSet(object):
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
         else:
-            self._ttml = etree.fromstring(SubtitleSet.BASE_TTML % {
+            self._set_ttml(etree.fromstring(SubtitleSet.BASE_TTML % {
                 'namespace_uri': TTML_NAMESPACE_URI,
                 'title' : title or '',
                 'description': description or '',
                 'language_code': language_code or '',
-            })
+            }))
 
         if initial_data:
             self.subtitles = self.subtitle_items()
         else:
             self.subtitles = None
+
+    def _set_ttml(self, ttml):
+        self._ttml = ttml
+        self._body = find_els(self._ttml, '/tt/body')[-1]
 
     def __len__(self):
         return len(self.get_subtitles())
@@ -371,11 +371,16 @@ class SubtitleSet(object):
             self.subtitles = self.subtitle_items()
         return self.subtitles[key]
 
+    def find_divs(self):
+        return find_els(self._body, "div")
+
+    def last_div(self):
+        return self.find_divs()[-1]
+
     def get_subtitles(self):
-        divs = find_els(self._ttml, "/tt/body/div")
         result = []
 
-        for div in divs:
+        for div in self.find_divs():
             el_count = 0
 
             for el in find_els(div, 'p'):
@@ -391,33 +396,38 @@ class SubtitleSet(object):
         NO UNICODE ALLOWED!  USE XML ENTITIES TO REPRESENT UNICODE CHARACTERS!
 
         """
-        
-        begin_value = milliseconds_to_time_clock_exp(from_ms)
-        begin = 'begin="%s"' % begin_value if begin_value  is not None else ''
-        end_value = milliseconds_to_time_clock_exp(to_ms)
-        end = 'end="%s"' %  end_value if end_value is not None else ''
 
         if escape:
             content = escape_xml(content)
         content = self._fix_xml_content(content)
-        p = etree.fromstring(SubtitleSet.SUBTITLE_XML % (begin, end, content))
+        p = self._create_subtitle_p(from_ms, to_ms, content)
+
+        if new_paragraph:
+            div = etree.SubElement(self._body,
+                                   '{%s}div' % TTML_NAMESPACE_URI)
+        else:
+            div = self.last_div()
+        div.append(p)
+
+    def _create_subtitle_p(self, from_ms, to_ms, content):
+        p = etree.fromstring(
+            '<p xmlns="http://www.w3.org/ns/ttml">%s</p>' % content)
+
+        if from_ms is not None:
+            p.set('begin', milliseconds_to_time_clock_exp(from_ms))
+        if to_ms is not None:
+            p.set('end', milliseconds_to_time_clock_exp(to_ms))
+
         # fromstring has no sane way to set an attribute namespace (yay)
+        # so we delete the old attrib, and add the new one with the prefixed
+        # namespace
         spans = [el for el in p.getchildren() if el.tag.endswith('span')]
         for span in spans:
-            # so we delete the old attrib, and add the new one with the
-            # prefixed namespace
             for attr_name, value in span.attrib.items():
                 if attr_name in ('fontStyle', 'textDecoration', 'fontWeight'):
                     span.set('{%s}%s' % (TTS_NAMESPACE_URI , attr_name), value)
                     del span.attrib[attr_name]
-
-
-        div = find_els(self._ttml, '/tt/body/div')[-1]
-        if new_paragraph:
-            body = find_els(self._ttml, '/tt/body')[-1]
-            div = etree.fromstring(SubtitleSet.SUBTITLE_DIV_XML)
-            body.append(div)
-        div.append(p)
+        return p
 
     _invalid_xml_control_chars_ascii = ''.join(chr(i) for i in xrange(32)
                                          if chr(i) not in "\n\r\t")
@@ -603,7 +613,7 @@ class SubtitleSet(object):
 
     def _get_tick_rate(self):
         try:
-            tt = find_els(self._ttml, '/tt/body/div')[0]
+            tt = self.find_divs()[0]
         except IndexError as e:
             from babelsubs.parsers.base import SubtitleParserError
             raise SubtitleParserError(
