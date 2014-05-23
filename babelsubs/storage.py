@@ -42,6 +42,11 @@ XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace'
 TTML_NAMESPACE_URI_LEGACY_RE =           re.compile(r'''('|")(%s)(#[\w]+)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE = re.compile(r'''('|")(%s)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 
+# Define a couple strings for easy namespaced tag/attribute creation
+TTML = '{%s}' % TTML_NAMESPACE_URI
+TTS = '{%s}' % TTS_NAMESPACE_URI
+XML = '{%s}' % XML_NAMESPACE_URI
+
 MULTIPLE_SPACES_RE = re.compile(r"\s{2,}")
 NEW_LINES_RE = re.compile(r'(\n|\r)')
 
@@ -403,8 +408,7 @@ class SubtitleSet(object):
         p = self._create_subtitle_p(from_ms, to_ms, content)
 
         if new_paragraph:
-            div = etree.SubElement(self._body,
-                                   '{%s}div' % TTML_NAMESPACE_URI)
+            div = etree.SubElement(self._body, TTML + 'div')
         else:
             div = self.last_div()
         div.append(p)
@@ -425,7 +429,7 @@ class SubtitleSet(object):
         for span in spans:
             for attr_name, value in span.attrib.items():
                 if attr_name in ('fontStyle', 'textDecoration', 'fontWeight'):
-                    span.set('{%s}%s' % (TTS_NAMESPACE_URI , attr_name), value)
+                    span.set(TTS + attr_name, value)
                     del span.attrib[attr_name]
         return p
 
@@ -580,8 +584,7 @@ class SubtitleSet(object):
             el.set('end',  milliseconds_to_time_clock_exp(to_ms) )
 
     def set_language(self, language_code):
-        lang_attr_name = '{%s}lang' % (XML_NAMESPACE_URI,)
-        self._ttml.set(lang_attr_name, language_code)
+        self._ttml.set(XML + 'lang', language_code)
 
     @classmethod
     def from_list(cls, language_code, subtitles, escape=False):
