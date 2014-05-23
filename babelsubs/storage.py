@@ -27,6 +27,7 @@ from xml.sax.saxutils import (escape as escape_xml,
 from collections import namedtuple
 
 from babelsubs import utils
+from babelsubs.xmlconst import *
 
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
@@ -35,17 +36,8 @@ TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))'
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
-TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
-TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
-TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
-XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace'
 TTML_NAMESPACE_URI_LEGACY_RE =           re.compile(r'''('|")(%s)(#[\w]+)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE = re.compile(r'''('|")(%s)("|')''' % TTML_NAMESPACE_URI_LEGACY)
-
-# Define a couple strings for easy namespaced tag/attribute creation
-TTML = '{%s}' % TTML_NAMESPACE_URI
-TTS = '{%s}' % TTS_NAMESPACE_URI
-XML = '{%s}' % XML_NAMESPACE_URI
 
 MULTIPLE_SPACES_RE = re.compile(r"\s{2,}")
 NEW_LINES_RE = re.compile(r'(\n|\r)')
@@ -363,6 +355,14 @@ class SubtitleSet(object):
             self.subtitles = self.subtitle_items()
         else:
             self.subtitles = None
+
+    @classmethod
+    def create_with_raw_ttml(cls, ttml):
+        self = cls.__new__(cls)
+        self._set_ttml(ttml)
+        # force subtitles to be created
+        self.subtitle_items()
+        return self
 
     def _set_ttml(self, ttml):
         self._ttml = ttml
