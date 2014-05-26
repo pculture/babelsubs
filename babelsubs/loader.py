@@ -23,6 +23,7 @@ from lxml import etree
 
 from babelsubs import parsers
 from babelsubs import storage
+from babelsubs.generators.dfxp import DFXPGenerator
 from babelsubs.xmlconst import *
 
 class SubtitleLoader(object):
@@ -114,13 +115,19 @@ class SubtitleLoader(object):
         body = etree.Element(TTML + 'body', attrib={
             TTML + 'region': self.regions[0][0],
         })
-        etree.SubElement(body, TTML + 'div')
         return body
 
     def create_new(self, language_code, title='', description=''):
         """Create a new SubtitleSet.  """
         ttml = self._empty_ttml(language_code, title, description)
+        # add an empty div to start the subtitles
+        etree.SubElement(ttml.find(TTML + 'body'), TTML + 'div')
         return storage.SubtitleSet.create_with_raw_ttml(ttml)
+
+    def dfxp_merge(self, subtitle_sets):
+        """Create a merged DFXP file from a list of subtitle sets."""
+        initial_ttml = self._empty_ttml('', '', '')
+        return DFXPGenerator.merge_subtitles(subtitle_sets, initial_ttml)
 
     def load(self, language_code, path):
         """Create a SubtitleSet with existing subtitles.
@@ -151,12 +158,10 @@ class SubtitleLoader(object):
             # return the subtitles as-is
             return parsed_subs
 
-        rv = self.create_new(language_code)
-        self._remove_intial_div(rv)
+        ttml  = self._empty_ttml(language_code, '', '')
         self._move_elements(parsed_subs._ttml.find(TTML + 'body'),
-                            rv._ttml.find(TTML + 'body'))
-        rv.subtitle_items()
-        return rv
+                            ttml.find(TTML + 'body'))
+        return storage.SubtitleSet.create_with_raw_ttml(ttml)
 
     def _remove_intial_div(self, subtitle_set):
         body = subtitle_set._ttml.find(TTML + 'body')

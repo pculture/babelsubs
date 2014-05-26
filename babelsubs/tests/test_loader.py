@@ -1,6 +1,10 @@
+from lxml import etree
+import re
 from unittest2 import TestCase
 
 from babelsubs import loader
+from babelsubs.generators.dfxp import DFXPGenerator
+from babelsubs.storage import SubtitleSet
 from babelsubs.tests import utils
 from babelsubs.xmlconst import *
 
@@ -53,7 +57,6 @@ class TestLoader(TestCase):
         self.assertEquals(ttml.find(TTML + 'body').attrib, {
             TTML + 'region': 'bottom',
         })
-
 
     def test_create_new(self):
         subs = self.loader.create_new('en', 'title', 'description')
