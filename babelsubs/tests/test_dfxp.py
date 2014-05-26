@@ -9,12 +9,12 @@ from babelsubs.generators.dfxp import DFXPGenerator
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers.base import SubtitleParserError
 from babelsubs.storage import  (
-    SubtitleSet, get_attr, TTML_NAMESPACE_URI, _cleanup_legacy_namespace,
-    TTML_NAMESPACE_URI_LEGACY, find_els,
+    SubtitleSet, get_attr, _cleanup_legacy_namespace,
 )
 
 from babelsubs.tests import utils
 from babelsubs import load_from
+from babelsubs.xmlconst import *
 
 SRT_TEXT = u"""
 1
@@ -126,78 +126,67 @@ class LegacyDFXPTest(TestCase):
         self.assertEqual(len(sset), 419)
 
 class DFXPMergeTest(TestCase):
+    def setUp(self):
+        self.en_subs = SubtitleSet('en')
+        self.es_subs = SubtitleSet('es')
+        self.fr_subs = SubtitleSet('fr')
+        self.en_subs.append_subtitle(1000, 1500, 'content')
+        self.es_subs.append_subtitle(1000, 1500, 'spanish content')
+        self.es_subs.append_subtitle(2000, 2500, 'spanish content 2',
+                                     new_paragraph=True)
+        self.fr_subs.append_subtitle(1000, 1500, 'french content')
+
     def test_dfxp_merge(self):
-        en_subs = SubtitleSet('en')
-        es_subs = SubtitleSet('es')
-        fr_subs = SubtitleSet('fr')
-        en_subs.append_subtitle(1000, 1500, 'content')
-        es_subs.append_subtitle(1000, 1500, 'spanish content')
-        es_subs.append_subtitle(2000, 2500, 'spanish content 2',
-                                new_paragraph=True)
-        fr_subs.append_subtitle(1000, 1500, 'french content')
-
-        correct_xml = """\
-<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="">
-    <head>
-        <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
-            <ttm:title/>
-            <ttm:description/>
-            <ttm:copyright/>
-        </metadata>
-
-        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
-            <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
-        </styling>
-
-        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
-            <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
-        </layout>
-    </head>
-    <body region="amara-subtitle-area">
-        <div xml:lang="en">
-            <div>
-                <p begin="00:00:01.000" end="00:00:01.500">content</p></div>
-        </div>
-        <div xml:lang="es">
-            <div>
-                <p begin="00:00:01.000" end="00:00:01.500">spanish content</p>
-            </div>
-            <div>
-                <p begin="00:00:02.000" end="00:00:02.500">spanish content 2</p>
-            </div>
-        </div>
-        <div xml:lang="fr">
-            <div>
-                <p begin="00:00:01.000" end="00:00:01.500">french content</p></div>
-        </div>
-    </body>
-</tt>
-"""
-        lang = '{http://www.w3.org/XML/1998/namespace}lang'
-
         merged = etree.fromstring(DFXPGenerator.merge_subtitles(
-            [en_subs, es_subs, fr_subs]))
+            [self.en_subs, self.es_subs, self.fr_subs]))
 
         self.assertEqual(
-            etree.tostring(find_els(merged, '/tt/head')[0]),
-            etree.tostring(find_els(en_subs._ttml, '/tt/head')[0]))
+            etree.tostring(merged.find(TTML + 'head')),
+            etree.tostring(self.en_subs._ttml.find(TTML + 'head')))
 
-        merged_divs = find_els(merged, '/tt/body/div')
+        self.check_merged_body(merged)
+
+    def test_merge_with_header(self):
+        initial_ttml = etree.fromstring("""\
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling">
+    <head>
+        <styling>
+            <style xml:id="style" tts:color="foo" tts:fontSize="bar" />
+        </styling>
+
+        <layout>
+            <region xml:id="region" style="style" tts:extent="foo" tts:origin="bar" />
+        </layout>
+    </head>
+    <body />
+</tt>""")
+
+        merged = etree.fromstring(DFXPGenerator.merge_subtitles(
+            [self.en_subs, self.es_subs, self.fr_subs],
+            initial_ttml=initial_ttml))
+
+        self.assertEqual(
+            etree.tostring(merged.find(TTML + 'head')),
+            etree.tostring(initial_ttml.find(TTML + 'head')))
+        self.check_merged_body(merged)
+
+    def check_merged_body(self, merged):
+        merged_divs = merged.find(TTML + 'body').findall(TTML + 'div')
         self.assertEqual(len(merged_divs), 3)
 
-        self.assertEqual(merged_divs[0].get(lang), 'en')
-        self.assertEqual(merged_divs[1].get(lang), 'es')
-        self.assertEqual(merged_divs[2].get(lang), 'fr')
+        self.assertEqual(merged_divs[0].get(XML + 'lang'), 'en')
+        self.assertEqual(merged_divs[1].get(XML + 'lang'), 'es')
+        self.assertEqual(merged_divs[2].get(XML + 'lang'), 'fr')
 
-        self.assertNodeContentEqual(merged_divs[0],
-                                    find_els(en_subs._ttml, '/tt/body')[0])
-        self.assertNodeContentEqual(merged_divs[1],
-                                    find_els(es_subs._ttml, '/tt/body')[0])
-        self.assertNodeContentEqual(merged_divs[2],
-                                    find_els(fr_subs._ttml, '/tt/body')[0])
-
+        self.assertNodeContentEqual(
+            merged_divs[0], self.en_subs._ttml.find(TTML + 'body'))
+        self.assertNodeContentEqual(
+            merged_divs[1], self.es_subs._ttml.find(TTML + 'body'))
+        self.assertNodeContentEqual(
+            merged_divs[2], self.fr_subs._ttml.find(TTML + 'body'))
 
     def assertNodeContentEqual(self, node, node2):
         self.assertEquals(
             ''.join(etree.tostring(child) for child in node),
             ''.join(etree.tostring(child) for child in node2))
+
