@@ -15,56 +15,13 @@ class TestLoader(TestCase):
         self.loader.add_region('bottom', 'test-style', extent='100% 20%', origin='0 80%')
         self.loader.add_region('top', 'test-style', extent='100% 20%', origin='0 0')
 
-    def check_ttml(self, ttml, language_code, title, description):
-        self.assertEquals(ttml.nsmap, {
-            None: TTML_NAMESPACE_URI,
-            'tts': TTS_NAMESPACE_URI,
-            'ttm': TTM_NAMESPACE_URI,
-        })
-        self.assertEquals(ttml.attrib, {
-            XML + 'lang': language_code,
-        })
-        head = ttml.find(TTML + 'head')
-        metadata = head.find(TTML + 'metadata')
-
-        self.assertEquals(metadata.find(TTM + 'title').text, title)
-        self.assertEquals(metadata.find(TTM + 'description').text,
-                          description)
-
-        styles = head.find(TTML + 'styling').findall(TTML + 'style')
-        regions = head.find(TTML + 'layout').findall(TTML + 'region')
-        self.assertEquals(len(styles), 1)
-        self.assertEquals(styles[0].attrib, {
-            XML + 'id': 'test-style',
-            TTS + 'color': 'white',
-            TTS + 'fontSize': '18px',
-        })
-
-        self.assertEquals(len(regions), 2)
-        self.assertEquals(regions[0].attrib, {
-            XML + 'id': 'bottom',
-            TTML + 'style': 'test-style',
-            TTS + 'extent': '100% 20%',
-            TTS + 'origin': '0 80%',
-        })
-        self.assertEquals(regions[1].attrib, {
-            XML + 'id': 'top',
-            TTML + 'style': 'test-style',
-            TTS + 'extent': '100% 20%',
-            TTS + 'origin': '0 0',
-        })
-
-        self.assertEquals(ttml.find(TTML + 'body').attrib, {
-            TTML + 'region': 'bottom',
-        })
-
     def test_create_new(self):
         subs = self.loader.create_new('en', 'title', 'description')
-        self.check_ttml(subs._ttml, 'en', 'title', 'description')
+        self.check_ttml_start(subs, 'en', 'title', 'description')
         self.assertEquals(len(subs.subtitle_items()), 0)
 
     def check_srt_import(self, subs):
-        self.check_ttml(subs._ttml, 'en', '', '')
+        self.check_ttml_start(subs, 'en')
 
         divs = subs._ttml.find(TTML + 'body').findall(TTML + 'div')
         self.assertEquals(len(divs), 1)
@@ -107,3 +64,72 @@ class TestLoader(TestCase):
         })
 
         self.assertEquals(head.find(TTML + 'layout'), None)
+
+    def check_ttml_start(self, subs, language_code, title=None, description=None):
+        top_part = re.match("(.*</head>)", subs.to_xml(), re.DOTALL)
+        if title:
+            title_tag = '<ttm:title>%s</ttm:title>' % (title,)
+        else:
+            title_tag = '<ttm:title/>'
+        if description:
+            description_tag = ('<ttm:description>%s</ttm:description>' %
+                               (description,))
+        else:
+            description_tag = '<ttm:description/>'
+
+        correct_start = """\
+<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="{language_code}">
+    <head>
+        <metadata>
+            {title_tag}
+            {description_tag}
+            <ttm:copyright/>
+        </metadata>
+        <styling>
+            <style xml:id="test-style" tts:color="white" tts:fontSize="18px"/>
+        </styling>
+        <layout>
+            <region xml:id="bottom" style="test-style" tts:origin="0 80%" tts:extent="100% 20%"/>
+            <region xml:id="top" style="test-style" tts:origin="0 0" tts:extent="100% 20%"/>
+        </layout>
+    </head>""".format(language_code=language_code, title_tag=title_tag,
+                      description_tag=description_tag)
+        utils.assert_long_text_equal(top_part.group(0), correct_start)
+
+    def test_dfxp_merge(self):
+        en_subs = SubtitleSet('en')
+        es_subs = SubtitleSet('es')
+        en_subs.append_subtitle(1000, 1500, 'content')
+        es_subs.append_subtitle(1000, 1500, 'spanish content')
+        result = self.loader.dfxp_merge([en_subs, es_subs])
+
+        utils.assert_long_text_equal(result, """\
+<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="">
+    <head>
+        <metadata>
+            <ttm:title/>
+            <ttm:description/>
+            <ttm:copyright/>
+        </metadata>
+        <styling>
+            <style xml:id="test-style" tts:color="white" tts:fontSize="18px"/>
+        </styling>
+        <layout>
+            <region xml:id="bottom" style="test-style" tts:origin="0 80%" tts:extent="100% 20%"/>
+            <region xml:id="top" style="test-style" tts:origin="0 0" tts:extent="100% 20%"/>
+        </layout>
+    </head>
+    <body region="bottom">
+        <div xml:lang="en">
+            <div>
+                <p begin="00:00:01.000" end="00:00:01.500">content</p>
+            </div>
+        </div>
+        <div xml:lang="es">
+            <div>
+                <p begin="00:00:01.000" end="00:00:01.500">spanish content</p>
+            </div>
+        </div>
+    </body>
+</tt>
+""")

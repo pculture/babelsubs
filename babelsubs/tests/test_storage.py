@@ -1,3 +1,4 @@
+from lxml import etree
 from unittest2 import TestCase
 
 from babelsubs import storage
@@ -231,3 +232,53 @@ class UpdateTest(TestCase):
         subs.set_language('fr')
         lang_attr_name = '{http://www.w3.org/XML/1998/namespace}lang'
         self.assertEquals(subs._ttml.get(lang_attr_name), 'fr')
+
+class SubtitleXMLFormattingTest(TestCase):
+    def setUp(self):
+        ttml = etree.fromstring('<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en"><head/><body><div/></body></tt>')
+        self.subtitles = storage.SubtitleSet.create_with_raw_ttml(ttml)
+
+    def test_empty_subs(self):
+        utils.assert_long_text_equal(self.subtitles.to_xml(), """\
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+    <head/>
+    <body>
+        <div/>
+    </body>
+</tt>
+""")
+
+
+    def test_with_subs(self):
+        self.subtitles.append_subtitle(1000, 1500, "content")
+        self.subtitles.append_subtitle(2000, 2500, "<i>content</i>", escape=False)
+        self.subtitles.append_subtitle(3000, 3500, "  content with space ")
+        utils.assert_long_text_equal(self.subtitles.to_xml(), """\
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+    <head/>
+    <body>
+        <div>
+            <p begin="00:00:01.000" end="00:00:01.500">content</p>
+            <p begin="00:00:02.000" end="00:00:02.500"><i>content</i></p>
+            <p begin="00:00:03.000" end="00:00:03.500">  content with space </p>
+        </div>
+    </body>
+</tt>
+""")
+
+    def test_with_new_paragraph(self):
+        self.subtitles.append_subtitle(1000, 1500, "content")
+        self.subtitles.append_subtitle(2000, 2500, "content 2", new_paragraph=True)
+        utils.assert_long_text_equal(self.subtitles.to_xml(), """\
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+    <head/>
+    <body>
+        <div>
+            <p begin="00:00:01.000" end="00:00:01.500">content</p>
+        </div>
+        <div>
+            <p begin="00:00:02.000" end="00:00:02.500">content 2</p>
+        </div>
+    </body>
+</tt>
+""")

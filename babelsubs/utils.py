@@ -5,6 +5,7 @@ import htmlentitydefs
 import formatter
 
 from itertools import chain
+from xmlconst import *
 
 DEFAULT_ALLOWED_TAGS = ['i', 'b', 'u']
 MULTIPLE_SPACES = re.compile('\s{2,}')
@@ -185,3 +186,40 @@ def fraction_to_milliseconds(str_milli):
 
 def centiseconds_to_milliseconds(centi):
     return int(centi) * 10 if centi else 0
+
+def indent_ttml(tt_elt, indent_width=4):
+    """Indent TTML tree
+
+    This function walks the XML tree and adjusts the text and tail attributes
+    so that the output will be nicely indented.  It skips <p> elements and
+    their children, since whitespace is significant there.
+
+    Also, we will add a newline after the closing tag for the TT element.
+
+    :param tt_elt: etree TT root element.
+    """
+    _do_indent_ttml(tt_elt, " " * indent_width, 0)
+    tt_elt.tail = "\n"
+
+def _do_indent_ttml(elt, indent, indent_level):
+    if elt.tag == TTML + 'p':
+        return
+    children = list(elt)
+    if not children:
+        if elt.text is not None and elt.text.strip() == '':
+            elt.text = None
+        return
+
+    # before a child element, we want to start a new line, then indent enough
+    # to move them to the next indentation level
+    pre_child_indent = "\n" + indent * (indent_level + 1)
+
+    elt.text = pre_child_indent
+    for child in children[:-1]:
+        child.tail = pre_child_indent
+    # after the last child, we need to position our closing tag.  This means
+    # indenting enough to move it to our indentation level.
+    children[-1].tail = "\n" + indent * indent_level
+
+    for child in children:
+        _do_indent_ttml(child, indent, indent_level + 1)

@@ -1,4 +1,5 @@
 from lxml import etree
+from babelsubs import utils
 from babelsubs.generators.base import register, BaseGenerator
 from babelsubs.storage import SubtitleSet
 from babelsubs.xmlconst import *
@@ -39,6 +40,10 @@ class DFXPGenerator(BaseGenerator):
             if body is None:
                 raise ValueError("no body tag")
 
+        # set the default language to blank.  We will create a div for each
+        # subtitle set and set xml:lang on that.
+        tt.set(XML + 'lang', '')
+
         # for each subtitle set we will append the body of tt
         for i, subtitle_set in enumerate(subtitle_sets):
             root_elt = subtitle_set.as_etree_node()
@@ -46,6 +51,7 @@ class DFXPGenerator(BaseGenerator):
             lang_div = etree.SubElement(body, TTML + 'div')
             lang_div.set(XML + 'lang', language_code)
             lang_div.extend(root_elt.find(TTML + 'body').findall(TTML + 'div'))
+        utils.indent_ttml(tt)
         return etree.tostring(tt)
 
 register(DFXPGenerator)

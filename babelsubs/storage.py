@@ -365,6 +365,7 @@ class SubtitleSet(object):
         return self
 
     def _set_ttml(self, ttml):
+        utils.indent_ttml(ttml)
         self._ttml = ttml
         self._body = find_els(self._ttml, '/tt/body')[-1]
 
@@ -412,6 +413,24 @@ class SubtitleSet(object):
         else:
             div = self.last_div()
         div.append(p)
+        self._adjust_whitespace_after_append(div, p, new_paragraph)
+
+    # couple of constants to easily create the text/tail attributes for the
+    # elements we create inside the body
+    _whitespace_before_p_tag = "\n" + " " * 12
+    _whitespace_before_div_tag = "\n" + " " * 8
+    _whitespace_after_last_div = "\n" + " " * 4
+
+    def _adjust_whitespace_after_append(self, div, p, new_paragraph):
+        if len(div) == 1:
+            # first element added
+            div.text = self._whitespace_before_p_tag
+        else:
+            div[-2].tail = self._whitespace_before_p_tag
+        p.tail = self._whitespace_before_div_tag
+        if new_paragraph:
+            self._body[-2].tail = self._whitespace_before_div_tag
+            div.tail = self._whitespace_after_last_div
 
     def _create_subtitle_p(self, from_ms, to_ms, content):
         p = etree.fromstring(
@@ -637,7 +656,7 @@ class SubtitleSet(object):
         raise NotImplementedError("Validation isnt working so far")
 
     def to_xml(self):
-        return etree.tostring(self._ttml, pretty_print=True)
+        return etree.tostring(self._ttml)
 
     def as_etree_node(self):
         return copy.deepcopy(self._ttml)
