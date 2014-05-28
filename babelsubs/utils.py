@@ -202,13 +202,9 @@ def indent_ttml(tt_elt, indent_width=4):
     tt_elt.tail = "\n"
 
 def _do_indent_ttml(elt, indent, indent_level):
-    if elt.tag == TTML + 'p':
+    if elt.tag == TTML + 'p' or len(elt) == 0:
         return
     children = list(elt)
-    if not children:
-        if elt.text is not None and elt.text.strip() == '':
-            elt.text = None
-        return
 
     # before a child element, we want to start a new line, then indent enough
     # to move them to the next indentation level

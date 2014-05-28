@@ -111,7 +111,7 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         self.assertTrue(len(element.getchildren()), 2)
 
         self.assertEquals(get_contents(element), 'And know, Mr. Amara will talk. >> Hello, and welcome.')
-        self.assertEquals(etree.tostring(element),
+        self.assertEquals(etree.tostring(element).strip(),
                           '<p xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" begin="00:00:00.004" end="00:00:02.093">And know, Mr. <span tts:fontWeight="bold">Amara</span> will talk.<br/> &gt;&gt; Hello, and welcome.</p>')
         self.assertEquals(element.getchildren()[1].tail, ' >> Hello, and welcome.')
 

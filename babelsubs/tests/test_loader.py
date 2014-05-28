@@ -70,12 +70,12 @@ class TestLoader(TestCase):
         if title:
             title_tag = '<ttm:title>%s</ttm:title>' % (title,)
         else:
-            title_tag = '<ttm:title/>'
+            title_tag = '<ttm:title></ttm:title>'
         if description:
             description_tag = ('<ttm:description>%s</ttm:description>' %
                                (description,))
         else:
-            description_tag = '<ttm:description/>'
+            description_tag = '<ttm:description></ttm:description>'
 
         correct_start = """\
 <tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="{language_code}">
@@ -107,8 +107,8 @@ class TestLoader(TestCase):
 <tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="">
     <head>
         <metadata>
-            <ttm:title/>
-            <ttm:description/>
+            <ttm:title></ttm:title>
+            <ttm:description></ttm:description>
             <ttm:copyright/>
         </metadata>
         <styling>
