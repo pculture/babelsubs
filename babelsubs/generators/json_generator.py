@@ -16,7 +16,7 @@ class JSONGenerator(BaseGenerator):
     """
     file_type = 'json'
 
-    MAPPINGS = dict(linebreaks="\n", bold="<b>%s</b>",
+    MAPPINGS = dict(linebreaks="<br>", bold="<b>%s</b>",
                     italics="<i>%s</i>", underline="<u>%s</u>")
 
     def __unicode__(self):
