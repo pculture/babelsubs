@@ -22,7 +22,7 @@ class SSAParser(SRTParser):
         pattern += r'[\w ]*,' #<Efect>,
         pattern += r'(?:\{.*?\})?(?P<text>.+?)\n' #[{<Override control codes>}]<Text>
         #replace \r\n to \n and fix end of last subtitle
-        input_string = input_string.replace('\r\n', '\n')+u'\n'
+        input_string = input_string.replace('\r\n', '\n')+'\n'
         self.markup_re = re.compile(r"{\\(?P<start>[biu])1}(?P<text>.+?){\\(?P<end>[biu])0}")
         super(SRTParser, self).__init__(input_string, pattern, flags=[re.DOTALL],
             language=language, eager_parse=eager_parse)
