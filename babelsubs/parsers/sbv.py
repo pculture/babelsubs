@@ -16,7 +16,7 @@ class SBVParser(BaseTextParser):
         # to time coordinates without having a frame rate number?
         # My guess people expect it to be guessable through the video
         # file, but that renders our quest useless. Ideas?
-        input_string = input_string.replace('\r\n', '\n')+u'\n\n'
+        input_string = input_string.replace('\r\n', '\n')+'\n\n'
         super(SBVParser, self).__init__(input_string, pattern, language=language,
              flags=[re.DOTALL], eager_parse=eager_parse)
 
