@@ -39,7 +39,8 @@ class TXTParser(BaseTextParser):
                 item['text'] = item['text'].replace("\n", '<br/>')
                 if not valid and ''.join(item['text'].split()):
                     valid = True
-                self.sub_set.append_subtitle(item['start'], item['end'], item['text'])
+                self.sub_set.append_subtitle(item['start'], item['end'],
+                                             item['text'], escape=False)
             if not valid:
                 raise SubtitleParserError("No subs")
         return self.sub_set

@@ -27,18 +27,23 @@ class TXTParsingTest(TestCase):
         self.assertEquals(len(subs), 2)
         [x for x in subs.to_internal().subtitle_items()]
 
+    def check_parsing(self, content, correct_subs):
+        subtitles = TXTParser.parse(content).to_internal().subtitle_items(
+            mappings=TXTGenerator.MAPPINGS)
+        self.assertEqual([s.text for s in subtitles], correct_subs)
+        for sub in subtitles:
+            self.assertEqual(sub.start_time, None)
+            self.assertEqual(sub.end_time, None)
+
     def test_invalid(self):
         with self.assertRaises(SubtitleParserError):
             TXTParser("\n\n","en")
 
-    def test_linebreaks(self):
-        input_str = '''hey
-        hey2
-        hey3
+    def test_linebreak(self):
+        self.check_parsing("one\ntwo", ["one\ntwo"])
 
-        second line'''
-        subs = TXTParser.parse(input_str)
-        self.assertEqual(len(subs), 2)
+    def test_double_linebreak_starts_new_sub(self):
+        self.check_parsing("one\n\ntwo", ["one", "two"])
 
 class TXTGeneraorTest(TestCase):
 
