@@ -10,7 +10,7 @@ class WEBVTTGenerator(BaseGenerator):
 
     def __init__(self, subtitle_set, language=None):
         super(WEBVTTGenerator, self).__init__(subtitle_set, language)
-        self.line_delimiter = '\r\n'
+        self.line_delimiter = '\n'
 
     def __unicode__(self):
         output = ['WEBVTT\n']
