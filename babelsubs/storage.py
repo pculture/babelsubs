@@ -524,7 +524,7 @@ class SubtitleSet(object):
         if not mappings:
             content = get_contents(el)
         else:
-            content = self.get_content_with_markup(el, mappings).strip()
+            content = self.get_content_with_markup(el, mappings)
 
         return SubtitleLine(from_ms, to_ms, content, meta)
 
@@ -537,7 +537,6 @@ class SubtitleSet(object):
         return begin is not None and begin.strip() != '' and \
                end is not None and end.strip() != ''
 
-
     @property
     def fully_synced(self):
         for item in self.get_subtitles():
@@ -546,6 +545,9 @@ class SubtitleSet(object):
         return True
 
     def get_content_with_markup(self, el, mappings):
+        return self._get_content_with_markup(el, mappings).strip()
+
+    def _get_content_with_markup(self, el, mappings):
         quote_text = mappings.get('quote_text', lambda x: x)
         text = []
         if el.text:
@@ -556,7 +558,7 @@ class SubtitleSet(object):
             if tag == 'span':
                 template = self._template_for_span(child, mappings)
                 text.append(template %
-                            (self.get_content_with_markup(child, mappings),))
+                            (self._get_content_with_markup(child, mappings),))
 
             elif tag == "br":
                 if 'linebreaks' in mappings:
@@ -565,7 +567,7 @@ class SubtitleSet(object):
             if child.tail:
                 text.append(quote_text(child.tail))
 
-        return ''.join(text).strip()
+        return ''.join(text)
 
     def _template_for_span(self, elt, mappings):
         """String to use for a span for get_content_with_markup().

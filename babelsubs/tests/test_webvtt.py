@@ -75,16 +75,28 @@ class WEBVTTParsingTest(TestCase):
 
 class WEBVTTGeneratorTest(TestCase):
 
-    def setUp(self):
-        self.dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
-        self.subs = self.dfxp.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
-
     def test_generated_formatting(self):
-        self.assertEqual(self.subs[2].text,'It has <b>bold</b> formatting' )
-        self.assertEqual(self.subs[3].text,'It has <i>italics</i> too' )
-        self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
-        self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
-        self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
+        dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
+        subs = dfxp.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
+        self.assertEqual(subs[2].text,'It has <b>bold</b> formatting' )
+        self.assertEqual(subs[3].text,'It has <i>italics</i> too' )
+        self.assertEqual(subs[4].text,'And why not <u>underline</u>' )
+        self.assertEqual(subs[5].text,'It has a html tag <a> should be in brackets' )
+        self.assertEqual(subs[6].text,'It has speaker changes >>>' )
+
+    def test_span_around_newline(self):
+        source = 'one<span fontStyle="italic"><br/></span>two'
+        subs = SubtitleSet('en')
+        subs.append_subtitle(0, 1000, source, escape=False)
+        items = subs.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
+        self.assertEqual(items[0].text, 'one<i>\n</i>two')
+
+    def test_space_before_end_span(self):
+        source = """<span fontStyle="italic">one<br/>two </span>three<span fontStyle="italic">four.</span>"""
+        subs = SubtitleSet('en')
+        subs.append_subtitle(0, 1000, source, escape=False)
+        items = subs.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
+        self.assertEqual(items[0].text, '<i>one\ntwo </i>three<i>four.</i>')
 
 class WEBVTTMultiLines(TestCase):
     def setUp(self):
