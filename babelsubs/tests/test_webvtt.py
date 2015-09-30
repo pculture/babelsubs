@@ -61,6 +61,17 @@ class WEBVTTParsingTest(TestCase):
         self.assertIn('<p begin="99:59:59.000" end="99:59:59.000">I\'m gutted. <br/>Absolutely gutted.</p>',
             parsed.to_xml())
 
+    def test_cue_settings(self):
+        subs  = utils.get_subs("cue-settings.vtt")
+        self.assertEquals(len(subs), 6)
+        self.assertEquals(subs.to_internal().subtitle_items()[0].text,
+                          'Hi, my name is Fred')
+
+    def test_voice_span(self):
+        subs  = utils.get_subs("voice-span.vtt")
+        self.assertEquals(len(subs), 6)
+        self.assertEquals(subs.to_internal().subtitle_items()[0].text,
+                          'Hi, my name is Fred')
 
 class WEBVTTGeneratorTest(TestCase):
 
