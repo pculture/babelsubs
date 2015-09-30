@@ -15,17 +15,6 @@ class WEBVTTParsingTest(TestCase):
         subs  = utils.get_subs("basic.vtt")
         self.assertEquals(len(subs), 19)
 
-    def setUp(self):
-        self.dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
-        self.subs = self.dfxp.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
-
-    def test_generated_formatting(self):
-        self.assertEqual(self.subs[2].text,'It has <b>bold</b> formatting' )
-        self.assertEqual(self.subs[3].text,'It has <i>italics</i> too' )
-        self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
-        self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
-        self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
-
     def test_round_trip(self):
         subs1  = utils.get_subs("basic.vtt")
         parsed1 = subs1.to_internal()
@@ -74,6 +63,16 @@ class WEBVTTParsingTest(TestCase):
 
 
 class WEBVTTGeneratorTest(TestCase):
+
+    def test_generated_formatting(self):
+        dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
+        subs = dfxp.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
+        self.assertEqual(subs[2].text,'It has <b>bold</b> formatting' )
+        self.assertEqual(subs[3].text,'It has <i>italics</i> too' )
+        self.assertEqual(subs[4].text,'And why not <u>underline</u>' )
+        self.assertEqual(subs[5].text,'It has a html tag <a> should be in brackets' )
+        self.assertEqual(subs[6].text,'It has speaker changes >>>' )
+
 
     def test_generated_formatting(self):
         dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
