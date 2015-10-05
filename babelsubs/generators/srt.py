@@ -5,7 +5,7 @@ from babelsubs.utils import UNSYNCED_TIME_FULL
 class SRTGenerator(BaseGenerator):
     file_type = 'srt'
 
-    MAPPINGS = dict(linebreaks="\n", bold="<b>%s</b>",
+    MAPPINGS = dict(linebreaks="\r\n", bold="<b>%s</b>",
                     italics="<i>%s</i>", underline="<u>%s</u>")
 
     def __init__(self, subtitle_set, language=None):

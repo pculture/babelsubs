@@ -93,7 +93,7 @@ class DFXPParsingTest(TestCase):
         subs = utils.get_subs("pre-dmr.dfxp")
         sub = subs.subtitle_set.subtitle_items(mappings=SRTGenerator.MAPPINGS)[0]
         self.assertEqual(sub.text,
-                         '''Last time, we began talking about\nresonance structures. And I'd like''')
+                         '''Last time, we began talking about\r\nresonance structures. And I'd like''')
 
     def test_equality_ignores_whitespace(self):
         subs_1 = utils.get_subs('pre-dmr.dfxp').subtitle_set
