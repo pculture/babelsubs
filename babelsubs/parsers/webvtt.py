@@ -10,9 +10,9 @@ class WEBVTTParser(BaseTextParser):
     _clean_pattern = re.compile(r'\{.*?\}', re.DOTALL)
 
     def __init__(self, input_string, language_code, eager_parse=True):
-        pattern = r'(?P<s_hour>\d{2}):(?P<s_min>\d{2}):(?P<s_sec>\d{2})(.(?P<s_secfr>\d*))?'
+        pattern = r'((?P<s_hour>\d{2}):)?(?P<s_min>\d{2}):(?P<s_sec>\d{2})(.(?P<s_secfr>\d*))?'
         pattern += r' --> '
-        pattern += r'(?P<e_hour>\d{2}):(?P<e_min>\d{2}):(?P<e_sec>\d{2})(.(?P<e_secfr>\d*))?'
+        pattern += r'((?P<e_hour>\d{2}):)?(?P<e_min>\d{2}):(?P<e_sec>\d{2})(.(?P<e_secfr>\d*))?'
         pattern += r'([ \t]+(?P<cue_settings>[^\r\n]+))?'
         pattern += r'\n(\n|(?P<text>.+?)\n\n)'
         input_string = input_string.replace('\r\n', '\n').replace('\r', '\n')+'\n\n'
@@ -21,6 +21,8 @@ class WEBVTTParser(BaseTextParser):
 
 
     def _get_time(self, hour, min, sec, milliseconds):
+        if hour is None:
+            hour = 0
         if milliseconds is None:
             milliseconds = '0'
         res  =  (int(hour)*60*60+int(min)*60+int(sec)+float('.'+milliseconds)) * 1000

@@ -73,6 +73,12 @@ class WEBVTTParsingTest(TestCase):
         self.assertEquals(subs.to_internal().subtitle_items()[0].text,
                           'Hi, my name is Fred')
 
+    def test_no_hour_in_time(self):
+        subs  = utils.get_subs("no-hour.vtt")
+        item = subs.to_internal().subtitle_items()[0]
+        self.assertEquals(item.start_time, 1000)
+        self.assertEquals(item.end_time, 3000)
+
 class WEBVTTGeneratorTest(TestCase):
 
     def test_generated_formatting(self):
