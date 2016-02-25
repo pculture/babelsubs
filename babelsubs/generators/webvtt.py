@@ -1,3 +1,5 @@
+from cgi import escape
+
 from babelsubs.generators.base import BaseGenerator, register
 from babelsubs.utils import UNSYNCED_TIME_FULL
 
@@ -6,7 +8,8 @@ class WEBVTTGenerator(BaseGenerator):
     file_type = 'vtt'
 
     MAPPINGS = dict(linebreaks="\n", bold="<b>%s</b>",
-                    italics="<i>%s</i>", underline="<u>%s</u>")
+                    italics="<i>%s</i>", underline="<u>%s</u>",
+                    quote_text=escape)
 
     def __init__(self, subtitle_set, language=None):
         super(WEBVTTGenerator, self).__init__(subtitle_set, language)

@@ -1,3 +1,4 @@
+from cgi import escape
 from babelsubs.generators.base import BaseGenerator, register
 from babelsubs.utils import UNSYNCED_TIME_FULL
 
@@ -6,7 +7,8 @@ class SRTGenerator(BaseGenerator):
     file_type = 'srt'
 
     MAPPINGS = dict(linebreaks="\r\n", bold="<b>%s</b>",
-                    italics="<i>%s</i>", underline="<u>%s</u>")
+                    italics="<i>%s</i>", underline="<u>%s</u>",
+                    quote_text=escape)
 
     def __init__(self, subtitle_set, language=None):
         super(SRTGenerator, self).__init__(subtitle_set, language)

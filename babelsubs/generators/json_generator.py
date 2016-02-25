@@ -1,3 +1,4 @@
+from cgi import escape
 from babelsubs.generators.base import BaseGenerator, register
 import json
 
@@ -17,7 +18,8 @@ class JSONGenerator(BaseGenerator):
     file_type = 'json'
 
     MAPPINGS = dict(linebreaks="<br>", bold="<b>%s</b>",
-                    italics="<i>%s</i>", underline="<u>%s</u>")
+                    italics="<i>%s</i>", underline="<u>%s</u>",
+                    quote_text=escape)
 
     def __unicode__(self):
         output = []
