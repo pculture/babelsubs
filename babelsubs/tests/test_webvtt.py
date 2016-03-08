@@ -43,7 +43,8 @@ class WEBVTTParsingTest(TestCase):
         subs  = utils.get_subs("basic.vtt")
         parsed = subs.to_internal()
         sub_data = [x for x in parsed.subtitle_items(WEBVTTGenerator.MAPPINGS)]
-        self.assertEquals(sub_data[16].text, "such as MP4, theora, webM and <i>&</i> HTML 5.")
+        self.assertEquals(sub_data[16].text,
+                          "such as MP4, theora, webM and <i>&amp;</i> HTML 5.")
 
     def test_invalid(self):
         with self.assertRaises(SubtitleParserError):
@@ -97,8 +98,10 @@ class WEBVTTGeneratorTest(TestCase):
         self.assertEqual(subs[2].text,'It has <b>bold</b> formatting' )
         self.assertEqual(subs[3].text,'It has <i>italics</i> too' )
         self.assertEqual(subs[4].text,'And why not <u>underline</u>' )
-        self.assertEqual(subs[5].text,'It has a html tag <a> should be in brackets' )
-        self.assertEqual(subs[6].text,'It has speaker changes >>>' )
+        self.assertEqual(subs[5].text,
+                         'It has a html tag &lt;a&gt; should be escaped' )
+        self.assertEqual(subs[6].text,
+                         'It has speaker changes &gt;&gt;&gt;' )
 
     def test_span_around_newline(self):
         source = 'one<span fontStyle="italic"><br/></span>two'

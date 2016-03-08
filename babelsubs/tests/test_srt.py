@@ -127,7 +127,8 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
         sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
-        self.assertEquals(sub_data[16].text, "such as MP4, theora, webM and <i>&</i> HTML 5.")
+        self.assertEquals(sub_data[16].text,
+                          "such as MP4, theora, webM and <i>&amp;</i> HTML 5.")
 
     def test_unsynced_generator(self):
         subs = SubtitleSet('en')
@@ -182,8 +183,10 @@ class SRTGeneratorTest(TestCase):
         self.assertEqual(self.subs[2].text,'It has <b>bold</b> formatting' )
         self.assertEqual(self.subs[3].text,'It has <i>italics</i> too' )
         self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
-        self.assertEqual(self.subs[5].text,'It has a html tag <a> should be in brackets' )
-        self.assertEqual(self.subs[6].text,'It has speaker changes >>>' )
+        self.assertEqual(self.subs[5].text,
+                         'It has a html tag &lt;a&gt; should be escaped' )
+        self.assertEqual(self.subs[6].text,
+                         'It has speaker changes &gt;&gt;&gt;')
 
 class SRTMultiLines(TestCase):
     def setUp(self):
