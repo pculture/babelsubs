@@ -142,6 +142,11 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
             if not tick_rate:
                 raise ValueError("Ticks need a tick rate, mate.")
             return 1000 * (num / float(tick_rate))
+        """
+        Seconds unit for Timed Text timestamps in the form "[0-9]+.[0-9]+s"
+        """
+        if unit == 's':
+            return 1000 * num
         multiplier = {
             "h": 3600 * 1000,
             "m": 60 * 1000,
@@ -151,7 +156,6 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
         }.get(unit, None)
         return num * multiplier
     raise ValueError("Time expression %s can't be parsed" % time_expression)
-
 
 def milliseconds_to_time_clock_exp(milliseconds):
     """
@@ -644,7 +648,7 @@ class SubtitleSet(object):
             if name == "tickRate":
                 return int(value)
         return 1
- 
+
     def __eq__(self, other):
         if type(self) == type(other):
             return not diff(self, other, None)['changed']
