@@ -76,7 +76,7 @@ class TimeHandlingTest(TestCase):
             self.assertIn("end", el.attrib)
             self.assertTrue(storage.TIME_EXPRESSION_CLOCK_TIME.match(el.attrib['end']))
             self.assertNotIn('dur', el.attrib)
-        
+        self.assertEqual(subs[5].attrib['end'], '00:01:05.540')
 
 class AddSubtitlesTest(TestCase):
 

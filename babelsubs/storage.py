@@ -32,7 +32,7 @@ from babelsubs.xmlconst import *
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
 
-TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]{1,})(?P<unit>(h|ms|s|m|f|t))')
+TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]+(\.\d+)?)(?P<unit>(h|ms|s|m|f|t))')
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
@@ -137,7 +137,7 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
     match = TIME_EXPRESSION_METRIC.match(time_expression)
     if match:
         groups = match.groupdict()
-        num, unit = int(groups['num']), groups['unit']
+        num, unit = float(groups['num']), groups['unit']
         if unit == 't':
             if not tick_rate:
                 raise ValueError("Ticks need a tick rate, mate.")

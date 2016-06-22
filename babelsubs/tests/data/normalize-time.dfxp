@@ -15,6 +15,7 @@
             <p xml:id="p2" begin="37667ms" dur="00:00:01.934">with ms in begin</p>
             <p xml:id="p3" begin="00:00:39.667" end="00:00:40.300"> With end </p>
             <p xml:id="p4" begin="00:00:42.033" end="43033ms">With ms and end</p>
+            <p xml:id="p5" begin="00:01:00.000" end="65.54s">With decimal s</p>
         </div>
     </body>
 </tt>
