@@ -281,7 +281,7 @@ def calc_changes(set_1, set_2, mappings=None):
 
 class SubtitleSet(object):
     BASE_TTML = '''\
-<tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" >
+<tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" %(additions)s>
     <head>
         <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
             <ttm:title>%(title)s</ttm:title>
@@ -316,7 +316,7 @@ class SubtitleSet(object):
 '''
 
     def __init__(self, language_code, initial_data=None, title=None,
-                 description=None, normalize_time=True):
+                 description=None, normalize_time=True, additions=None):
         """Create a new set of Subtitles, either empty or from a hunk of TTML.
 
         language_code: The bcp47 code for this language.
@@ -349,6 +349,7 @@ class SubtitleSet(object):
                 'title' : title or '',
                 'description': description or '',
                 'language_code': language_code or '',
+                'additions': additions or '',
             }))
 
         if initial_data:
@@ -408,7 +409,7 @@ class SubtitleSet(object):
         content = self._fix_xml_content(content)
         p = self._create_subtitle_p(from_ms, to_ms, content)
 
-        if new_paragraph:
+        if new_paragraph and len(self.last_div()) > 0:
             div = etree.SubElement(self._body, TTML + 'div')
         else:
             div = self.last_div()
@@ -429,7 +430,8 @@ class SubtitleSet(object):
             div[-2].tail = self._whitespace_before_p_tag
         p.tail = self._whitespace_before_div_tag
         if new_paragraph:
-            self._body[-2].tail = self._whitespace_before_div_tag
+            if len(self._body) > 1:
+                self._body[-2].tail = self._whitespace_before_div_tag
             div.tail = self._whitespace_after_last_div
 
     def _create_subtitle_p(self, from_ms, to_ms, content):
