@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en" >
+<head>
+        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+        </styling>
+        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+            <region xmlns="http://www.w3.org/1999/xhtml" xml:id="bottom" style="amara-style" tts:extent="100% 20%" tts:origin="0 80%"/>
+            <region xmlns="http://www.w3.org/1999/xhtml" xml:id="top" style="amara-style" tts:extent="100% 20%" tts:origin="0 0"/>
+        </layout>
+</head>
+<body region="bottom">
+	<div xml:lang="en">
+		<p region="top" begin="00:00:01.200" end="00:00:04.467">DAVID POGUE:<br />Copper, symbol Cu.</p>
+		<p begin="00:00:04.467" end="00:00:10.300">Atomic number 29--<br />29 protons, 29 electrons.</p>
+		<p begin="00:03:35.367" end="00:03:37.000">Get your commodities!</p>
+		<p begin="00:03:37.000" end="00:03:39.333">Got copper at 80 cents a pound.</p>
+		<p begin="00:03:39.333" end="00:03:40.867">Anybody?</p>
+        </div>
+</body>
+</tt>

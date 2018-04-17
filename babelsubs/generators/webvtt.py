@@ -17,18 +17,25 @@ class WEBVTTGenerator(BaseGenerator):
 
     def __unicode__(self):
         output = ['WEBVTT\n']
-        for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
-            if meta['new_paragraph']:
+        for sub in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
+            if sub.new_paragraph:
                 output.append(u'NOTE Paragraph')
                 output.append(u'')
 
-            output.append(u'%s --> %s' % (
-                self.format_time(from_ms),
-                self.format_time(to_ms)
-            ))
-            output.append(content)
+            output.append(self.format_cue_header(sub))
+            output.append(sub.text)
             output.append(u'')
         return self.line_delimiter.join(output)[:-1]
+
+    def format_cue_header(self, sub):
+        parts = []
+        parts.append(u'%s --> %s' % (
+            self.format_time(sub.start_time),
+            self.format_time(sub.end_time)
+        ))
+        if sub.region == 'top':
+            parts.append('line:1')
+        return ' '.join(parts)
 
     def format_time(self, milliseconds):
         if milliseconds is None:

@@ -36,6 +36,7 @@ TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]+(\.\d+)?)(?P<unit>(h|ms|s|m|f
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
+REGION_META_KEY = 'region'
 TTML_NAMESPACE_URI_LEGACY_RE =           re.compile(r'''('|")(%s)(#[\w]+)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 TTML_NAMESPACE_URI_LEGACY_NO_ANCHOR_RE = re.compile(r'''('|")(%s)("|')''' % TTML_NAMESPACE_URI_LEGACY)
 
@@ -50,7 +51,27 @@ NAMESPACE_DECL = {
 }
 VALID_ROOT_ELS = ('tt', 'body', 'div')
 
-SubtitleLine = namedtuple("SubtitleLine", ['start_time', 'end_time', 'text', 'meta'])
+# The old, deprecated, API for SubtitleLine is a simple tuple.  We wrap that
+# tuple in a class to provide the new, nicer, API.
+SubtitleLineBase = namedtuple("SubtitleLineBase", ['start_time', 'end_time', 'text', 'meta'])
+class SubtitleLine(SubtitleLineBase):
+    def __new__(cls, start_time, end_time, text, meta=None,
+                new_paragraph=False, region=None):
+        if meta is None:
+            meta = {}
+        if new_paragraph:
+            meta[NEW_PARAGRAPH_META_KEY] = True
+        if region or REGION_META_KEY not in meta:
+            meta[REGION_META_KEY] = region
+        return super(SubtitleLine, cls).__new__(cls, start_time, end_time, text, meta)
+
+    @property
+    def new_paragraph(self):
+        return NEW_PARAGRAPH_META_KEY in self.meta
+
+    @property
+    def region(self):
+        return self.meta.get(REGION_META_KEY)
 
 def _cleanup_legacy_namespace(input_string):
     """
@@ -397,7 +418,7 @@ class SubtitleSet(object):
         return result
 
     def append_subtitle(self, from_ms, to_ms, content, new_paragraph=False,
-                        escape=True):
+                        region=None, escape=True):
         """Append a subtitle to the end of the list.
 
         NO UNICODE ALLOWED!  USE XML ENTITIES TO REPRESENT UNICODE CHARACTERS!
@@ -408,6 +429,8 @@ class SubtitleSet(object):
             content = escape_xml(content)
         content = self._fix_xml_content(content)
         p = self._create_subtitle_p(from_ms, to_ms, content)
+        if region:
+            p.set('region', region)
 
         if new_paragraph and len(self.last_div()) > 0:
             div = etree.SubElement(self._body, TTML + 'div')
@@ -507,7 +530,8 @@ class SubtitleSet(object):
             # bool(el.getprevious()) doesn't do what you'd think
             # use 'is None'
             meta = {
-                NEW_PARAGRAPH_META_KEY: True if el.getprevious()is None  else False
+                NEW_PARAGRAPH_META_KEY: (el.getprevious() is None),
+                REGION_META_KEY: get_attr(el, 'region'),
             }
             result.append(self._extract_from_el(el, meta, mappings))
 
