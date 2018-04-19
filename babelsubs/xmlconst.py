@@ -22,12 +22,14 @@ TTML_NAMESPACE_URI = 'http://www.w3.org/ns/ttml'
 TTML_NAMESPACE_URI_LEGACY = 'http://www.w3.org/2006/04/ttaf1'
 TTS_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#styling'
 TTM_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#metadata'
+TTP_NAMESPACE_URI = 'http://www.w3.org/ns/ttml#parameter'
 XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace'
 
 # These strings help construct etree tag/attribute names
 TTML = '{%s}' % TTML_NAMESPACE_URI
 TTM = '{%s}' % TTM_NAMESPACE_URI
 TTS = '{%s}' % TTS_NAMESPACE_URI
+TTP = '{%s}' % TTP_NAMESPACE_URI
 XML = '{%s}' % XML_NAMESPACE_URI
 
 

@@ -302,7 +302,7 @@ def calc_changes(set_1, set_2, mappings=None):
 
 class SubtitleSet(object):
     BASE_TTML = '''\
-<tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling" %(additions)s>
+<tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling">
     <head>
         <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
             <ttm:title>%(title)s</ttm:title>
@@ -337,7 +337,7 @@ class SubtitleSet(object):
 '''
 
     def __init__(self, language_code, initial_data=None, title=None,
-                 description=None, normalize_time=True, additions=None):
+                 description=None, normalize_time=True):
         """Create a new set of Subtitles, either empty or from a hunk of TTML.
 
         language_code: The bcp47 code for this language.
@@ -370,7 +370,6 @@ class SubtitleSet(object):
                 'title' : title or '',
                 'description': description or '',
                 'language_code': language_code or '',
-                'additions': additions or '',
             }))
 
         if initial_data:
