@@ -111,3 +111,10 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         with self.assertRaises(SubtitleParserError):
             SSAParser ("this\n\nisnot a valid subs format","en")
 
+
+class SSAGenerationTest(TestCase):
+    def test_newlines(self):
+        subs = storage.SubtitleSet('en')
+        subs.append_subtitle(0, 1000, "line1<br/>line2", escape=False)
+        items = subs.subtitle_items(mappings=SSAGenerator.MAPPINGS)
+        self.assertEqual(items[0].text, "line1\Nline2")
