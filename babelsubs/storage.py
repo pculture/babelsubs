@@ -629,6 +629,9 @@ class SubtitleSet(object):
         if to_ms is not None:
             el.set('end',  milliseconds_to_time_clock_exp(to_ms) )
 
+    def get_language(self):
+        return self._ttml.get(XML + 'lang')
+
     def set_language(self, language_code):
         self._ttml.set(XML + 'lang', language_code)
 

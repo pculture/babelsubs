@@ -71,9 +71,9 @@ class SubtitleLoader(object):
             raise ValueError("no styles added")
         if not self.regions:
             raise ValueError("no regions added")
-        attrib = {
-            XML + 'lang': language_code,
-        }
+        attrib = {}
+        if language_code:
+            attrib[XML + 'lang'] = language_code
         if frame_rate:
             attrib[TTP + 'frameRate'] = frame_rate
             if frame_rate_multiplier:
