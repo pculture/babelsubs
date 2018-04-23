@@ -67,7 +67,7 @@ class SubtitleLine(SubtitleLineBase):
 
     @property
     def new_paragraph(self):
-        return NEW_PARAGRAPH_META_KEY in self.meta
+        return bool(self.meta.get(NEW_PARAGRAPH_META_KEY))
 
     @property
     def region(self):
