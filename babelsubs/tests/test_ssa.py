@@ -1,4 +1,5 @@
 # encoding: utf-8
+import unittest
 from unittest2 import TestCase
 
 from babelsubs import SubtitleParserError
@@ -6,6 +7,7 @@ from babelsubs.tests import utils
 from babelsubs.generators.ssa import SSAGenerator
 from babelsubs.parsers.ssa import SSAParser
 from babelsubs import storage
+from babelsubs.xmlconst import *
 
 class SSAParsingTest(TestCase):
 
@@ -13,21 +15,8 @@ class SSAParsingTest(TestCase):
         subs  = utils.get_subs("simple.ssa")
         self.assertEquals(len(subs), 19)
 
-    def test_self_generate(self):
-        parsed_subs1 = utils.get_subs("simple.ssa")
-        generated = SSAParser(unicode(parsed_subs1), 'en')
 
-        for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in generated.to_internal()]):
-            self.assertEquals(x1, x2)
-
-    def test_generate_centiseconds(self):
-        sset = storage.SubtitleSet('en')
-        sset.append_subtitle(133, 238,'hey')
-        output = unicode(SSAGenerator(sset))
-        # make sure time is 230 milliseconds not 38 and that
-        # we are rounding to 0.24 (instead of truncating to 0.23
-        self.assertIn("Dialogue: 0,0:00:00.13,0:00:00.24", output)
-
+    @unittest.skip
     def test_formatting(self):
         subs = """[Script Info]
 Title: 
@@ -46,8 +35,6 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
 
         element = internal.get_subtitles()[0]
 
-        #FIXME: when we implement proper parsing of formatting
-        return
         self.assertEquals(len(element.getchildren()), 4)
         bold, italics, underline = element.getchildren()
 
@@ -77,12 +64,55 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
                 [x for x in internal2.subtitle_items(SSAGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
 
+    def test_formatting(self):
+        subs = """[Script Info]
+Title: 
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\\NStarted
+"""
+        parsed = SSAParser(subs, 'en')
+        internal = parsed.to_internal()
+        element = internal.get_subtitles()[0]
+        children = element.getchildren()
+        self.assertEquals(element.text.strip(), 'We')
+        self.assertEquals(len(children), 1)
+        child = children[0]
+        self.assertEquals(child.tag, TTML + 'br')
+        self.assertEquals(child.tail.strip(), 'Started')
 
     def test_timing_parser(self):
         parsed_subs = utils.get_subs("simple.ssa")
         subs = [a for a in parsed_subs.to_internal().subtitle_items()]
         self.assertEqual(subs[0][0], 40)
         self.assertEqual(subs[0][1], 2930)
+
+    def test_invalid(self):
+        with self.assertRaises(SubtitleParserError):
+            SSAParser ("this\n\nisnot a valid subs format","en")
+
+
+class SSAGenerationTest(TestCase):
+    def test_newlines(self):
+        subs = storage.SubtitleSet('en')
+        subs.append_subtitle(0, 1000, "line1<br/>line2", escape=False)
+        items = subs.subtitle_items(mappings=SSAGenerator.MAPPINGS)
+        self.assertEqual(items[0].text, "line1\Nline2")
+
+    def test_self_generate(self):
+        parsed_subs1 = utils.get_subs("simple.ssa")
+        generated = SSAParser(unicode(parsed_subs1), 'en')
+
+        for x1, x2 in zip([x for x in  parsed_subs1.to_internal()], [x for x in generated.to_internal()]):
+            self.assertEquals(x1, x2)
+
+    def test_generate_centiseconds(self):
+        sset = storage.SubtitleSet('en')
+        sset.append_subtitle(133, 238,'hey')
+        output = unicode(SSAGenerator(sset))
+        # make sure time is 230 milliseconds not 38 and that
+        # we are rounding to 0.24 (instead of truncating to 0.23
+        self.assertIn("Dialogue: 0,0:00:00.13,0:00:00.24", output)
 
     def test_timing_generator(self):
         sset = storage.SubtitleSet('en')
@@ -106,8 +136,4 @@ Dialogue: 0,0:00:00.04,0:00:02.93,Default,,0000,0000,0000,,We\n started {\\b1}Un
         generated = SSAGenerator(internal)
         self.assertEqual(generated.format_time(None), u'9:59:59.99')
         self.assertIn(u'Dialogue: 0,9:59:59.99,9:59:59.99,Default,,0000,0000,0000,,2', unicode(generated))
-
-    def test_invalid(self):
-        with self.assertRaises(SubtitleParserError):
-            SSAParser ("this\n\nisnot a valid subs format","en")
 

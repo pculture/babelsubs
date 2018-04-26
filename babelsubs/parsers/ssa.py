@@ -28,8 +28,10 @@ class SSAParser(SRTParser):
             language=language, eager_parse=eager_parse)
 
     def get_markup(self, text):
-        return self.markup_re.sub(self.__replace, text)
-    
+        markup = self.markup_re.sub(self.__replace, text)
+        markup = markup.replace('\\N', '<br/>').replace('\\n', '<br/>')
+        return markup
+
     def _get_data(self, match):
         output = {}
         output['start'] = self._get_time(match['s_hour'],
