@@ -1,6 +1,6 @@
 import re
 
-from lxml import etree
+from defusedxml import ElementTree as etree
 from babelsubs import utils
 from babelsubs.parsers.base import BaseTextParser, register
 

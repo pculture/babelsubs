@@ -2,7 +2,7 @@
 from unittest2 import TestCase
 import copy
 
-from lxml import etree
+from defusedxml import ElementTree as etree
 
 from babelsubs.parsers.dfxp import DFXPParser
 from babelsubs.generators.dfxp import DFXPGenerator

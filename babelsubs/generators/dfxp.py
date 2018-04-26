@@ -1,4 +1,5 @@
-from lxml import etree
+from lxml import etree # nosec -- only used for building elements
+
 from babelsubs import utils
 from babelsubs.generators.base import register, BaseGenerator
 from babelsubs.storage import SubtitleSet

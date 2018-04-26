@@ -1,4 +1,4 @@
-from lxml import etree
+from defusedxml import ElementTree as etree
 import re
 from unittest2 import TestCase
 

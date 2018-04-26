@@ -1,7 +1,7 @@
 from babelsubs.storage import SubtitleSet
 from base import BaseTextParser, SubtitleParserError, register
 from xml.parsers.expat import ExpatError
-from lxml.etree import XMLSyntaxError
+from xml.etree.ElementTree import ParseError
 
 MAX_SUB_TIME = (60 * 60 * 100) - 1
 
@@ -17,7 +17,7 @@ class DFXPParser(BaseTextParser):
     def __init__(self, input_string, language=None):
         try:
             self.subtitle_set = SubtitleSet(language, input_string, normalize_time=True)
-        except (XMLSyntaxError, ExpatError), e:
+        except (ParseError, ExpatError), e:
             raise SubtitleParserError("There was an error while we were parsing your xml", e)
 
         self.language = language
