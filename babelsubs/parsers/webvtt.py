@@ -45,7 +45,45 @@ class WEBVTTParser(BaseTextParser):
             utils.escape_ampersands(utils.strip_tags(
                 self._clean_pattern.sub('', match['text'])))
         )
+        cue_settings = self._parse_cue_settings(match['cue_settings'])
+        output['region'] = self.calc_region(cue_settings)
         return output
+
+    def _parse_cue_settings(self, settings_text):
+        if settings_text is None:
+            return {}
+        return dict(s.split(':', 1) for s in settings_text.split())
+
+    def calc_region(self, cue_settings):
+        line = cue_settings.get('line')
+        if not line:
+            return None
+        # remove alignment if present at the end ("1,start")
+        line = line.split(',', 1)[0]
+        if line.endswith('%'):
+            return self.calc_region_percent(line)
+        else:
+            return self.calc_region_number(line)
+
+    def calc_region_percent(self, line):
+        try:
+            percent = int(line[:-1])
+        except ValueError:
+            return None
+        if percent <= 20:
+            return 'top'
+        else:
+            return None
+
+    def calc_region_number(self, line):
+        try:
+            number = int(line)
+        except ValueError:
+            return None
+        if 0 <= number <= 5:
+            return 'top'
+        else:
+            return None
 
     def get_markup(self, text):
         # create a simple element so we can parse using etree

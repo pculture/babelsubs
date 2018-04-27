@@ -104,6 +104,13 @@ class DFXPParsingTest(TestCase):
         sset = utils.get_subs('i-2376.dfxp').subtitle_set
         self.assertFalse(sset.fully_synced)
 
+    def test_regions(self):
+        subs  = utils.get_subs("regions.dfxp")
+        items = subs.to_internal().subtitle_items()
+        self.assertEquals(items[0].region, "top")
+        for item in items[1:]:
+            self.assertEquals(item.region, None)
+
 class LegacyDFXPTest(TestCase):
 
     def test_ttfa(self):

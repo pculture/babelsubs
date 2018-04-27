@@ -80,6 +80,14 @@ class WEBVTTParsingTest(TestCase):
         self.assertEquals(item.start_time, 1000)
         self.assertEquals(item.end_time, 3000)
 
+    def test_regions(self):
+        subs  = utils.get_subs("regions.vtt")
+        items = subs.to_internal().subtitle_items()
+        for sub in items[:4]:
+            self.assertEquals(sub.region, "top")
+        for sub in items[4:]:
+            self.assertEquals(sub.region, None)
+
 class WEBVTTGeneratorTest(TestCase):
 
     def test_generated_formatting(self):
@@ -116,6 +124,13 @@ class WEBVTTGeneratorTest(TestCase):
         subs.append_subtitle(0, 1000, source, escape=False)
         items = subs.subtitle_items(mappings=WEBVTTGenerator.MAPPINGS)
         self.assertEqual(items[0].text, '<i>one\ntwo </i>three<i>four.</i>')
+
+    def test_regions(self):
+        subs = SubtitleSet('en')
+        sub = subs.append_subtitle(0, 1000, "test", region="top")
+        generator = WEBVTTGenerator(subs)
+        self.assertEqual(generator.format_cue_header(subs.subtitle_items()[0]),
+                         u'00:00:00.000 --> 00:00:01.000 line:1')
 
 class WEBVTTMultiLines(TestCase):
     def setUp(self):
