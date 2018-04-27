@@ -1,7 +1,6 @@
 import re
 from babelsubs.storage import SubtitleSet
 
-
 class BaseTextParser(object):
     # xml based formats must let encoding handling to the xml parser
     # as the encoding will be declared on the root el. All other
@@ -74,7 +73,9 @@ class BaseTextParser(object):
                 for match in self._matches:
                     item = self._get_data(match.groupdict())
                     text = self.get_markup(item['text'])
-                    self.sub_set.append_subtitle(item['start'], item['end'], text, escape=False)
+                    self.sub_set.append_subtitle(
+                        item['start'], item['end'], text,
+                        region=item.get('region'), escape=False)
                 if match is None:
                     raise ValueError("No subs found")
             except Exception as e:

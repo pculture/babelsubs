@@ -175,6 +175,12 @@ class AddSubtitlesTest(TestCase):
         self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38], SRTGenerator.MAPPINGS),
                           'a <u>word on <i>nested spans</i></u>')
 
+    def test_region(self):
+        subs = storage.SubtitleSet('en')
+        subs.append_subtitle(0, 1000, "test", region="top")
+        elt = subs.get_subtitles()[0]
+        self.assertEqual(elt.attrib['region'], 'top')
+
 class AccessTest(TestCase):
 
     def test_indexing(self):
