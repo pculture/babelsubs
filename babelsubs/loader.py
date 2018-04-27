@@ -18,8 +18,7 @@
 """babelsubs.loader -- create subtitle sets."""
 
 import os.path
-
-from lxml import etree
+import lxml
 
 from babelsubs import parsers
 from babelsubs import storage
@@ -78,13 +77,13 @@ class SubtitleLoader(object):
             attrib[TTP + 'frameRate'] = frame_rate
             if frame_rate_multiplier:
                 attrib[TTP + 'frameRateMultiplier'] = frame_rate_multiplier
-        tt = etree.Element(TTML + 'tt', attrib=attrib, nsmap={
+        tt = lxml.etree.Element(TTML + 'tt', attrib=attrib, nsmap={
             None: TTML_NAMESPACE_URI,
             'tts': TTS_NAMESPACE_URI,
             'ttm': TTM_NAMESPACE_URI,
             'ttp': TTP_NAMESPACE_URI,
         })
-        head = etree.SubElement(tt, TTML + 'head')
+        head = lxml.etree.SubElement(tt, TTML + 'head')
         head.append(self._create_metadata(title, description))
         head.append(self._create_styling())
         head.append(self._create_layout())
@@ -92,25 +91,25 @@ class SubtitleLoader(object):
         return tt
 
     def _create_metadata(self, title, description):
-        metadata = etree.Element(TTML + 'metadata')
-        etree.SubElement(metadata, TTM + 'title').text = title
-        etree.SubElement(metadata, TTM + 'description').text = description
-        etree.SubElement(metadata, TTM + 'copyright')
+        metadata = lxml.etree.Element(TTML + 'metadata')
+        lxml.etree.SubElement(metadata, TTM + 'title').text = title
+        lxml.etree.SubElement(metadata, TTM + 'description').text = description
+        lxml.etree.SubElement(metadata, TTM + 'copyright')
         return metadata
 
     def _create_styling(self):
-        styling = etree.Element(TTML + 'styling')
+        styling = lxml.etree.Element(TTML + 'styling')
         for (xml_id, attrib) in self.styles:
-            style = etree.SubElement(styling, TTML + 'style')
+            style = lxml.etree.SubElement(styling, TTML + 'style')
             style.set(XML + 'id', xml_id)
             for name, value in attrib.items():
                 style.set(TTS + name, value)
         return styling
 
     def _create_layout(self):
-        layout = etree.Element(TTML + 'layout')
+        layout = lxml.etree.Element(TTML + 'layout')
         for (xml_id, style_id, attrib) in self.regions:
-            region = etree.SubElement(layout, TTML + 'region')
+            region = lxml.etree.SubElement(layout, TTML + 'region')
             region.set(XML + 'id', xml_id)
             region.set(TTML + 'style', style_id)
             for name, value in attrib.items():
@@ -118,7 +117,7 @@ class SubtitleLoader(object):
         return layout
 
     def _create_empty_body(self):
-        body = etree.Element(TTML + 'body', attrib={
+        body = lxml.etree.Element(TTML + 'body', attrib={
             TTML + 'region': self.regions[0][0],
         })
         return body
@@ -129,7 +128,7 @@ class SubtitleLoader(object):
         ttml = self._empty_ttml(language_code, title, description, frame_rate,
                                 frame_rate_multiplier)
         # add an empty div to start the subtitles
-        etree.SubElement(ttml.find(TTML + 'body'), TTML + 'div')
+        lxml.etree.SubElement(ttml.find(TTML + 'body'), TTML + 'div')
         return storage.SubtitleSet.create_with_raw_ttml(ttml)
 
     def dfxp_merge(self, subtitle_sets):
