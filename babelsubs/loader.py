@@ -70,12 +70,6 @@ class SubtitleLoader(object):
             raise ValueError("no styles added")
         if not self.regions:
             raise ValueError("no regions added")
-<<<<<<< HEAD
-
-        tt = lxml.etree.Element(TTML + 'tt', attrib={
-            XML + 'lang': language_code,
-        }, nsmap = {
-=======
         attrib = {}
         if language_code:
             attrib[XML + 'lang'] = language_code
@@ -84,7 +78,6 @@ class SubtitleLoader(object):
             if frame_rate_multiplier:
                 attrib[TTP + 'frameRateMultiplier'] = frame_rate_multiplier
         tt = lxml.etree.Element(TTML + 'tt', attrib=attrib, nsmap={
->>>>>>> ea9c1cdfdadd4884469d57f1bbc22ad474e0d61c
             None: TTML_NAMESPACE_URI,
             'tts': TTS_NAMESPACE_URI,
             'ttm': TTM_NAMESPACE_URI,
