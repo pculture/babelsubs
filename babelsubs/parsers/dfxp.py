@@ -1,5 +1,6 @@
 from babelsubs.storage import SubtitleSet
 from base import BaseTextParser, SubtitleParserError, register
+from lxml.etree import XMLSyntaxError # nosec -- exception only
 from xml.parsers.expat import ExpatError
 from xml.etree.ElementTree import ParseError
 
@@ -17,7 +18,7 @@ class DFXPParser(BaseTextParser):
     def __init__(self, input_string, language=None):
         try:
             self.subtitle_set = SubtitleSet(language, input_string, normalize_time=True)
-        except (ParseError, ExpatError), e:
+        except (ParseError, XMLSyntaxError, ExpatError), e:
             raise SubtitleParserError("There was an error while we were parsing your xml", e)
 
         self.language = language
