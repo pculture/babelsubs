@@ -171,8 +171,8 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
             'f': 0,
         }.get(unit, None)
         return num * multiplier
-    raise ValueError("Time expression %s can't be parsed" % time_expression)
-
+    # Time expression can't be parsed
+    return None
 
 def milliseconds_to_time_clock_exp(milliseconds):
     """
@@ -504,7 +504,7 @@ class SubtitleSet(object):
         if end:
             end = to_clock_time(end, self.tick_rate)
         dur = get_attr(el, 'dur')
-        if dur :
+        if dur:
             end= milliseconds_to_time_clock_exp(
                 time_expression_to_milliseconds(begin, self.tick_rate) + \
                 time_expression_to_milliseconds(dur, self.tick_rate))
