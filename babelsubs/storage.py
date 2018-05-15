@@ -21,7 +21,8 @@ import difflib
 from itertools import izip_longest, izip
 import os
 import re
-from lxml import etree
+from defusedxml import ElementTree as etree
+from defusedxml import lxml
 from xml.sax.saxutils import (escape as escape_xml,
                               unescape as unescape_xml)
 from collections import namedtuple
@@ -30,7 +31,6 @@ from babelsubs import utils
 from babelsubs.xmlconst import *
 
 SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
-#schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
 
 TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]+(\.\d+)?)(?P<unit>(h|ms|s|m|f|t))')
 TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
@@ -354,8 +354,7 @@ class SubtitleSet(object):
             initial_data = NEW_LINES_RE.sub("", initial_data)
             initial_data = MULTIPLE_SPACES_RE.sub(" ", initial_data)
 
-            self._set_ttml(etree.fromstring(initial_data,
-                parser=etree.XMLParser(remove_blank_text=True)))
+            self._set_ttml(lxml.fromstring(initial_data))
             # now, if there's a space after a <br> tag, we don't want it here.
             # most likely it was created by indenting. But *only* it it's after a
             # <br> tag, so we must loop through them
@@ -365,7 +364,7 @@ class SubtitleSet(object):
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
         else:
-            self._set_ttml(etree.fromstring(SubtitleSet.BASE_TTML % {
+            self._set_ttml(lxml.fromstring(SubtitleSet.BASE_TTML % {
                 'namespace_uri': TTML_NAMESPACE_URI,
                 'title' : title or '',
                 'description': description or '',
@@ -457,7 +456,7 @@ class SubtitleSet(object):
             div.tail = self._whitespace_after_last_div
 
     def _create_subtitle_p(self, from_ms, to_ms, content):
-        p = etree.fromstring(
+        p = lxml.fromstring(
             '<p xmlns="http://www.w3.org/ns/ttml">%s</p>' % content)
 
         if from_ms is not None:
@@ -686,7 +685,7 @@ class SubtitleSet(object):
         raise NotImplementedError("Validation isnt working so far")
 
     def to_xml(self):
-        return etree.tostring(self._ttml)
+        return lxml.tostring(self._ttml)
 
     def as_etree_node(self):
         return copy.deepcopy(self._ttml)

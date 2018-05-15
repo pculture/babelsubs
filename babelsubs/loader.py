@@ -18,7 +18,7 @@
 """babelsubs.loader -- create subtitle sets."""
 
 import os.path
-import lxml
+import lxml # nosec -- only used for building elements
 
 from babelsubs import parsers
 from babelsubs import storage

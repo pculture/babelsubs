@@ -1,6 +1,6 @@
 from unittest2 import TestCase
 
-from lxml import etree
+from defusedxml import ElementTree as etree
 from babelsubs.storage import get_contents, SubtitleSet, TTS_NAMESPACE_URI
 from babelsubs.generators.srt import SRTGenerator
 from babelsubs.parsers import SubtitleParserError

@@ -1,4 +1,4 @@
-from lxml import etree
+from defusedxml import ElementTree as etree
 from babelsubs.utils import unescape_html
 from babelsubs.parsers.base import BaseTextParser, register, SubtitleParserError
 from babelsubs.storage import SubtitleSet

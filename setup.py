@@ -14,8 +14,8 @@ setup(
     packages=['babelsubs'],
     setup_requires=[],
     install_requires=[
-        'lxml==2.3',
-        'html5lib==0.95',
+        'lxml==4.2.3',
+        'html5lib==1.0.1',
         'wsgiref==0.1.2',
     ],
     dependency_links=[
