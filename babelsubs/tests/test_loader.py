@@ -78,7 +78,7 @@ class TestLoader(TestCase):
             description_tag = '<ttm:description></ttm:description>'
 
         correct_start = """\
-<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="{language_code}">
+<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="{language_code}">
     <head>
         <metadata>
             {title_tag}
@@ -104,7 +104,7 @@ class TestLoader(TestCase):
         result = self.loader.dfxp_merge([en_subs, es_subs])
 
         utils.assert_long_text_equal(result, """\
-<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="">
+<tt xmlns:tts="http://www.w3.org/ns/ttml#styling" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns="http://www.w3.org/ns/ttml" xml:lang="">
     <head>
         <metadata>
             <ttm:title></ttm:title>
