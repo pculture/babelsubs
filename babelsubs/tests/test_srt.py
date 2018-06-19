@@ -18,10 +18,10 @@ class SRTParsingTest(TestCase):
     def test_internal_format(self):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
-        sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
+        sub_data = [x for x in parsed.subtitle_items()]
         self.assertEquals(sub_data[0].start_time, 4)
         self.assertEquals(sub_data[0].end_time, 2093)
-        self.assertEquals(sub_data[0].text, "We started <b>Universal Subtitles</b> because we believe")
+        self.assertEquals(sub_data[0].text, "We started Universal Subtitles because we believe")
 
     def test_round_trip(self):
         subs1  = utils.get_subs("simple.srt")
@@ -31,8 +31,8 @@ class SRTParsingTest(TestCase):
         parsed2 = subs2.to_internal()
         self.assertEquals(len(subs1), len(subs2))
 
-        for x1, x2 in zip([x for x in parsed1.subtitle_items(SRTGenerator.MAPPINGS)], \
-                [x for x in parsed2.subtitle_items(SRTGenerator.MAPPINGS)]):
+        for x1, x2 in zip([x for x in parsed1.subtitle_items()], \
+                [x for x in parsed2.subtitle_items()]):
             self.assertEquals(x1, x2)
         
     def test_timed_data_parses_correctly(self):
@@ -50,7 +50,7 @@ class SRTParsingTest(TestCase):
     def test_curly_brackets(self):
         subs  = utils.get_subs("curly_brackets.srt")
         parsed = subs.to_internal()
-        sub_data = list(parsed.subtitle_items(SRTGenerator.MAPPINGS))
+        sub_data = list(parsed.subtitle_items())
         self.assertEquals(len(sub_data), 1)
         self.assertEquals(sub_data[0].text, "{ a } {{ b }} c")
 
@@ -94,8 +94,8 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         parsed2 = SRTParser(output, 'en')
         internal2 = parsed2.to_internal()
 
-        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
-                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
+        for x1, x2 in zip([x for x in internal.subtitle_items()], \
+                [x for x in internal2.subtitle_items()]):
             self.assertEquals(x1, x2)
 
     def test_speaker_change(self):
@@ -119,16 +119,16 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         parsed2 = SRTParser(output, 'en')
         internal2 = parsed2.to_internal()
 
-        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
-                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
+        for x1, x2 in zip([x for x in internal.subtitle_items()], \
+                [x for x in internal2.subtitle_items()]):
             self.assertEquals(x1, x2)
 
     def test_ampersand_escaping(self):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
-        sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
+        sub_data = [x for x in parsed.subtitle_items()]
         self.assertEquals(sub_data[16].text,
-                          "such as MP4, theora, webM and <i>&amp;</i> HTML 5.")
+                          "such as MP4, theora, webM and & HTML 5.")
 
     def test_unsynced_generator(self):
         subs = SubtitleSet('en')
@@ -148,7 +148,7 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
 
         generated = SRTGenerator(internal)
         self.assertEqual(generated.format_time(None), u'99:59:59,999')
-        self.assertIn(u'''1\r\n99:59:59,999 --> 99:59:59,999\r\n0\r\n\r\n2\r\n99:59:59,999 --> 99:59:59,999\r\n1\r\n\r\n3\r\n99:59:59,999 --> 99:59:59,999\r\n2\r\n\r\n4\r\n99:59:59,999 --> 99:59:59,999\r\n3\r\n\r\n5\r\n99:59:59,999 --> 99:59:59,999\r\n4\r\n''',
+        self.assertIn(u'''1\n99:59:59,999 --> 99:59:59,999\n0\n\n2\n99:59:59,999 --> 99:59:59,999\n1\n\n3\n99:59:59,999 --> 99:59:59,999\n2\n\n4\n99:59:59,999 --> 99:59:59,999\n3\n\n5\n99:59:59,999 --> 99:59:59,999\n4\n''',
                     unicode(generated))
 
 
@@ -177,16 +177,16 @@ class SRTGeneratorTest(TestCase):
 
     def setUp(self):
         self.dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
-        self.subs = self.dfxp.subtitle_items(mappings=SRTGenerator.MAPPINGS)
+        self.subs = self.dfxp.subtitle_items()
 
     def test_generated_formatting(self):
-        self.assertEqual(self.subs[2].text,'It has <b>bold</b> formatting' )
-        self.assertEqual(self.subs[3].text,'It has <i>italics</i> too' )
-        self.assertEqual(self.subs[4].text,'And why not <u>underline</u>' )
+        self.assertEqual(self.subs[2].text,'It has bold formatting' )
+        self.assertEqual(self.subs[3].text,'It has italics too' )
+        self.assertEqual(self.subs[4].text,'And why not underline' )
         self.assertEqual(self.subs[5].text,
-                         'It has a html tag &lt;a&gt; should be escaped' )
+                         'It has a html tag <a> should be escaped' )
         self.assertEqual(self.subs[6].text,
-                         'It has speaker changes &gt;&gt;&gt;')
+                         'It has speaker changes >>>')
 
 class SRTMultiLines(TestCase):
     def setUp(self):
