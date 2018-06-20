@@ -148,7 +148,7 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
 
         generated = SRTGenerator(internal)
         self.assertEqual(generated.format_time(None), u'99:59:59,999')
-        self.assertIn(u'''1\n99:59:59,999 --> 99:59:59,999\n0\n\n2\n99:59:59,999 --> 99:59:59,999\n1\n\n3\n99:59:59,999 --> 99:59:59,999\n2\n\n4\n99:59:59,999 --> 99:59:59,999\n3\n\n5\n99:59:59,999 --> 99:59:59,999\n4\n''',
+        self.assertIn(u'''1\r\n99:59:59,999 --> 99:59:59,999\r\n0\r\n\r\n2\r\n99:59:59,999 --> 99:59:59,999\r\n1\r\n\r\n3\r\n99:59:59,999 --> 99:59:59,999\r\n2\r\n\r\n4\r\n99:59:59,999 --> 99:59:59,999\r\n3\r\n\r\n5\r\n99:59:59,999 --> 99:59:59,999\r\n4\r\n''',
                     unicode(generated))
 
 
@@ -188,13 +188,20 @@ class SRTGeneratorTest(TestCase):
         self.assertEqual(self.subs[6].text,
                          'It has speaker changes >>>')
 
+    def test_xml_literals(self):
+        dfxp = utils.get_subs("with-xml-literals.dfxp").to_internal()
+        subs = dfxp.subtitle_items()
+        self.assertEqual(subs[2].text,'It has <b>bold</b> formatting' )
+        self.assertEqual(subs[3].text,'It has <i>italics</i> too' )
+        self.assertEqual(subs[4].text,'And why not <u>underline</u>' )
+
 class SRTMultiLines(TestCase):
     def setUp(self):
         self.dfxp = utils.get_subs("multiline-italics.dfxp").to_internal()
         
     def test_two_line_italics(self):
         """Line break inside italics. """
-        expected = """<i>multi-line\r\nitalicized</i>"""
+        expected = """multi-line\r\nitalicized"""
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[2], 
@@ -202,8 +209,8 @@ class SRTMultiLines(TestCase):
 
     def test_italics_after_linebreak(self):
         """3 lines with italicized 2nd and 3rd. """
-        expected = ("this is the first line\r\n<i>multi-line\r\n"
-                    "italicized second and third</i>")
+        expected = ("this is the first line\r\nmulti-line\r\n"
+                    "italicized second and third")
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[3], 
@@ -211,7 +218,7 @@ class SRTMultiLines(TestCase):
 
     def test_italics_before_linebreak(self):
         """italicized lines followed by linebreak and regular text."""
-        expected = ("<i>italicized</i>\r\nno italics last line")
+        expected = ("italicized\r\nno italics last line")
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[4], 
@@ -227,7 +234,7 @@ class SRTMultiLines(TestCase):
 
     def test_linebreak_before_italics(self):
         """linebreak before italics. """
-        expected = ('this is line 1 \r\n<i>italicized</i>\r\nno italics last line')
+        expected = ('this is line 1 \r\nitalicized\r\nno italics last line')
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[6], 
@@ -235,7 +242,7 @@ class SRTMultiLines(TestCase):
 
     def test_linebreak_in_nested_tags(self):
         """italicized lines followed by linebreak and regular text."""
-        expected = ("this is line 1 \r\n<i>italicized <b>this is bold and italics</b></i>\r\nno italics last line")
+        expected = ("this is line 1 \r\nitalicized this is bold and italics\r\nno italics last line")
         els = self.dfxp.get_subtitles()
         self.assertEqual(expected, 
                          self.dfxp.get_content_with_markup(els[7], 
