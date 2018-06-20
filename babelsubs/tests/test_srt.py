@@ -18,7 +18,7 @@ class SRTParsingTest(TestCase):
     def test_internal_format(self):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
-        sub_data = [x for x in parsed.subtitle_items()]
+        sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
         self.assertEquals(sub_data[0].start_time, 4)
         self.assertEquals(sub_data[0].end_time, 2093)
         self.assertEquals(sub_data[0].text, "We started Universal Subtitles because we believe")
@@ -31,8 +31,8 @@ class SRTParsingTest(TestCase):
         parsed2 = subs2.to_internal()
         self.assertEquals(len(subs1), len(subs2))
 
-        for x1, x2 in zip([x for x in parsed1.subtitle_items()], \
-                [x for x in parsed2.subtitle_items()]):
+        for x1, x2 in zip([x for x in parsed1.subtitle_items(SRTGenerator.MAPPINGS)], \
+                [x for x in parsed2.subtitle_items(SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
         
     def test_timed_data_parses_correctly(self):
@@ -50,7 +50,7 @@ class SRTParsingTest(TestCase):
     def test_curly_brackets(self):
         subs  = utils.get_subs("curly_brackets.srt")
         parsed = subs.to_internal()
-        sub_data = list(parsed.subtitle_items())
+        sub_data = list(parsed.subtitle_items(SRTGenerator.MAPPINGS))
         self.assertEquals(len(sub_data), 1)
         self.assertEquals(sub_data[0].text, "{ a } {{ b }} c")
 
@@ -94,8 +94,8 @@ We\n started <b>Universal Subtitles</b> <i>because</i> we <u>believe</u>
         parsed2 = SRTParser(output, 'en')
         internal2 = parsed2.to_internal()
 
-        for x1, x2 in zip([x for x in internal.subtitle_items()], \
-                [x for x in internal2.subtitle_items()]):
+        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
+                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
 
     def test_speaker_change(self):
@@ -119,14 +119,14 @@ And know, Mr. <b>Amara</b> will talk.\n >> Hello, and welcome.
         parsed2 = SRTParser(output, 'en')
         internal2 = parsed2.to_internal()
 
-        for x1, x2 in zip([x for x in internal.subtitle_items()], \
-                [x for x in internal2.subtitle_items()]):
+        for x1, x2 in zip([x for x in internal.subtitle_items(SRTGenerator.MAPPINGS)], \
+                [x for x in internal2.subtitle_items(SRTGenerator.MAPPINGS)]):
             self.assertEquals(x1, x2)
 
     def test_ampersand_escaping(self):
         subs  = utils.get_subs("simple.srt")
         parsed = subs.to_internal()
-        sub_data = [x for x in parsed.subtitle_items()]
+        sub_data = [x for x in parsed.subtitle_items(SRTGenerator.MAPPINGS)]
         self.assertEquals(sub_data[16].text,
                           "such as MP4, theora, webM and & HTML 5.")
 
@@ -177,7 +177,7 @@ class SRTGeneratorTest(TestCase):
 
     def setUp(self):
         self.dfxp = utils.get_subs("with-formatting.dfxp").to_internal()
-        self.subs = self.dfxp.subtitle_items()
+        self.subs = self.dfxp.subtitle_items(mappings=SRTGenerator.MAPPINGS)
 
     def test_generated_formatting(self):
         self.assertEqual(self.subs[2].text,'It has bold formatting' )
