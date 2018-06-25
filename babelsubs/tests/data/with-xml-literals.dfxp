@@ -1,0 +1,21 @@
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" xml:lang="en">
+    <head>
+        <metadata xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+            <ttm:title/>
+            <ttm:description/>
+            <ttm:copyright/>
+        </metadata>
+
+        <styling xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <style xml:id="amara-style" tts:color="white" tts:fontFamily="proportionalSansSerif" tts:fontSize="18px" tts:textAlign="center"/>
+        </styling>
+
+        <layout xmlns:tts="http://www.w3.org/ns/ttml#styling">
+            <region xml:id="amara-subtitle-area" style="amara-style" tts:extent="560px 62px" tts:padding="5px 3px" tts:backgroundColor="black" tts:displayAlign="after"/>
+        </layout>
+    </head>
+    <body region="amara-subtitle-area">
+        <div>
+            <p begin="00:00:00.000" end="00:00:01.038">This is a full fledge test of the migration of subtitles into DMR.</p><p begin="00:00:01.300" end="00:00:03.073">It has non ascii characters in can&#231;&#227;o, viol&#227;o, n&#233;?</p><p begin="00:00:03.509" end="00:00:05.926">It has &lt;b&gt;bold&lt;/b&gt; formatting</p><p begin="00:00:05.926" end="00:00:07.676">It has &lt;i&gt;italics&lt;/i&gt; too</p><p begin="00:00:07.676" end="00:00:09.847">And why not &lt;u&gt;underline&lt;/u&gt;</p><p begin="00:00:09.847" end="00:00:11.757">It has a html tag &lt;a&gt; should be escaped</p><p begin="00:00:11.757" end="00:00:13.852">It has speaker changes &gt;&gt;&gt;</p><p begin="00:00:13.852" end="00:00:15.758">And an &amp; (ampersand) of course</p></div>
+    </body>
+</tt>

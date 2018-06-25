@@ -172,7 +172,9 @@ class AddSubtitlesTest(TestCase):
 
     def test_nested_with_markup(self):
         dfxp = utils.get_subs("simple.dfxp").to_internal()
-        self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38], SRTGenerator.MAPPINGS),
+        self.assertEqual( dfxp.get_content_with_markup(dfxp.get_subtitles()[38],
+                          dict(linebreaks="\r\n", bold="<b>%s</b>",
+                            italics="<i>%s</i>", underline="<u>%s</u>")),
                           'a <u>word on <i>nested spans</i></u>')
 
     def test_region(self):
