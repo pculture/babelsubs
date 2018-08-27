@@ -1,5 +1,5 @@
 # encoding: utf-8
-from unittest2 import TestCase
+from unittest import TestCase
 import copy
 
 from lxml import etree

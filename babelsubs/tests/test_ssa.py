@@ -1,6 +1,6 @@
 # encoding: utf-8
 import unittest
-from unittest2 import TestCase
+from unittest import TestCase
 
 from babelsubs import SubtitleParserError
 from babelsubs.tests import utils

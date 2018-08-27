@@ -1,6 +1,6 @@
 from lxml import etree
 import re
-from unittest2 import TestCase
+from unittest import TestCase
 
 from babelsubs import loader
 from babelsubs.generators.dfxp import DFXPGenerator

@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 
 from lxml import etree
 from babelsubs.storage import get_contents, SubtitleSet, TTS_NAMESPACE_URI

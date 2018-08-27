@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 from babelsubs import load_from, load_from_file
 from babelsubs.tests import utils
 

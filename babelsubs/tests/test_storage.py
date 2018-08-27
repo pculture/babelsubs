@@ -1,5 +1,5 @@
 from lxml import etree
-from unittest2 import TestCase
+from unittest import TestCase
 
 from babelsubs import storage
 from babelsubs.generators.html import HTMLGenerator

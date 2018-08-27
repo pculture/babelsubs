@@ -3,7 +3,7 @@ from babelsubs import SubtitleParserError
 from babelsubs.generators import TXTGenerator
 from babelsubs.parsers.txt import TXTParser
 from babelsubs.storage import SubtitleSet
-from unittest2 import TestCase
+from unittest import TestCase
 
 
 

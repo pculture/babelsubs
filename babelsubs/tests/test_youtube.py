@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 
 from babelsubs.parsers.youtube import YoutubeParser
 from babelsubs.tests import utils

@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 
 from babelsubs.generators.json_generator import JSONGenerator
 from babelsubs import SubtitleParserError

@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 from babelsubs.storage import SubtitleSet, SubtitleLine, diff, calc_changes
 
 class DiffingTest(TestCase):

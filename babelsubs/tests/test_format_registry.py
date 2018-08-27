@@ -1,4 +1,4 @@
-from unittest2 import TestCase
+from unittest import TestCase
 from babelsubs import get_available_formats
 from babelsubs.parsers import base, discover
 from babelsubs.parsers.base import ParserList
