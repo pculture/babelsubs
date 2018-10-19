@@ -65,7 +65,7 @@ class SubtitleLoader(object):
         self.regions.append((xml_id, style_id, attrib))
 
     def _empty_ttml(self, language_code, title, description, frame_rate=None,
-                    frame_rate_multiplier=None):
+                    frame_rate_multiplier=None, drop_mode=None):
         if not self.styles:
             raise ValueError("no styles added")
         if not self.regions:
@@ -77,6 +77,9 @@ class SubtitleLoader(object):
             attrib[TTP + 'frameRate'] = frame_rate
             if frame_rate_multiplier:
                 attrib[TTP + 'frameRateMultiplier'] = frame_rate_multiplier
+            if drop_mode == 'dropNTSC':
+                attrib[TTP + 'timeBase'] = 'smpte'
+                attrib[TTP + 'dropMode'] = 'dropNTSC'
         tt = lxml.etree.Element(TTML + 'tt', attrib=attrib, nsmap={
             None: TTML_NAMESPACE_URI,
             'tts': TTS_NAMESPACE_URI,
@@ -123,10 +126,10 @@ class SubtitleLoader(object):
         return body
 
     def create_new(self, language_code, title='', description='',
-                   frame_rate=None, frame_rate_multiplier=None):
+                   frame_rate=None, frame_rate_multiplier=None, drop_mode=None):
         """Create a new SubtitleSet.  """
         ttml = self._empty_ttml(language_code, title, description, frame_rate,
-                                frame_rate_multiplier)
+                                frame_rate_multiplier, drop_mode)
         # add an empty div to start the subtitles
         lxml.etree.SubElement(ttml.find(TTML + 'body'), TTML + 'div')
         return storage.SubtitleSet.create_with_raw_ttml(ttml)
