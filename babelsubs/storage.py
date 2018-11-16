@@ -33,7 +33,11 @@ SCHEMA_PATH =  os.path.join(os.getcwd(), "data", 'xsdchema', 'all.xsd')
 #schema = lxml.etree.XMLSchema(lxml.etree.parse(open(SCHEMA_PATH)))
 
 TIME_EXPRESSION_METRIC = re.compile(r'(?P<num>[\d]+(\.\d+)?)(?P<unit>(h|ms|s|m|f|t))')
-TIME_EXPRESSION_CLOCK_TIME = re.compile(r'(?P<hours>[\d]{2,3}):(?P<minutes>[\d]{2}):(?P<seconds>[\d]{2})(?:.(?P<fraction>[\d]{1,3}))?')
+TIME_EXPRESSION_CLOCK_TIME = re.compile(
+    r'(?P<hours>[\d]{2,3}):'
+    r'(?P<minutes>[\d]{2}):'
+    r'(?P<seconds>[\d]{2})'
+    r'((\.(?P<fraction>\d+))|(:(?P<frames>\d+)))?')
 
 NEW_PARAGRAPH_META_KEY = 'new_paragraph'
 REGION_META_KEY = 'region'
@@ -137,7 +141,53 @@ def get_contents(el):
     """
     return "".join([x for x in el.itertext()]).strip()
 
-def time_expression_to_milliseconds(time_expression, tick_rate=None):
+# Define a bunch of functions to parse time expressions.  Each returns
+# milliseconds if it can parse the expression, or None if it can't
+
+def parse_time_expression_clock_time(time_expression, time_parameters):
+    match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
+    if not match:
+        return None
+    groups = match.groupdict()
+    hour = int(groups['hours'])
+    minutes = int(groups['minutes'])
+    seconds  = int(groups['seconds'])
+    milliseconds = int(groups['fraction'] or 0)
+    if groups['frames']:
+        milliseconds += (float(groups['frames']) * 1000 /
+                         time_parameters.frame_rate)
+
+    rv = (((hour * 3600) + (minutes * 60) + seconds ) * 1000 ) + milliseconds
+    if time_parameters.frame_rate_multiplier != 1.0:
+        rv /= time_parameters.frame_rate_multiplier
+
+    return int(round(rv))
+
+def parse_time_expression_metric(time_expression, time_parameters):
+    match = TIME_EXPRESSION_METRIC.match(time_expression)
+    if not match:
+        return None
+    groups = match.groupdict()
+    num, unit = float(groups['num']), groups['unit']
+    if unit == 't':
+        if not time_parameters.tick_rate:
+            raise ValueError("Ticks need a tick rate, mate.")
+        return 1000 * (num / float(time_parameters.tick_rate))
+    multiplier = {
+        "h": 3600 * 1000,
+        "m": 60 * 1000,
+        "s": 1000,
+        "ms": 1,
+        'f': 0,
+    }.get(unit, None)
+    return num * multiplier
+
+time_expression_parser_funcs = [
+    parse_time_expression_clock_time,
+    parse_time_expression_metric,
+]
+
+def time_expression_to_milliseconds(time_expression, time_parameters):
     """
     Parses possible values from time expressions[1] to a normalized value
     in milliseconds.
@@ -147,30 +197,10 @@ def time_expression_to_milliseconds(time_expression, tick_rate=None):
     """
     if not time_expression:
         return 0
-    match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
-    if match:
-        groups = match.groupdict()
-        hour = int(groups['hours'])
-        minutes = int(groups['minutes'])
-        seconds  = int(groups['seconds'])
-        milliseconds = int(groups['fraction'] or 0)
-        return (((hour * 3600) + (minutes * 60) + seconds ) * 1000 ) + milliseconds
-    match = TIME_EXPRESSION_METRIC.match(time_expression)
-    if match:
-        groups = match.groupdict()
-        num, unit = float(groups['num']), groups['unit']
-        if unit == 't':
-            if not tick_rate:
-                raise ValueError("Ticks need a tick rate, mate.")
-            return 1000 * (num / float(tick_rate))
-        multiplier = {
-            "h": 3600 * 1000,
-            "m": 60 * 1000,
-            "s": 1000,
-            "ms": 1,
-            'f': 0,
-        }.get(unit, None)
-        return num * multiplier
+    for func in time_expression_parser_funcs:
+        rv = func(time_expression, time_parameters)
+        if rv is not None:
+            return rv
     # Time expression can't be parsed
     return None
 
@@ -184,14 +214,15 @@ def milliseconds_to_time_clock_exp(milliseconds):
     expression = '%(hours)02d:%(minutes)02d:%(seconds)02d.%(milliseconds)03d'
     return expression % utils.milliseconds_to_time_clock_components(milliseconds)
 
-def to_clock_time(time_expression, tick_rate=None):
+def to_clock_time(time_expression, time_parameters=None):
     """
     If time expression is not in clock time, transform it
     """
     match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
     if match:
         return time_expression
-    return milliseconds_to_time_clock_exp(time_expression_to_milliseconds(time_expression, tick_rate))
+    return milliseconds_to_time_clock_exp(
+        time_expression_to_milliseconds(time_expression, time_parameters))
 
 class _Differ(object):
     """Class that does the work for diff()."""
@@ -300,6 +331,30 @@ def calc_changes(set_1, set_2, mappings=None):
     differ = _Differ(set_1, set_2, mappings)
     return differ.calc_text_changed(), differ.calc_time_changed()
 
+class TimeParameters(object):
+    """
+    Parse the time time_parameters of the TTML file
+    """
+
+    def __init__(self, ttml_attrib=None):
+        if ttml_attrib is None:
+            ttml_attrib = {}
+        self.tick_rate = self.get_value(ttml_attrib, 'tickRate', int, None)
+        self.frame_rate = self.get_value(ttml_attrib, 'frameRate', int, 30)
+        self.frame_rate_multiplier = self.get_value(
+            ttml_attrib, 'frameRateMultiplier', self.parse_fraction, 1.0)
+
+    def get_value(self, ttml_attrib, name, converter, default):
+        key = TTP + name
+        if key in ttml_attrib:
+            return converter(ttml_attrib[key])
+        else:
+            return default
+
+    def parse_fraction(self, value):
+        parts = value.split(None, 2)
+        return float(parts[0]) / float(parts[1])
+
 class SubtitleSet(object):
     BASE_TTML = '''\
 <tt xml:lang="%(language_code)s" xmlns="%(namespace_uri)s" xmlns:tts="http://www.w3.org/ns/ttml#styling">
@@ -361,7 +416,7 @@ class SubtitleSet(object):
             # <br> tag, so we must loop through them
             for node in find_els(self._ttml, "/tt/body/div/*/br"):
                 node.tail = node.tail.lstrip() if node.tail else None
-            self.tick_rate = self._get_tick_rate()
+            self.time_parameters = TimeParameters(self._ttml.attrib)
             if normalize_time:
                 [self.normalize_time(x) for x in self.get_subtitles()]
         else:
@@ -371,6 +426,7 @@ class SubtitleSet(object):
                 'description': description or '',
                 'language_code': language_code or '',
             }))
+            self.time_parameters = TimeParameters()
 
         if initial_data:
             self.subtitles = self.subtitle_items()
@@ -381,6 +437,7 @@ class SubtitleSet(object):
     def create_with_raw_ttml(cls, ttml):
         self = cls.__new__(cls)
         self._set_ttml(ttml)
+        self.time_parameters = TimeParameters(self._ttml.attrib)
         # force subtitles to be created
         self.subtitle_items()
         return self
@@ -499,15 +556,15 @@ class SubtitleSet(object):
         """
         begin = get_attr(el, 'begin')
         if begin:
-            begin = to_clock_time(begin, self.tick_rate)
+            begin = to_clock_time(begin, self.time_parameters)
         end = get_attr(el, 'end')
         if end:
-            end = to_clock_time(end, self.tick_rate)
+            end = to_clock_time(end, self.time_parameters)
         dur = get_attr(el, 'dur')
         if dur:
             end= milliseconds_to_time_clock_exp(
-                time_expression_to_milliseconds(begin, self.tick_rate) + \
-                time_expression_to_milliseconds(dur, self.tick_rate))
+                time_expression_to_milliseconds(begin, self.time_parameters) + \
+                time_expression_to_milliseconds(dur, self.time_parameters))
             el.attrib.pop('dur')
         if begin:
             el.attrib['begin'] = begin
@@ -542,9 +599,9 @@ class SubtitleSet(object):
         end = get_attr(el, 'end')
 
 
-        from_ms = (time_expression_to_milliseconds(begin)
+        from_ms = (time_expression_to_milliseconds(begin, self.time_parameters)
                 if begin  is not None and begin is not '' else None)
-        to_ms = (time_expression_to_milliseconds(end)
+        to_ms = (time_expression_to_milliseconds(end, self.time_parameters)
                 if end is not None and end is not '' else None)
         if not mappings:
             content = get_contents(el)
@@ -660,19 +717,6 @@ class SubtitleSet(object):
             subs.append_subtitle( *s, **extra)
         return subs
 
-    def _get_tick_rate(self):
-        try:
-            tt = self.find_divs()[0]
-        except IndexError as e:
-            from babelsubs.parsers.base import SubtitleParserError
-            raise SubtitleParserError(
-                "No valid root elements found, we'll accept 'tt, body and div",
-                original_error=e)
-        for name,value in tt.attrib.items():
-            if name == "tickRate":
-                return int(value)
-        return 1
- 
     def __eq__(self, other):
         if type(self) == type(other):
             return not diff(self, other, None)['changed']

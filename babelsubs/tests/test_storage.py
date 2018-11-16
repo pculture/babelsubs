@@ -8,6 +8,12 @@ from babelsubs.parsers import SubtitleParserError
 from babelsubs.tests import utils
 from babelsubs import utils as main_utils
 
+def time_expression_to_milliseconds(expression, time_parameters=None):
+    if time_parameters is None:
+        time_parameters = storage.TimeParameters()
+    return storage.time_expression_to_milliseconds(expression,
+                                                   time_parameters)
+
 class TimeHandlingTest(TestCase):
 
     def test_split(self):
@@ -33,18 +39,18 @@ class TimeHandlingTest(TestCase):
 
     def test_time_expression_to_milliseconds_clock_time_fraction(self):
         milliseconds  = (((3 * 3600 ) + (20 * 60 ) + (40 )) * 1000 )  + 200
-        self.assertEquals(storage.time_expression_to_milliseconds("03:20:40.200"), milliseconds)
+        self.assertEquals(time_expression_to_milliseconds("03:20:40.200"), milliseconds)
         
     def test_parse_time_expression_clock_time(self):
         milliseconds  = (((3 * 3600 ) + (20 * 60 ) + (40 )) * 1000 )  
-        self.assertEquals(storage.time_expression_to_milliseconds("03:20:40"), milliseconds)
+        self.assertEquals(time_expression_to_milliseconds("03:20:40"), milliseconds)
 
 
     def test_parse_time_expression_metric(self):
-        self.assertEquals(storage.time_expression_to_milliseconds("10h"), 10 * 3600 * 1000)
-        self.assertEquals(storage.time_expression_to_milliseconds("5m"), 5 * 60 * 1000)
-        self.assertEquals(storage.time_expression_to_milliseconds("3000s"),  3000 * 1000)
-        self.assertEquals(storage.time_expression_to_milliseconds("5000ms"), 5000)
+        self.assertEquals(time_expression_to_milliseconds("10h"), 10 * 3600 * 1000)
+        self.assertEquals(time_expression_to_milliseconds("5m"), 5 * 60 * 1000)
+        self.assertEquals(time_expression_to_milliseconds("3000s"),  3000 * 1000)
+        self.assertEquals(time_expression_to_milliseconds("5000ms"), 5000)
         
 
     def test_parse_time_expression_clock_regex(self):
@@ -64,6 +70,25 @@ class TimeHandlingTest(TestCase):
         _components("100:03:02", 100, 3, 2, None)
         _components("100:03:02.200", 100, 3, 2, 200)
 
+    def test_frame_rate(self):
+        params = storage.TimeParameters({
+            storage.TTP + 'frameRate': "30",
+        })
+        self.assertEquals(
+            time_expression_to_milliseconds('00:00:00:10', params), 333)
+        # 10 frames x 30fps == 333ms
+
+    def test_frame_rate_timecode_with_multiplier(self):
+        params = storage.TimeParameters({
+            storage.TTP + 'frameRate': "30",
+            storage.TTP + 'frameRateMultiplier': '1000 1001'
+        })
+        self.assertEquals(
+            time_expression_to_milliseconds('00:00:00:10', params), 334)
+        # 10 frames x 30fps/29.97fps == 334ms
+        self.assertEquals(
+            time_expression_to_milliseconds('00:10:00:00', params),
+            600600)
 
     def test_normalize_time(self):
         content_str = open(utils.get_data_file_path("normalize-time.dfxp") ).read()
