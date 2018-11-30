@@ -90,6 +90,19 @@ class TimeHandlingTest(TestCase):
             time_expression_to_milliseconds('00:10:00:00', params),
             600600)
 
+    def test_drop_mode(self):
+        params = storage.TimeParameters({
+            storage.TTP + 'frameRate': "30",
+            storage.TTP + 'dropMode': "dropNTSC",
+            storage.TTP + 'frameRateMultiplier': '1000 1001'
+        })
+        self.assertEquals(
+            time_expression_to_milliseconds('00:00:00:10', params), 333)
+        # 10 frames x 30fps/29.97fps == 334ms
+        self.assertEquals(
+            time_expression_to_milliseconds('00:10:00:00', params),
+            600000)
+
     def test_normalize_time(self):
         content_str = open(utils.get_data_file_path("normalize-time.dfxp") ).read()
         dfxp = storage.SubtitleSet('en', content_str, normalize_time=True)

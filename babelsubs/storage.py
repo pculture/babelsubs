@@ -331,8 +331,19 @@ class TimeParameters(object):
             ttml_attrib = {}
         self.tick_rate = self.get_value(ttml_attrib, 'tickRate', int, None)
         self.frame_rate = self.get_value(ttml_attrib, 'frameRate', int, 30)
-        self.frame_rate_multiplier = self.get_value(
-            ttml_attrib, 'frameRateMultiplier', self.parse_fraction, 1.0)
+        self.dropMode = self.get_value(ttml_attrib, 'dropMode', str,
+                                       'nonDrop')
+        if self.dropMode == 'nonDrop':
+            self.frame_rate_multiplier = self.get_value(
+                ttml_attrib, 'frameRateMultiplier', self.parse_fraction, 1.0)
+        else:
+            # In drop mode, we should ignore frameRateMultiplier
+            #
+            # Note that this isn't 100% correct.  The DFXP spec has an example
+            # of how to convert frames to ms in drop mode.  But the simple
+            # method of not multiplying won't be off by too much at any point.
+
+            self.frame_rate_multiplier = 1.0
 
     def get_value(self, ttml_attrib, name, converter, default):
         key = TTP + name
