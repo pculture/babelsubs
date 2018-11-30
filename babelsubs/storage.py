@@ -214,16 +214,6 @@ def milliseconds_to_time_clock_exp(milliseconds):
     expression = '%(hours)02d:%(minutes)02d:%(seconds)02d.%(milliseconds)03d'
     return expression % utils.milliseconds_to_time_clock_components(milliseconds)
 
-def to_clock_time(time_expression, time_parameters=None):
-    """
-    If time expression is not in clock time, transform it
-    """
-    match = TIME_EXPRESSION_CLOCK_TIME.match(time_expression)
-    if match:
-        return time_expression
-    return milliseconds_to_time_clock_exp(
-        time_expression_to_milliseconds(time_expression, time_parameters))
-
 class _Differ(object):
     """Class that does the work for diff()."""
     def __init__(self, set_1, set_2, mappings):
@@ -556,10 +546,10 @@ class SubtitleSet(object):
         """
         begin = get_attr(el, 'begin')
         if begin:
-            begin = to_clock_time(begin, self.time_parameters)
+            begin = self.normalize_time_expression(begin)
         end = get_attr(el, 'end')
         if end:
-            end = to_clock_time(end, self.time_parameters)
+            end = self.normalize_time_expression(end)
         dur = get_attr(el, 'dur')
         if dur:
             end= milliseconds_to_time_clock_exp(
@@ -570,6 +560,19 @@ class SubtitleSet(object):
             el.attrib['begin'] = begin
         if end:
             el.attrib['end'] = end
+
+    def normalize_time_expression(self, time_expression):
+        """
+        Normalize a time expression
+
+        This method does a couple things:
+           - Converts all time expressions to clock time
+           - Adjust times based on self.time_parameters, meaning we convert
+             frames to milliseconds, and adjust by frameRateMultiplier
+        """
+        ms = time_expression_to_milliseconds(time_expression,
+                                             self.time_parameters)
+        return milliseconds_to_time_clock_exp(ms)
 
     def subtitle_items(self, mappings=None):
         """
