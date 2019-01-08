@@ -2,6 +2,7 @@ from unittest import TestCase
 from babelsubs.storage import SubtitleSet, SubtitleLine, diff, calc_changes
 
 class DiffingTest(TestCase):
+
     def test_empty_subs(self):
         result = diff(SubtitleSet('en'), SubtitleSet('en'))
         self.assertEqual(result['changed'], False)
@@ -9,9 +10,8 @@ class DiffingTest(TestCase):
         self.assertEqual(result['time_changed'], 0)
         self.assertEqual(len(result['subtitle_data']), 0)
 
-
     def empty_line(self):
-        return SubtitleLine(None, None, None, None)
+        return SubtitleLine(None, None, None, None, None, None)
 
     def test_one_set_empty(self):
         set_1 = SubtitleSet.from_list('en', [
@@ -263,10 +263,10 @@ class DiffingTest(TestCase):
     def test_unsynced_reflect_time_changes(self):
         set_1 = SubtitleSet.from_list('en', [
             (0, 1000, "Hey 1"),
+            (1000, 2000, "Hey 2"),
             ])
         set_2 = SubtitleSet.from_list('en', [
             (0, 1000, "Hey 1"),
-            (None, None, "Hey 2"),
             ])
         result = diff(set_1, set_2)
 

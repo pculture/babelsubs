@@ -16,8 +16,8 @@ class JSONParser(BaseTextParser):
             flags=[], eager_parse=eager_parse)
 
     def to_internal(self):
-        if not hasattr(self, 'sub_set'):
-            self.sub_set = SubtitleSet(self.language)
+        if not getattr(self, 'subtitle_set', None):
+            self.subtitle_set = SubtitleSet(self.language)
 
             try:
                 data = json.loads(self.input_string)
@@ -28,10 +28,14 @@ class JSONParser(BaseTextParser):
             data = sorted(data, key=lambda k: k['position'])
 
             for sub in data:
-                self.sub_set.append_subtitle(sub['start'], sub['end'],
-                    sub['text'])
+                new_paragraph = sub.get('new_paragraph', None)
+                region = sub.get('region', None)
+                meta = sub.get('meta', None)
+                self.subtitle_set.append_subtitle(sub['start'], sub['end'], sub['text'],
+                                             new_paragraph=new_paragraph, region=region,
+                                             meta=meta)
 
-        return self.sub_set
+        return self.subtitle_set
 
 
 register(JSONParser)

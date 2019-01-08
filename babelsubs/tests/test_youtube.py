@@ -15,7 +15,7 @@ class YouTubeParsingTest(TestCase):
         
     def test_no_duration(self):
         subs  = self._get_subs("youtube-no-end.xml")
-        sub_data = [x for x in subs.subtitle_items()]
+        sub_data = subs.subtitles
         self.assertEquals(sub_data[0].start_time, 430)
         self.assertEquals(sub_data[0].end_time, 3170)
         # make sure the logic is right up to the last one

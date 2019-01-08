@@ -52,7 +52,7 @@ def load_from(sub_from, type=None, language=None):
         elif extension and extension in available_types:
             target_type = extension
         else: 
-            raise TypeError("Type %s is not an available type"  % (type or extension))
+            raise TypeError("Type {} is not an available type".format((type or extension)))
         parser = parsers.discover(target_type) 
         with sub_from:
             sub_from = sub_from.read()
@@ -74,17 +74,16 @@ def load_from(sub_from, type=None, language=None):
 
 def load_from_file(filename, type=None, language=None):
     if not os.path.isfile(filename):
-        raise ValueError('Invalid filename "%s".' % filename)
+        raise ValueError('Invalid filename "{}".'.format(filename))
 
     with open(filename) as f:
         return load_from(f, type, language)
-
 
 def to(subs, type, language=None):
     Generator = generators.discover(type)
 
     if not Generator:
-        raise TypeError("Could not find a type %s" % type)
+        raise TypeError("Could not find a type {}".format(type))
 
     return Generator.generate(subs, language=language)
 

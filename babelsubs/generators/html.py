@@ -1,14 +1,9 @@
-from cgi import escape
-
 from babelsubs.generators.base import BaseGenerator, register
 from babelsubs.utils import UNSYNCED_TIME_FULL
 
 
 class HTMLGenerator(BaseGenerator):
     file_type = 'html'
-
-    MAPPINGS = dict(linebreaks="<br>", bold="<strong>%s</strong>",
-        italics="<em>%s</em>", underline="<u>%s</u>", quote_text=escape)
 
     def __init__(self, subtitle_set, language=None):
         super(HTMLGenerator, self).__init__(subtitle_set, language)
@@ -17,13 +12,13 @@ class HTMLGenerator(BaseGenerator):
     def __unicode__(self):
         output = []
         i = 1
-        for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(mappings=self.MAPPINGS):
+        for subtitle in self.subtitle_set.subtitles:
             output.append(unicode(i))
-            output.append(u'%s --> %s' % (
-                self.format_time(from_ms),
-                self.format_time(to_ms)
+            output.append(u'{} --> {}'.format(
+                self.format_time(subtitle.start_time),
+                self.format_time(subtitle.end_time)
                 ))
-            output.append(content)
+            output.append(subtitle.text)
             output.append(u'')
             i += 1
         return self.line_delimiter.join(output)

@@ -51,40 +51,32 @@ class BaseTextParser(object):
             self.input_string = self.input_string.decode('utf-8')
         return self._pattern.finditer(self.input_string)
 
-    def __unicode__(self):
-        return self.to(self.file_type)
-
     @classmethod
     def parse(cls, input_string, language=None):
         return cls(input_string, language)
 
-    def to(self, type):
-        from babelsubs import to
-        if isinstance(type, list):
-            type = type[0]
-
-        return to(self.to_internal(), type, language=self.language)
-
     def to_internal(self):
-        if not hasattr(self, 'sub_set'):
+        if not getattr(self, 'subtitle_set', None):
             match = None
             try:
-                self.sub_set = SubtitleSet(self.language)
+                self.subtitle_set = SubtitleSet(self.language)
                 for match in self._matches:
                     item = self._get_data(match.groupdict())
                     text = self.get_markup(item['text'])
-                    self.sub_set.append_subtitle(
+                    self.subtitle_set.append_subtitle(
                         item['start'], item['end'], text,
-                        region=item.get('region'), escape=False)
+                        region=item.get('region'))
                 if match is None:
                     raise ValueError("No subs found")
             except Exception as e:
                 raise SubtitleParserError(original_error=e)
 
-        return self.sub_set
+        return self.subtitle_set
 
     def get_markup(self, text):
-        return text.replace("\n", '<br/>')
+        # normalize line breaks
+        text = text.replace("\r\n", "<br>").replace("\r", "<br>").replace("\n", "<br>")
+        return text
 
     _matches = property(_get_matches)
 

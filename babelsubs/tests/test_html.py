@@ -8,16 +8,18 @@ class HTMLGeneratorTest(TestCase):
     def setUp(self):
         subs  = utils.get_subs("simple.srt")
         self.parsed = subs.to_internal()
-        self.sub_data = [x for x in self.parsed.subtitle_items(HTMLGenerator.MAPPINGS)]
+        self.subtitles = self.parsed.subtitles
 
-    def assertText(self, text, sub_index):
-        self.assertIn(text, self.sub_data[sub_index].text)
+    def assertText(self, text, index):
+        self.assertIn(text, self.subtitles[index].text)
 
+    # TODO: figure out if we really need to use em and strong, or if we can just make sure to
+    #       normalize them into i and b
     def test_bold(self):
-        self.assertText("We started <strong>Universal Subtitles</strong> because we believe", 0)
+        self.assertText("We started <b>Universal Subtitles</b> because we believe", 0)
 
     def test_italics(self):
-        self.assertText("Videomakers and websites should <em>really</em> care about this stuff too.", 3)
+        self.assertText("Videomakers and websites should <i>really</i> care about this stuff too.", 3)
 
     def test_line_breaks(self):
         self.assertText("and then type along with the dialog<br>to create the subtitles", 7)
@@ -29,7 +31,5 @@ class HTMLGeneratorTest(TestCase):
 class HTMLMappingsTest(TestCase):
     def test_escape(self):
         subs = utils.get_subs("simple.dfxp").to_internal()
-        items = subs.subtitle_items(HTMLGenerator.MAPPINGS)
-        self.assertEquals(items[75].text,
-                          '&lt;script&gt;alert&lt;/script&gt;')
+        self.assertEquals(subs.subtitles[75].text, 'alert')
 

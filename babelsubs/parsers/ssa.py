@@ -19,18 +19,14 @@ class SSAParser(SRTParser):
         pattern += r'[\w ]+,' #<Style>,
         pattern += r'[\w ]*,' #<Character name>,
         pattern += r'\d{4},\d{4},\d{4},' #<MarginL>,<MarginR>,<MarginV>,
-        pattern += r'[\w ]*,' #<Efect>,
+        pattern += r'[\w ]*,' #<Effect>,
         pattern += r'(?:\{.*?\})?(?P<text>.+?)\n' #[{<Override control codes>}]<Text>
+        # get markup tags
+        self.markup_re = re.compile(r"{\\(?P<start>[biu])1}(?P<text>.+?){\\(?P<end>[biu])0}")
         #replace \r\n to \n and fix end of last subtitle
         input_string = input_string.replace('\r\n', '\n')+'\n'
-        self.markup_re = re.compile(r"{\\(?P<start>[biu])1}(?P<text>.+?){\\(?P<end>[biu])0}")
         super(SRTParser, self).__init__(input_string, pattern, flags=[re.DOTALL],
             language=language, eager_parse=eager_parse)
-
-    def get_markup(self, text):
-        markup = self.markup_re.sub(self.__replace, text)
-        markup = markup.replace('\\N', '<br/>').replace('\\n', '<br/>')
-        return markup
 
     def _get_data(self, match):
         output = {}
@@ -57,21 +53,18 @@ class SSAParser(SRTParser):
             return None
         return res
 
+    def get_markup(self, text):
+        markup = self.markup_re.sub(self.__replace, text)
+        markup = markup.replace('\\N', '<br>').replace('\\n', '<br>')
+        return markup
+
     def __replace(self, match):
         group = match.groupdict()
         if group['start'] != group['end']:
-            raise ValueError("Unbalanced tags start: %(start)s, end: %(end)s" % group)
+            raise ValueError("Unbalanced tags - start: {}, end: {}".format(
+                             group['start'], group['end']))
 
-        base_span = '<span %s>%s</span>'
-
-        if group['start'] == 'b':
-            span = base_span % ('fontWeight="bold"', group['text'])
-        elif group['start'] == 'i':
-            span = base_span % ('fontStyle="italic"', group['text'])
-        elif group['start'] == 'u':
-            span = base_span % ('textDecoration="underline"', group['text'])
-
-        return span
-
+        tag = '<{}>{}</{}>'.format(group['start'], group['text'], group['start'])
+        return tag
 
 register(SSAParser)

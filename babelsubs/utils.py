@@ -1,13 +1,16 @@
 import re
 import bleach
-import htmllib
 import htmlentitydefs
-import formatter
+
+# TODO: when we change to python 3, use this instead
+# from html.parser import HTMLParser
+from HTMLParser import HTMLParser
+
 
 from itertools import chain
 from xmlconst import *
 
-DEFAULT_ALLOWED_TAGS = ['i', 'b', 'u']
+DEFAULT_ALLOWED_TAGS = ['i', 'b', 'u', 'br']
 MULTIPLE_SPACES = re.compile('\s{2,}')
 BLANK_CHARS = re.compile('[\n\t\r]*')
 # We support unsyced subs, meaning there is not timing data for them
@@ -17,14 +20,17 @@ UNSYNCED_TIME_FULL = (60 * 60 * 100 * 1000) - 1
 # be adjusted
 UNSYNCED_TIME_ONE_HOUR_DIGIT = (60 * 60 * 10 * 1000) - 1000
 
-def unescape_html(s):
-    p = htmllib.HTMLParser(formatter.NullFormatter() )
+def unescape_html(text):
+    h = HTMLParser()
+    """
     # we need to preserve line breaks, nofill makes sure we don't
     # loose them
-    p.nofill = True
-    p.save_bgn()
-    p.feed(s)
-    return p.save_end().strip()
+    h.nofill = True
+    h.save_bgn()
+    h.feed(text)
+    return h.save_end().strip()
+    """
+    return h.unescape(text)
 
 LANG_DIALECT_RE = re.compile(r'(?P<lang_code>[\w]{2,13})(?P<dialect>-[\w]{2,8})?(?P<rest>-[\w]*)?')
 
@@ -81,17 +87,14 @@ def generate_style_map(dom):
                 style_map['italic'].append(style_id)
     return style_map
 
-def strip_tags(text, tags=None):
+def strip_tags(text, tags=DEFAULT_ALLOWED_TAGS):
     """
     Returns text with the tags stripped.
     By default we allow the standard formatting tags
     to pass (i,b,u).
     Any other tag's content will be present, but with tags removed.
     """
-    if tags is None:
-        tags = DEFAULT_ALLOWED_TAGS
     return bleach.clean(text, tags=tags, strip=True)
-
 
 def escape_ampersands(text):
     """Take a string of chars and replace ampersands with &amp;"""
@@ -200,6 +203,7 @@ def indent_ttml(tt_elt, indent_width=4):
     """
     _do_indent_ttml(tt_elt, " " * indent_width, 0)
     tt_elt.tail = "\n"
+    return tt_elt
 
 def _do_indent_ttml(elt, indent, indent_level):
     if elt.tag == TTML + 'p' or len(elt) == 0:

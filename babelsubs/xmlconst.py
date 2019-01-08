@@ -31,5 +31,3 @@ TTM = '{%s}' % TTM_NAMESPACE_URI
 TTS = '{%s}' % TTS_NAMESPACE_URI
 TTP = '{%s}' % TTP_NAMESPACE_URI
 XML = '{%s}' % XML_NAMESPACE_URI
-
-

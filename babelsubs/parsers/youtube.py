@@ -16,16 +16,17 @@ class YoutubeParser(BaseTextParser):
         self.language = language_code
 
     def __iter__(self):
-        if not hasattr(self, 'sub_set'):
+        if not getattr(self, 'subtitle_set', None):
             self.to_internal()
 
-        for sub in self.sub_set:
+        for sub in self.subtitle_set:
             yield sub
 
     def to_internal(self):
-        if not hasattr(self, 'sub_set'):
+        if not getattr(self, 'subtitle_set', None):
             try:
-                self.sub_set = SubtitleSet(self.language)
+                # TODO: what format does youtube return?
+                self.subtitle_set = SubtitleSet(self.language)
                 xml = etree.fromstring(self.input_string.encode('utf-8'))
 
                 has_subs = False
@@ -33,7 +34,7 @@ class YoutubeParser(BaseTextParser):
                 for i,item in enumerate(xml):
                     duration = 0
                     start = int(float(item.get('start')) * 1000)
-                    if hasattr(item, 'duration'):
+                    if getattr(item, 'duration', None):
                         duration = int(float(item.get('dur', 0)) * 1000)
                     elif i+1 < total_items:
                         # youtube sometimes omits the duration attribute
@@ -46,15 +47,14 @@ class YoutubeParser(BaseTextParser):
                         duration = 3000
                     end = start + duration
                     text = item.text and unescape_html(item.text) or u''
-                    self.sub_set.append_subtitle(start, end, text)
+                    self.subtitle_set.append_subtitle(start, end, text)
                     has_subs = True
                 if not has_subs:
                     raise ValueError("No subs")
             except Exception as e:
                 raise SubtitleParserError(original_error=e)
 
-
-        return self.sub_set
+        return self.subtitle_set
 
 
 register(YoutubeParser)

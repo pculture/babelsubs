@@ -41,12 +41,11 @@ class SBVParser(BaseTextParser):
         text = ('' if match['text'] is None
                 else utils.escape_ampersands(match['text']))
 
-        # [br] are linebreaks
-        text = text.replace("[br]", "<br/>")
-
-        output['text'] = text
-
+        output['text'] = self.get_markup(text)
         return output
 
+    def get_markup(self, text):
+        # [br] are linebreaks
+        return text.replace("[br]", "<br>")
 
 register(SBVParser)

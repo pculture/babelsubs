@@ -6,9 +6,7 @@ from babelsubs.parsers.json_parser import JSONParser
 from babelsubs.tests import utils
 import json
 
-
 class JSONGeneratorTest(TestCase):
-
     def test_basic(self):
         subs = utils.get_subs("simple.srt")
         self.assertEquals(len(subs), 19)
@@ -21,5 +19,5 @@ class JSONGeneratorTest(TestCase):
 class JSONParserTest(TestCase):
     def test_invalid(self):
         with self.assertRaises(SubtitleParserError):
-            JSONParser ("this\n\nisnot a valid subs format","en")
+            JSONParser("this\n\nisnot a valid subs format","en")
 

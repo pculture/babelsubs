@@ -5,18 +5,15 @@ from babelsubs.generators.base import BaseGenerator, register
 class SSAGenerator(BaseGenerator):
     file_type = ['ssa', 'ass']
 
-    MAPPINGS = dict(bold="{\\b1}%s{\\b0}",
-                    italics="{\i1}%s{\i0}", underline="{\u1}%s{\u0}",
-                    linebreaks="\N")
-
-
     def __unicode__(self):
-        #add BOM to fix python default behaviour, because players don't play without it
-        return u''.join([unicode(codecs.BOM_UTF8, "utf8"), self._start(), self._content(), self._end()])
+        # add BOM to fix python default behaviour, because players don't play without it
+        return u''.join([unicode(codecs.BOM_UTF8, "utf8"),
+                        self._start(), self._content(), self._end()])
 
     def _start(self):
-        ld = self.line_delimiter
-        return u'[Script Info]%sTitle: %s%s' % (ld, getattr(self, 'title', ''), ld)
+        return u'[Script Info]{}Title: {}{}'.format(self.line_delimiter,
+                                                    getattr(self, 'title', ''),
+                                                    self.line_delimiter)
 
     def _end(self):
         return u''
@@ -31,22 +28,26 @@ class SSAGenerator(BaseGenerator):
             use_centiseconds=True)
         return u'%(hours)i:%(minutes)02i:%(seconds)02i.%(centiseconds)02i' % components
 
-    def _clean_text(self, text):
-        return text.replace('\n', ' ')
-
     def _content(self):
-        dl = self.line_delimiter
         output = []
-        output.append(u'[Events]%s' % dl)
-        output.append(u'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text%s' % dl)
-        tpl = u'Dialogue: 0,%s,%s,Default,,0000,0000,0000,,%s%s'
+        output.append(u'[Events]' + self.line_delimiter)
+        output.append(u'Format: Layer, Start, End, Style, Name, MarginL, MarginR, ' +
+                      u'MarginV, Effect, Text' + self.line_delimiter)
+        template = u'Dialogue: 0,{},{},Default,,0000,0000,0000,,{}{}'
 
-        for from_ms, to_ms, content, meta in self.subtitle_set.subtitle_items(self.MAPPINGS):
-            start = self.format_time(from_ms)
-            end = self.format_time(to_ms)
-            text = self._clean_text(content)
-            output.append(tpl % (start, end, text, dl))
+        for subtitle in self.subtitle_set.subtitles:
+            start = self.format_time(subtitle.start_time)
+            end = self.format_time(subtitle.end_time)
+            text = self.get_markup(subtitle.text)
+            output.append(template.format(start, end, text, self.line_delimiter))
 
         return ''.join(output)
+
+    def get_markup(self, text):
+        text = text.replace("<b>", "{\\b1}").replace("</b>", "{\\b0}")
+        text = text.replace("<i>", "{\\i1}").replace("</i>", "{\\i0}")
+        text = text.replace("<u>", "{\\u1}").replace("</u>", "{\\u0}")
+        text = text.replace("<br>", "\N")
+        return text.replace("\n", "")
 
 register(SSAGenerator)

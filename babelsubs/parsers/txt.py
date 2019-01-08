@@ -31,19 +31,18 @@ class TXTParser(BaseTextParser):
             yield output
 
     def to_internal(self):
-
-        if not hasattr(self, 'sub_set'):
-            self.sub_set = SubtitleSet(self.language)
+        if not hasattr(self, 'subtitle_set'):
+            self.subtitle_set = SubtitleSet(self.language)
             valid = False
             for item in self._result_iter():
                 item['text'] = item['text'].replace("\n", '<br/>')
                 if not valid and ''.join(item['text'].split()):
                     valid = True
-                self.sub_set.append_subtitle(item['start'], item['end'],
-                                             item['text'], escape=False)
+                self.subtitle_set.append_subtitle(item['start'], item['end'],
+                                             item['text'])
             if not valid:
                 raise SubtitleParserError("No subs")
-        return self.sub_set
+        return self.subtitle_set
 
 
 register(TXTParser)

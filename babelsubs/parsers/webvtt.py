@@ -1,6 +1,5 @@
 import re
 
-from lxml import etree
 from babelsubs import utils
 from babelsubs.parsers.base import BaseTextParser, register
 
@@ -40,11 +39,11 @@ class WEBVTTParser(BaseTextParser):
                                        match['e_min'],
                                        match['e_sec'],
                                        match['e_secfr'])
-        output['text'] = (
-            '' if match['text'] is None else
-            utils.escape_ampersands(utils.strip_tags(
-                self._clean_pattern.sub('', match['text'])))
-        )
+        text = ('' if match['text'] is None else
+                utils.escape_ampersands(utils.strip_tags(
+                    self._clean_pattern.sub('', match['text'])))
+               )
+        output['text'] = self.get_markup(text)
         cue_settings = self._parse_cue_settings(match['cue_settings'])
         output['region'] = self.calc_region(cue_settings)
         return output
@@ -84,31 +83,5 @@ class WEBVTTParser(BaseTextParser):
             return 'top'
         else:
             return None
-
-    def get_markup(self, text):
-        # create a simple element so we can parse using etree
-        # webvtt uses html like tags as markup
-        base = "<p>%s</p>" % text
-        el = etree.fromstring(base)
-
-        content = [el.text]
-        base_span = '<span %s>%s</span>'
-
-        for child in el.getchildren():
-            tag = child.tag
-
-            if tag == 'b':
-                content.append(base_span % ('fontWeight="bold"', child.text))
-            elif tag == 'i':
-                content.append(base_span % ('fontStyle="italic"', child.text))
-            elif tag == 'u':
-                content.append(base_span % ('textDecoration="underline"', child.text))
-
-            content.append(child.tail)
-
-        if el.tail:
-            content.append(el.tail.strip())
-
-        return "".join(filter(None, content)).replace("\n", "<br />")
 
 register(WEBVTTParser)
